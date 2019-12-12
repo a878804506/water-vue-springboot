@@ -1,0 +1,50 @@
+*.iml
+**/target
+**/node_modules
+
+.idea
+package-lock.json
+docs/.vuepress/dist
+**/dist
+.classpath
+.factorypath
+.vscode
+.settings
+.project
+vue-element-admin/
+vue-admin-template/
+vue-admin-template-tabnav/
+
+ ##filter databfile、sln file##
+*.mdb
+*.ldb
+*.sln
+##class file##
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+# compression file
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.via
+*.tmp
+*.err
+# OS generated files #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+application-*.properties
