@@ -20,8 +20,8 @@ public class PageFactory<T> {
     public Page<T> defaultPage() {
         HttpServletRequest request = HttpUtil.getRequest();
         //每页多少条数据
-        int limit = Integer.valueOf(request.getParameter("limit"));
-        String pageNum = request.getParameter("page");
+        int limit = request.getParameter("limit") == null ? 10 : (Integer.valueOf(request.getParameter("limit")));
+        String pageNum = request.getParameter("page") == null ? "1" : request.getParameter("page");
         //每页的偏移量(本页当前有多少条)
         int offset = 0;
         if (StringUtils.isNotEmpty(pageNum)) {
