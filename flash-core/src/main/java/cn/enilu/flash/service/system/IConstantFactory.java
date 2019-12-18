@@ -160,4 +160,16 @@ public interface IConstantFactory {
     Menu getMenu(Long id) ;
 
     Notice getNotice(Long id);
+
+    /**
+     * 水务系统
+     * 获取客户状态 正常、报停
+     */
+    String getCustomerStatusName(Integer status);
+
+    /**
+     * 水务系统
+     * 获取客户删除状态 正常、已删除
+     */
+    String getCustomerDeleteName(Integer delete);
 }

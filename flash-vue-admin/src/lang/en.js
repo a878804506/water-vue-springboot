@@ -15,7 +15,6 @@ export default {
     loginLog: 'Login Log',
     log: 'Bussiness Log',
     cfg: 'Config',
-
     banner: 'Banner',
     article: 'Article',
     editArticle: 'Edit Article',
@@ -26,7 +25,12 @@ export default {
     swagger: 'Docs',
     msg: 'History',
     msgTpl: 'Template',
-    msgSender: 'Sender'
+    msgSender: 'Sender',
+    //  水务系统 开始
+    waterCustomer: 'Water Customer',
+    customerMgr: 'Customer '
+
+    //  水务系统 结束
   },
   navbar: {
     logOut: 'Log Out',

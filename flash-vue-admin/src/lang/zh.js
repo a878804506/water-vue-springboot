@@ -26,7 +26,11 @@ export default {
     msg:'历史消息',
     msgTpl:'消息模板',
     msgSender:'消息发送器',
+    //  水务系统 开始
+    waterCustomer: '水务客户',
     customerMgr: '客户管理'
+
+    //  水务系统 结束
   },
   navbar: {
     logOut: '退出登录',
