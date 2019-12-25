@@ -58,5 +58,10 @@ public interface Permission {
     String FILE = "file";
     String FILE_UPLOAD = "fileUpload";
 
+    // 水务系统
+    String CUSTOMER_MGR = "customerMgr";
+    String CUSTOMER_INSERT_UPDATE = "customerInsertUpdate";
 
+    String CUSTOMER_WATER_METER = "customerWaterMeter";
+    String UPDATE_WATER_METER = "updateWaterMeter";
 }

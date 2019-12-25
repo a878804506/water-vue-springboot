@@ -30,6 +30,7 @@ export default {
     //  水务系统 开始
     waterCustomer: 'Water System Customer',
     customerMgr: 'Customer ',
+
     waterCost: 'Water System Cost',
     customerCost: 'Customer Cost',
     customerWaterMeter: 'Customer Water Meter'

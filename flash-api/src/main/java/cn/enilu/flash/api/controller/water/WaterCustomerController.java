@@ -1,14 +1,13 @@
 package cn.enilu.flash.api.controller.water;
 
 import cn.enilu.flash.bean.entity.water.WaterCustomer;
+import cn.enilu.flash.bean.enumeration.Permission;
 import cn.enilu.flash.bean.vo.query.SearchFilter;
 import cn.enilu.flash.service.water.WaterCustomerService;
 
 import cn.enilu.flash.bean.core.BussinessLog;
 import cn.enilu.flash.bean.constant.factory.PageFactory;
 import cn.enilu.flash.bean.dictmap.CommonDict;
-import cn.enilu.flash.bean.enumeration.BizExceptionEnum;
-import cn.enilu.flash.bean.exception.ApplicationException;
 import cn.enilu.flash.bean.vo.front.Rets;
 
 import cn.enilu.flash.utils.BeanUtil;
@@ -16,6 +15,7 @@ import cn.enilu.flash.utils.StringUtil;
 import cn.enilu.flash.utils.factory.Page;
 
 import cn.enilu.flash.warpper.water.WaterCustomerWarpper;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +33,7 @@ public class WaterCustomerController {
     private WaterCustomerService waterCustomerService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequiresPermissions(value = {Permission.CUSTOMER_MGR})
     public Object list(@RequestParam(required = false) String name,
                        @RequestParam(required = false) String status,
                        @RequestParam(required = false) String delete) {
@@ -60,22 +61,13 @@ public class WaterCustomerController {
 
     @RequestMapping(method = RequestMethod.POST)
     @BussinessLog(value = "新增、编辑客户信息表", key = "name", dict = CommonDict.class)
+    @RequiresPermissions(value = {Permission.CUSTOMER_INSERT_UPDATE})
     public Object save(@ModelAttribute WaterCustomer tWaterCustomer) {
         if (tWaterCustomer.getId() == null) {
             waterCustomerService.insert(tWaterCustomer);
         } else {
             waterCustomerService.update(tWaterCustomer);
         }
-        return Rets.success();
-    }
-
-    @RequestMapping(method = RequestMethod.DELETE)
-    @BussinessLog(value = "删除客户信息表", key = "id", dict = CommonDict.class)
-    public Object remove(Long id) {
-        if (id == null) {
-            throw new ApplicationException(BizExceptionEnum.REQUEST_NULL);
-        }
-        waterCustomerService.delete(id);
         return Rets.success();
     }
 }

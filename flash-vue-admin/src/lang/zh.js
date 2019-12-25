@@ -30,6 +30,7 @@ export default {
     //  水务系统 开始
     waterCustomer: '水务客户',
     customerMgr: '客户管理',
+
     waterCost: '水费管理',
     customerCost: '账单管理(菜单建了，没做)',
     customerWaterMeter: '起止码管理'
