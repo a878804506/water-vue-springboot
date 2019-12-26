@@ -49,9 +49,7 @@ public class WaterCustomerController {
             page.addFilter(SearchFilter.build("delete", SearchFilter.Operator.EQ, delete));
         }
         // 手动排序 id正序
-        Sort sort = new Sort("id");
-        sort.ascending();
-        page.setSort(sort);
+        page.setSort(new Sort(Sort.Direction.ASC,"id"));
         page = waterCustomerService.queryPage(page);
         // 字典字段转换
         List list = (List) new WaterCustomerWarpper(BeanUtil.objectsToMaps(page.getRecords())).warp();

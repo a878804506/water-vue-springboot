@@ -1,6 +1,7 @@
 package cn.enilu.flash.api.controller.water;
 
 import cn.enilu.flash.bean.constant.water.WaterConstant;
+import cn.enilu.flash.bean.constant.water.WaterTemplateSQLConstant;
 import cn.enilu.flash.bean.entity.water.WaterMeter;
 import cn.enilu.flash.bean.enumeration.Permission;
 import cn.enilu.flash.service.water.WaterMeterService;
@@ -35,6 +36,7 @@ public class WaterMeterController {
 
     /**
      * 查询起止码列表
+     *
      * @param name
      * @param year
      * @return
@@ -51,6 +53,7 @@ public class WaterMeterController {
         if (null == name) {
             name = "";
         }
+        name = WaterTemplateSQLConstant.PER_CENT + name + WaterTemplateSQLConstant.PER_CENT;
         page = waterMeterService.queryWaterMeterPage(page, name, year);
         // 字典字段转换
         List list = (List) new WaterMeterWarpper(BeanUtil.objectsToMaps(page.getRecords())).warp();
@@ -65,7 +68,7 @@ public class WaterMeterController {
         if (tWaterWatermeter.getId() == null) {
             return Rets.failure("id不能为空!");
         } else {
-            waterMeterService.updateWatermeterById(tWaterWatermeter,DateFormatUtils.format(new Date(), WaterConstant.YYYY));
+            waterMeterService.updateWatermeterById(tWaterWatermeter, DateFormatUtils.format(new Date(), WaterConstant.YYYY));
         }
         return Rets.success();
     }
