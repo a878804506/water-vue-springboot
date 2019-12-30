@@ -191,7 +191,7 @@ export default {
             })
           } else {
             this.$message({
-              message: '提交失败',
+              message: '两次密码不一致',
               type: 'error'
             })
           }

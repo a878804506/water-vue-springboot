@@ -3,16 +3,23 @@ package cn.enilu.flash.bean.entity.water;
 import cn.enilu.flash.bean.entity.BaseEntity;
 import lombok.Data;
 import org.hibernate.annotations.Table;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 
 /**
  * 客户信息表
  */
-@Data
 @Entity(name="t_water_customer")
 @Table(appliesTo = "t_water_customer",comment = "客户信息表")
+@Data
+/*
+开启审计功能 by 陈韵辉 20191230
+用于自动插入创建人创建时间 修改人 修改时间
+ */
+@EntityListeners(AuditingEntityListener.class)
 public class WaterCustomer extends BaseEntity {
     @Column(name="name",columnDefinition = "VARCHAR(20) COMMENT '客户姓名'")
     private String name;

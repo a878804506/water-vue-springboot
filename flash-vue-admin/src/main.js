@@ -14,7 +14,7 @@ import router from './router'
 import i18n from './lang' // Internationalization
 import '@/icons' // icon
 import '@/permission' // permission control
-
+import VueParticles from 'vue-particles'
 
 /**
  * If you don't want to use mock-server
@@ -27,6 +27,9 @@ import '@/permission' // permission control
 
 // set ElementUI lang to EN
 Vue.use(ElementUI, {   i18n: (key, value) => i18n.t(key, value) })
+
+//登陆页的粒子效果组件
+Vue.use(VueParticles)
 
 Vue.component('v-chart', ECharts)
 Vue.config.productionTip = false

@@ -22,6 +22,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan(basePackages = "cn.enilu.flash")
 @EntityScan(basePackages="cn.enilu.flash.bean.entity")
 @EnableJpaRepositories(basePackages = "cn.enilu.flash.dao", repositoryFactoryBeanClass = BaseRepositoryFactoryBean.class)
+// 开启审计功能 by 陈韵辉 20191230
 @EnableJpaAuditing
 public class ApiApplication extends SpringBootServletInitializer {
 
