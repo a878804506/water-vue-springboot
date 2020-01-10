@@ -42,9 +42,4 @@ public class WaterMeter extends BaseEntity {
     private Integer eleven;
     @Column(name="twelve",columnDefinition = "DOUBLE COMMENT '十二月'")
     private Integer twelve;
-    /**
-     *  delete 关键字处理
-     */
-    @Column(name="cdelete",columnDefinition = "INT COMMENT '是否可用（1：正常、0：已删除）'")
-    private Integer cdelete;
 }

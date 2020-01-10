@@ -21,7 +21,6 @@ export default {
         ten: '',
         eleven: '',
         twelve: '',
-        cdelete: '',
         id: ''
       },
       listQuery: {
@@ -121,7 +120,6 @@ export default {
         ten: '',
         eleven: '',
         twelve: '',
-        cdelete: '',
         id: ''
       }
     },
@@ -149,7 +147,6 @@ export default {
             ten: this.form.ten,
             eleven: this.form.eleven,
             twelve: this.form.twelve,
-            cdelete: this.form.cdelete,
             id: this.form.id
           }).then(response => {
             this.$message({

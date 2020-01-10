@@ -1,6 +1,7 @@
 *.iml
 **/target
 **/node_modules
+**/META-INF
 
 .idea
 package-lock.json

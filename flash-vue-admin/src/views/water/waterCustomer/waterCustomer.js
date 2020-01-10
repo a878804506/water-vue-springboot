@@ -16,7 +16,7 @@ export default {
         label: '正常'
       }, {
         value: '0',
-        label: '已删除'
+        label: '删除'
       }
       ],
       formVisible: false,
@@ -151,8 +151,13 @@ export default {
     },
     add() {
       this.resetForm()
-      this.formTitle = '添加客户信息表',
-        this.formVisible = true
+      this.formTitle = '添加客户信息表'
+      this.formVisible = true
+      /**
+       * 默认正常
+       */
+      this.form.status = '1'
+      this.form.delete = '1'
       this.isAdd = true
     },
     save() {

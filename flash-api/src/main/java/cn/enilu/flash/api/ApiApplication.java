@@ -17,6 +17,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * @author enilu
  * @version 2018/9/11 0011
  */
+// 开启使用缓存
 @EnableCaching
 @SpringBootApplication
 @ComponentScan(basePackages = "cn.enilu.flash")

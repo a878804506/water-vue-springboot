@@ -94,11 +94,6 @@
           {{scope.row.twelve}}
         </template>
       </el-table-column>
-      <el-table-column label="是否可用">
-        <template slot-scope="scope">
-          {{scope.row.deleteName}}
-        </template>
-      </el-table-column>
     </el-table>
 
     <el-pagination

@@ -4,6 +4,7 @@ import cn.enilu.flash.bean.constant.water.WaterConstant;
 import cn.enilu.flash.bean.constant.water.WaterTemplateSQLConstant;
 import cn.enilu.flash.bean.entity.water.WaterMeter;
 import cn.enilu.flash.bean.enumeration.Permission;
+import cn.enilu.flash.bean.vo.query.SearchFilter;
 import cn.enilu.flash.service.water.WaterMeterService;
 
 import cn.enilu.flash.bean.core.BussinessLog;
@@ -12,6 +13,7 @@ import cn.enilu.flash.bean.dictmap.CommonDict;
 import cn.enilu.flash.bean.vo.front.Rets;
 
 import cn.enilu.flash.utils.BeanUtil;
+import cn.enilu.flash.utils.StringUtil;
 import cn.enilu.flash.utils.factory.Page;
 
 import cn.enilu.flash.warpper.water.WaterMeterWarpper;
@@ -22,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -46,13 +49,14 @@ public class WaterMeterController {
     public Object list(@RequestParam(required = false) String name,
                        @RequestParam(required = false) String year) {
         Page<WaterMeter> page = new PageFactory<WaterMeter>().defaultPage();
-        if (StringUtils.isEmpty(year)) {
-            // 没有年份就给默认的
-            year = DateFormatUtils.format(new Date(), WaterConstant.YYYY);
-        }
-        if (null == name) {
+        if (StringUtil.isNotEmpty(name)) {
+            // 模糊搜索
+            page.addFilter(SearchFilter.build("name", SearchFilter.Operator.LIKE, name));
+        }else{
             name = "";
         }
+        // 手动排序 id正序
+        page.setSort(new Sort(Sort.Direction.ASC,"id"));
         name = WaterTemplateSQLConstant.PER_CENT + name + WaterTemplateSQLConstant.PER_CENT;
         page = waterMeterService.queryWaterMeterPage(page, name, year);
         // 字典字段转换
@@ -68,7 +72,7 @@ public class WaterMeterController {
         if (tWaterWatermeter.getId() == null) {
             return Rets.failure("id不能为空!");
         } else {
-            waterMeterService.updateWatermeterById(tWaterWatermeter, DateFormatUtils.format(new Date(), WaterConstant.YYYY));
+            waterMeterService.updateWatermeterById(tWaterWatermeter);
         }
         return Rets.success();
     }

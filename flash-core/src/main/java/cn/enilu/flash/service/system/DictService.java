@@ -1,5 +1,6 @@
 package cn.enilu.flash.service.system;
 
+import cn.enilu.flash.bean.constant.water.WaterTemplateSQLConstant;
 import cn.enilu.flash.bean.entity.system.Dict;
 import cn.enilu.flash.cache.DictCache;
 import cn.enilu.flash.dao.system.DictRepository;
@@ -92,7 +93,7 @@ public class DictService extends BaseService<Dict,Long,DictRepository> {
     }
 
     public List<Dict> findByNameLike(String name) {
-        return dictRepository.findByNameLike(name);
+        return dictRepository.findByNameLike(WaterTemplateSQLConstant.PER_CENT+name+WaterTemplateSQLConstant.PER_CENT);
     }
 
     public List<Dict> findByPid(Long pid) {

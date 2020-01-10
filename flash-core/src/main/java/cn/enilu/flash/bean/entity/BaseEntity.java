@@ -5,11 +5,9 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -22,6 +20,11 @@ import java.util.Date;
  */
 @MappedSuperclass
 @Data
+/*
+开启审计功能 by 陈韵辉 20191230
+用于自动插入创建人创建时间 修改人 修改时间
+ */
+@EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity implements Serializable {
 
     @Id
