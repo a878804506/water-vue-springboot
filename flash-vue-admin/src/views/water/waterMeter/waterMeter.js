@@ -75,7 +75,7 @@ export default {
       this.fetchData()
     },
     reset() {
-      this.listQuery.name = ''
+      this.listQuery.cname = ''
       this.fetchData()
     },
     handleFilter() {
@@ -203,6 +203,5 @@ export default {
         })
       }
     }
-
   }
 }

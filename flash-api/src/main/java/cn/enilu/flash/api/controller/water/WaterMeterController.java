@@ -1,6 +1,5 @@
 package cn.enilu.flash.api.controller.water;
 
-import cn.enilu.flash.bean.constant.water.WaterConstant;
 import cn.enilu.flash.bean.constant.water.WaterTemplateSQLConstant;
 import cn.enilu.flash.bean.entity.water.WaterMeter;
 import cn.enilu.flash.bean.enumeration.Permission;
@@ -17,8 +16,6 @@ import cn.enilu.flash.utils.StringUtil;
 import cn.enilu.flash.utils.factory.Page;
 
 import cn.enilu.flash.warpper.water.WaterMeterWarpper;
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -40,25 +36,25 @@ public class WaterMeterController {
     /**
      * 查询起止码列表
      *
-     * @param name
+     * @param cname
      * @param year
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @RequiresPermissions(value = {Permission.CUSTOMER_WATER_METER})
-    public Object list(@RequestParam(required = false) String name,
+    public Object list(@RequestParam(required = false) String cname,
                        @RequestParam(required = false) String year) {
         Page<WaterMeter> page = new PageFactory<WaterMeter>().defaultPage();
-        if (StringUtil.isNotEmpty(name)) {
+        if (StringUtil.isNotEmpty(cname)) {
             // 模糊搜索
-            page.addFilter(SearchFilter.build("name", SearchFilter.Operator.LIKE, name));
+            page.addFilter(SearchFilter.build("cname", SearchFilter.Operator.LIKE, cname));
         }else{
-            name = "";
+            cname = "";
         }
         // 手动排序 id正序
         page.setSort(new Sort(Sort.Direction.ASC,"id"));
-        name = WaterTemplateSQLConstant.PER_CENT + name + WaterTemplateSQLConstant.PER_CENT;
-        page = waterMeterService.queryWaterMeterPage(page, name, year);
+        cname = WaterTemplateSQLConstant.PER_CENT + cname + WaterTemplateSQLConstant.PER_CENT;
+        page = waterMeterService.queryWaterMeterPage(page, cname, year);
         // 字典字段转换
         List list = (List) new WaterMeterWarpper(BeanUtil.objectsToMaps(page.getRecords())).warp();
         page.setRecords(list);

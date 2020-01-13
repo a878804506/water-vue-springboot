@@ -62,7 +62,7 @@ public class WaterCustomerController {
     @RequiresPermissions(value = {Permission.CUSTOMER_INSERT_UPDATE})
     public Object save(@ModelAttribute WaterCustomer tWaterCustomer) {
         if (tWaterCustomer.getId() == null) {
-            waterCustomerService.insert(tWaterCustomer);
+            waterCustomerService.insertCustomerAndMeter(tWaterCustomer);
         } else {
             waterCustomerService.update(tWaterCustomer);
         }
