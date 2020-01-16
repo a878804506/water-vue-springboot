@@ -22,6 +22,5 @@ public class WaterCustomerWarpper extends BaseControllerWarpper {
     public void warpTheMap(Map<String, Object> map) {
         map.put("statusName", ConstantFactory.me().getCustomerStatusName((Integer) map.get("status")));
 
-        map.put("deleteName", ConstantFactory.me().getCustomerDeleteName((Integer) map.get("delete")));
     }
 }

@@ -16,16 +16,6 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="3">
-          <el-select v-model="listQuery.delete" size="mini" placeholder="客户可用状态">
-            <el-option
-              v-for="item in customerDelete"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </el-col>
         <el-col :span="6">
           <el-button type="success" size="mini" icon="el-icon-search" @click.native="search">{{ $t('button.search') }}</el-button>
           <el-button type="primary" size="mini" icon="el-icon-refresh" @click.native="reset">{{ $t('button.reset') }}</el-button>
@@ -40,8 +30,6 @@
           </el-button>
           <el-button type="primary" size="mini" icon="el-icon-edit" @click.native="edit">{{ $t('button.edit') }}
           </el-button>
-          <!--<el-button type="danger" size="mini" icon="el-icon-delete" @click.native="remove">{{ $t('button.delete') }}
-          </el-button>-->
         </el-col>
       </el-row>
     </div>
@@ -77,11 +65,6 @@
       <el-table-column label="用户状态">
         <template slot-scope="scope">
           {{scope.row.statusName}}
-        </template>
-      </el-table-column>
-      <el-table-column label="是否可用">
-        <template slot-scope="scope">
-          {{scope.row.deleteName}}
         </template>
       </el-table-column>
     </el-table>
@@ -129,18 +112,6 @@
               <el-select v-model="form.status" placeholder="请选择">
                 <el-option
                   v-for="item in customerStatus"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="客户可用状态" prop="delete">
-              <el-select v-model="form.delete" placeholder="请选择">
-                <el-option
-                  v-for="item in customerDelete"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">

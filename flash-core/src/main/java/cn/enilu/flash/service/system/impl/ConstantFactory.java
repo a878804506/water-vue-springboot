@@ -434,8 +434,4 @@ public class ConstantFactory implements IConstantFactory {
         return getDictsByName("水务系统客户状态", String.valueOf(status));
     }
 
-    @Override
-    public String getCustomerDeleteName(Integer delete) {
-        return getDictsByName("水务系统客户是否被删除", String.valueOf(delete));
-    }
 }

@@ -35,8 +35,7 @@ public class WaterCustomerController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @RequiresPermissions(value = {Permission.CUSTOMER_MGR})
     public Object list(@RequestParam(required = false) String name,
-                       @RequestParam(required = false) String status,
-                       @RequestParam(required = false) String delete) {
+                       @RequestParam(required = false) String status) {
         Page page = new PageFactory().defaultPage();
         if (StringUtil.isNotEmpty(name)) {
             // 模糊搜索
@@ -44,9 +43,6 @@ public class WaterCustomerController {
         }
         if (StringUtil.isNotEmpty(status)) {
             page.addFilter(SearchFilter.build("status", SearchFilter.Operator.EQ, status));
-        }
-        if (StringUtil.isNotEmpty(delete)) {
-            page.addFilter(SearchFilter.build("delete", SearchFilter.Operator.EQ, delete));
         }
         // 手动排序 id正序
         page.setSort(new Sort(Sort.Direction.ASC,"id"));

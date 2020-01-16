@@ -24,9 +24,5 @@ public class WaterCustomer extends BaseEntity {
     private String starttime;
     @Column(name="status",columnDefinition = "INT COMMENT '客户状态（1：正常、0：报停）'")
     private Integer status;
-    /**
-     *  delete 关键字处理
-     */
-    @Column(name="[delete]",columnDefinition = "INT COMMENT '是否可用（1：正常、0：已删除）'")
-    private Integer delete;
+
 }

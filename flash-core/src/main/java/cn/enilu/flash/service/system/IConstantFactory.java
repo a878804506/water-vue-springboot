@@ -67,10 +67,12 @@ public interface IConstantFactory {
 
     /**
      * 根据字典名称获取字典列表
+     *
      * @param dictName
      * @return
      */
     List<DictVo> findByDictName(String dictName);
+
     /**
      * 获取字典名称
      */
@@ -90,8 +92,10 @@ public interface IConstantFactory {
      * 获取性别名称
      */
     String getSexName(Integer sex);
+
     /**
      * 获取银行卡类型名称
+     *
      * @param cardType
      * @return
      */
@@ -99,6 +103,7 @@ public interface IConstantFactory {
 
     /**
      * 获取个人证件类型
+     *
      * @param cardType
      * @return
      */
@@ -106,10 +111,12 @@ public interface IConstantFactory {
 
     /**
      * 获取联系人关系
+     *
      * @param relation
      * @return
      */
     String getRelationName(String relation);
+
     /**
      * 获取用户登录状态
      */
@@ -143,21 +150,26 @@ public interface IConstantFactory {
 
     /**
      * 获取指定名称下的字典列表
+     *
      * @param pname
      * @return
      */
     List<Dict> getDicts(String pname);
+
     /**
      * 获取全局参数
+     *
      * @param cfgName
      * @return
      */
     String getCfg(String cfgName);
 
 
-    Role getRole(Long id) ;
+    Role getRole(Long id);
+
     Dept getDept(Long id);
-    Menu getMenu(Long id) ;
+
+    Menu getMenu(Long id);
 
     Notice getNotice(Long id);
 
@@ -167,9 +179,4 @@ public interface IConstantFactory {
      */
     String getCustomerStatusName(Integer status);
 
-    /**
-     * 水务系统
-     * 获取客户删除状态 正常、已删除
-     */
-    String getCustomerDeleteName(Integer delete);
 }

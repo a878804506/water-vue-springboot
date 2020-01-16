@@ -28,7 +28,6 @@ export default {
         address: '',
         starttime: '',
         status: '',
-        delete: '',
         id: ''
       },
       rules: {
@@ -47,9 +46,6 @@ export default {
         ],
         status: [
           {required: true, message: '请选择', trigger: 'blur'}
-        ],
-        delete: [
-          {required: true, message: '请选择', trigger: 'blur'}
         ]
       },
       listQuery: {
@@ -58,7 +54,6 @@ export default {
         id: undefined,
         name: undefined,
         status: undefined,
-        delete: undefined
       },
       total: 0,
       list: null,
@@ -109,7 +104,6 @@ export default {
     reset() {
       this.listQuery.name = ''
       this.listQuery.status = ''
-      this.listQuery.delete = ''
       this.fetchData()
     },
     handleFilter() {
@@ -145,7 +139,6 @@ export default {
         address: '',
         starttime: '',
         status: '',
-        delete: '',
         id: ''
       }
     },
@@ -157,7 +150,6 @@ export default {
        * 默认正常
        */
       this.form.status = '1'
-      this.form.delete = '1'
       this.isAdd = true
     },
     save() {
@@ -170,7 +162,6 @@ export default {
             address: this.form.address,
             starttime: this.form.starttime,
             status: this.form.status,
-            delete: this.form.delete,
             id: this.form.id
           }).then(response => {
             this.$message({
@@ -201,7 +192,6 @@ export default {
         this.isAdd = false
         this.form = this.selRow
         this.form.status = this.selRow.status + ''
-        this.form.delete = this.selRow.delete + ''
         this.formTitle = '编辑客户信息表'
         this.formVisible = true
       }

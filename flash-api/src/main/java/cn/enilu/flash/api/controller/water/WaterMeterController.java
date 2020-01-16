@@ -15,7 +15,6 @@ import cn.enilu.flash.utils.BeanUtil;
 import cn.enilu.flash.utils.StringUtil;
 import cn.enilu.flash.utils.factory.Page;
 
-import cn.enilu.flash.warpper.water.WaterMeterWarpper;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,9 +54,6 @@ public class WaterMeterController {
         page.setSort(new Sort(Sort.Direction.ASC,"id"));
         cname = WaterTemplateSQLConstant.PER_CENT + cname + WaterTemplateSQLConstant.PER_CENT;
         page = waterMeterService.queryWaterMeterPage(page, cname, year);
-        // 字典字段转换
-        List list = (List) new WaterMeterWarpper(BeanUtil.objectsToMaps(page.getRecords())).warp();
-        page.setRecords(list);
         return Rets.success(page);
     }
 
