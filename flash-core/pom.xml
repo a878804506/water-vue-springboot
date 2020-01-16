@@ -112,7 +112,10 @@
             <groupId>org.jxls</groupId>
             <artifactId>jxls-poi</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>net.sourceforge.jexcelapi</groupId>
+            <artifactId>jxl</artifactId>
+        </dependency>
         <!-- message  start-->
         <dependency>
             <groupId>com.github.qcloudsms</groupId>

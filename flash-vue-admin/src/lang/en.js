@@ -32,7 +32,7 @@ export default {
     customerMgr: 'Customer ',
 
     waterCost: 'Water System Cost',
-    customerCost: 'Customer Cost',
+    customerWaterInfo: 'Customer Water Info',
     customerWaterMeter: 'Customer Water Meter'
     //  水务系统 结束
   },
@@ -64,7 +64,11 @@ export default {
     cancel: 'Cancel',
     clear: 'Clear',
     back: 'Back',
-    export: 'Export'
+    export: 'Export',
+    //  水务系统 开始
+    waterCreateTable: 'Create Bill',
+    waterDownloadExcel: '下载Excel'
+    //  水务系统 结束
   },
   common: {
     mustSelectOne: 'Please select the record to operate!',
@@ -82,7 +86,12 @@ export default {
       fri: 'Fri',
       sat: 'Sat',
       sun: 'Sun'
-    }
+    },
+    //  水务系统 开始
+    mustInputIdAndMeterCode: 'illegal parameter:the customer ID or meter code !',
+    FirstCreateBill: 'Please create customer bill first!',
+    createSuccess: 'Create Success'
+    //  水务系统 结束
   },
 
   dashboard: {

@@ -8,7 +8,7 @@ import cn.enilu.flash.dao.water.WaterMeterRepository;
 
 import cn.enilu.flash.service.BaseService;
 import cn.enilu.flash.utils.factory.Page;
-import cn.enilu.flash.utils.water.WaterCommonUtile;
+import cn.enilu.flash.utils.water.WaterCommonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,9 +44,9 @@ public class WaterMeterService extends BaseService<WaterMeter, Long, WaterMeterR
              */
             //查询的表名
             String table = WaterConstant.WATER_METTER + year;
-            String excu_page_sql = WaterCommonUtile.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_METTER_PAGE, table, name, (page.getCurrent() - 1) * page.getLimit(), page.getLimit());
+            String excu_page_sql = WaterCommonUtil.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_METTER_PAGE, table, name, (page.getCurrent() - 1) * page.getLimit(), page.getLimit());
             List<WaterMeter> records = waterMeterRepository.query(excu_page_sql);
-            String excu_page_count_sql = WaterCommonUtile.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_METTER_PAGE_COUNT, table, name);
+            String excu_page_count_sql = WaterCommonUtil.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_METTER_PAGE_COUNT, table, name);
             page.setRecords(records);
             page.setTotal(Integer.valueOf(waterMeterRepository.getBySql(excu_page_count_sql) + ""));
             return page;
@@ -60,6 +60,9 @@ public class WaterMeterService extends BaseService<WaterMeter, Long, WaterMeterR
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public void updateWatermeterById(WaterMeter waterWatermeter) {
+        if(null == waterWatermeter.getThirteen()){
+            waterWatermeter.setThirteen(waterWatermeter.getTwelve());
+        }
         waterMeterRepository.save(waterWatermeter);
     }
 }

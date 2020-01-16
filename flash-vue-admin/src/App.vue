@@ -1,13 +1,13 @@
 <template>
   <div id="app">
-    <router-view />
+    <router-view/>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'App'
-}
+  export default {
+    name: 'App'
+  }
 </script>
 <style>
   .current-row > td {
@@ -16,5 +16,9 @@ export default {
 
   .el-table--border td {
     border-right: 0;
+  }
+
+  .el-form-item__label {
+    font-size: 16px;
   }
 </style>

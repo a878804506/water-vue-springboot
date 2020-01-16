@@ -58,10 +58,16 @@ public interface Permission {
     String FILE = "file";
     String FILE_UPLOAD = "fileUpload";
 
-    // 水务系统
+    // 水务系统  开始
+    // 客户信息
     String CUSTOMER_MGR = "customerMgr";
     String CUSTOMER_INSERT_UPDATE = "customerInsertUpdate";
-
+    //客户起止码
     String CUSTOMER_WATER_METER = "customerWaterMeter";
     String UPDATE_WATER_METER = "updateWaterMeter";
+    //客户账单
+    String CREATE_WATER_INFO = "createWaterInfo";
+    String DOWNLOAD_WATER_INFO = "downloadWaterInfo";
+    String CUSTOMER_WATER_INFO = "getWaterInfo";
+    // 水务系统  结束
 }

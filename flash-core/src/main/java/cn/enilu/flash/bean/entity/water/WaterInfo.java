@@ -19,13 +19,13 @@ import java.util.Date;
 @Entity
 @Table(name = "t_water_waterinfo")
 @Data
-@IdClass(WaterWaterinfoPK.class)
+@IdClass(WaterInfoPK.class)
 /*
 开启审计功能 by 陈韵辉 20191230
 用于自动插入创建人创建时间 修改人 修改时间
  */
 @EntityListeners(AuditingEntityListener.class)
-public class WaterWaterinfo {
+public class WaterInfo {
     @Id
     @Column(name = "cid")
     private int cid;
@@ -61,7 +61,7 @@ public class WaterWaterinfo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        WaterWaterinfo that = (WaterWaterinfo) o;
+        WaterInfo that = (WaterInfo) o;
 
         if (cid != that.cid) return false;
         if (year != that.year) return false;

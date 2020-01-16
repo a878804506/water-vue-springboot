@@ -32,7 +32,7 @@ export default {
     customerMgr: '客户管理',
 
     waterCost: '水费管理',
-    customerCost: '账单管理(菜单建了，没做)',
+    customerWaterInfo: '账单管理',
     customerWaterMeter: '起止码管理'
     //  水务系统 结束
   },
@@ -65,7 +65,11 @@ export default {
     cancel: '取消',
     clear: '清除',
     back: '返回',
-    export: '导出'
+    export: '导出',
+    //  水务系统 开始
+    waterCreateTable: '账单生成',
+    waterDownloadExcel: '下载Excel'
+    //  水务系统 结束
   },
   common: {
     mustSelectOne: '请选中操作项!',
@@ -83,7 +87,12 @@ export default {
       fri: '周五',
       sat: '周六',
       sun: '周日'
-    }
+    },
+    //  水务系统 开始
+    mustInputIdAndMeterCode: '非法参数:客户id或本月止码!',
+    FirstCreateBill: '请先生成账单!',
+    createSuccess: '生成成功'
+    //  水务系统 结束
   },
   dashboard: {
     newUser: '新增用户',

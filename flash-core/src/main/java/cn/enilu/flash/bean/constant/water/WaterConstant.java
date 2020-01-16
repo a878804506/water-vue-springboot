@@ -19,4 +19,10 @@ public class WaterConstant {
 
     public static final String YYYY = "yyyy";
 
+    public static final String YYYY_MM_DD = "yyyy-MM-dd";
+
+    public static final String START_HH_MM_SS = "00:00:00";
+
+    public static final String END_HH_MM_SS = "23:59:59";
+
 }

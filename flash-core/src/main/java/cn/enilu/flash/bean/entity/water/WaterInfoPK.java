@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @Date 2020-01-12 21:43
  **/
 @Data
-public class WaterWaterinfoPK implements Serializable {
+public class WaterInfoPK implements Serializable {
     @Column(name = "cid")
     @Id
     private int cid;
@@ -29,7 +29,7 @@ public class WaterWaterinfoPK implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        WaterWaterinfoPK that = (WaterWaterinfoPK) o;
+        WaterInfoPK that = (WaterInfoPK) o;
 
         if (cid != that.cid) return false;
         if (year != that.year) return false;

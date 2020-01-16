@@ -105,7 +105,7 @@ public class UserController extends BaseController {
             throw new ApplicationException(BizExceptionEnum.REQUEST_NULL);
         }
         //不能修改超级管理员
-        if (userId.equals(Const.ADMIN_ID)) {
+        if (userId.longValue() == Const.ADMIN_ID.longValue()) {
             throw new ApplicationException(BizExceptionEnum.CANT_CHANGE_ADMIN);
         }
         User user = userService.get(userId);

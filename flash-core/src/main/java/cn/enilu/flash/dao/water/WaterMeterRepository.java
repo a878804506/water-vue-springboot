@@ -5,6 +5,6 @@ import cn.enilu.flash.dao.BaseRepository;
 
 public interface WaterMeterRepository extends BaseRepository<WaterMeter, Long> {
 
-
+    WaterMeter findByCid(Integer cid);
 }
 
