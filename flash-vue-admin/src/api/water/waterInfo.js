@@ -31,3 +31,11 @@ export function getWaterInfo(params) {
     params
   })
 }
+
+export function getCustomersWaterCostByMonth(params) {
+  return request({
+    url: '/water/info/getCustomersWaterCostByMonth',
+    method: 'get',
+    params
+  })
+}

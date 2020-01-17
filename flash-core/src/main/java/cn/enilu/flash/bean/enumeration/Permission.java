@@ -70,6 +70,6 @@ public interface Permission {
     String DOWNLOAD_WATER_INFO = "downloadWaterInfo";
     String CUSTOMER_WATER_INFO = "getWaterInfo";
     //全镇月度总水费详情
-    String CUSTOMERS_WATER_COST = "getCustomersWaterCostByMonth";
+    String CUSTOMERS_WATER_COST = "waterCostByMonth";
     // 水务系统  结束
 }

@@ -1,7 +1,6 @@
 package cn.enilu.flash.service.water;
 
 
-import cn.enilu.flash.bean.constant.water.WaterConstant;
 import cn.enilu.flash.bean.entity.water.WaterBill;
 import cn.enilu.flash.bean.entity.water.WaterCustomer;
 import cn.enilu.flash.bean.entity.water.WaterInfo;
@@ -22,11 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -208,13 +203,64 @@ public class WaterInfoService extends BaseService<WaterInfo, Long, WaterInfoRepo
 
     /**
      * 页面初始化后和每次生成完账单后查询开票数量详情
+     *
      * @param month 查询月份
      * @return
      */
     public Object getWaterInfo(Integer month) {
         Map result = new HashMap();
-        result.put("toDay",waterInfoRepository.countByModifyTimeBetween(WaterCommonUtil.getStartDate(new Date()), WaterCommonUtil.getEndDate(new Date())));
-        result.put("toMonth",waterInfoRepository.countByYearAndMonth(Calendar.getInstance().get(Calendar.YEAR), month));
+        result.put("toDay", waterInfoRepository.countByModifyTimeBetween(WaterCommonUtil.getStartDate(new Date()), WaterCommonUtil.getEndDate(new Date())));
+        result.put("toMonth", waterInfoRepository.countByYearAndMonth(Calendar.getInstance().get(Calendar.YEAR), month));
+        return result;
+    }
+
+    /**
+     * 全镇月度总水费详情
+     *
+     * @param month 月份
+     * @return
+     */
+    public Object getCustomersWaterCostByMonth(Integer month) {
+        Map result = new HashMap();
+        List<Map> tableData = new ArrayList<>();
+        Map oneData = new HashMap();
+        List<WaterCustomer> waterCustomers = waterCustomerRepository.findAll();
+        oneData.put("waterCustomersCount", waterCustomers.size());
+        //报停用户数
+        int statusCount = 0;
+        for (WaterCustomer waterCustomer : waterCustomers) {
+            if (waterCustomer.getStatus() == 0) {
+                statusCount++;
+            }
+        }
+        oneData.put("statusCount", statusCount);
+        // 应录入用户数
+        oneData.put("shouldCustomerCount", waterCustomers.size() - statusCount);
+        List<WaterInfo> customersWaterInfo = waterInfoRepository.findByYearAndMonth(Calendar.getInstance().get(Calendar.YEAR), month);
+        // 实际入用户数
+        int practicalCustomerCount = customersWaterInfo.size();
+        oneData.put("practicalCustomerCount", practicalCustomerCount);
+        // 未录入的用户数
+        oneData.put("noPracticalCustomerCount", waterCustomers.size() - statusCount - practicalCustomerCount);
+
+        // 实际录入总用水量
+        Double waterCount = 0d;
+        // 实际录入总水费
+        Double waterCost = 0d;
+        //  实际录入水费的客户id列表
+        Set<Integer> customerCid = new HashSet<>();
+        for (WaterInfo waterInfo : customersWaterInfo) {
+            waterCount += waterInfo.getCount();
+            waterCost += waterInfo.getCost();
+            customerCid.add(waterInfo.getCid());
+        }
+        oneData.put("waterCount", new BigDecimal(waterCount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        oneData.put("waterCost", new BigDecimal(waterCost).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        tableData.add(oneData);
+        result.put("tableData", tableData);
+        // 没有录入当月水费的客户起止码
+        List<WaterMeter> practicalCustomerWaterInfo = waterMeterRepository.findByCidNotIn(customerCid);
+        result.put("practicalCustomerWaterInfo", practicalCustomerWaterInfo);
         return result;
     }
 }

@@ -74,4 +74,14 @@ public class WaterInfoController {
         return Rets.success(waterInfoService.getWaterInfo(month));
     }
 
+    @RequestMapping(value = "/getCustomersWaterCostByMonth", method = RequestMethod.GET)
+    @BussinessLog(value = "全镇月度总水费详情", key = "name", dict = CommonDict.class)
+    @RequiresPermissions(value = {Permission.CUSTOMERS_WATER_COST})
+    public Object getCustomersWaterCostByMonth(Integer month) {
+        if (month < 1 || month > 13) {
+            return Rets.failure("月份非法!");
+        }
+        return Rets.success(waterInfoService.getCustomersWaterCostByMonth(month));
+    }
+
 }

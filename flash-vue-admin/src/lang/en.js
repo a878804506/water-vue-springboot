@@ -33,7 +33,8 @@ export default {
 
     waterCost: 'Water System Cost',
     customerWaterInfo: 'Customer Water Info',
-    customerWaterMeter: 'Customer Water Meter'
+    customerWaterMeter: 'Customer Water Meter',
+    waterCostByMonth: 'Month Water Cost'
     //  水务系统 结束
   },
   navbar: {
@@ -90,7 +91,8 @@ export default {
     //  水务系统 开始
     mustInputIdAndMeterCode: 'illegal parameter:the customer ID or meter code !',
     FirstCreateBill: 'Please create customer bill first!',
-    createSuccess: 'Create Success'
+    createSuccess: 'Create Success',
+    illegalParameter: 'Illegal parameter!'
     //  水务系统 结束
   },
 

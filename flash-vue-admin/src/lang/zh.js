@@ -33,7 +33,8 @@ export default {
 
     waterCost: '水费管理',
     customerWaterInfo: '账单管理',
-    customerWaterMeter: '起止码管理'
+    customerWaterMeter: '起止码管理',
+    waterCostByMonth: '全镇月度水费详情'
     //  水务系统 结束
   },
   navbar: {
@@ -91,7 +92,8 @@ export default {
     //  水务系统 开始
     mustInputIdAndMeterCode: '非法参数:客户id或本月止码!',
     FirstCreateBill: '请先生成账单!',
-    createSuccess: '生成成功'
+    createSuccess: '生成成功',
+    illegalParameter: '非法参数!'
     //  水务系统 结束
   },
   dashboard: {
