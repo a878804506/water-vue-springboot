@@ -34,7 +34,8 @@ export default {
     waterCost: 'Water System Cost',
     customerWaterInfo: 'Customer Water Info',
     customerWaterMeter: 'Customer Water Meter',
-    waterCostByMonth: 'Month Water Cost'
+    waterCostByMonth: 'Month Water Cost',
+    waterCostByToDay: 'ToDay Water Cost'
     //  水务系统 结束
   },
   navbar: {

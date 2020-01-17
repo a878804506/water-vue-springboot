@@ -39,3 +39,10 @@ export function getCustomersWaterCostByMonth(params) {
     params
   })
 }
+
+export function getToDayTabs() {
+  return request({
+    url: '/water/info/getToDayTabs',
+    method: 'get'
+  })
+}

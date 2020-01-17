@@ -84,4 +84,10 @@ public class WaterInfoController {
         return Rets.success(waterInfoService.getCustomersWaterCostByMonth(month));
     }
 
+    @RequestMapping(value = "/getToDayTabs", method = RequestMethod.GET)
+    @BussinessLog(value = "查询今日录入水费详情的选项卡", key = "name", dict = CommonDict.class)
+    @RequiresPermissions(value = {Permission.CUSTOMERS_WATER_COST_TO_DAY})
+    public Object getToDayTabs() {
+        return Rets.success(waterInfoService.getToDayTabs());
+    }
 }

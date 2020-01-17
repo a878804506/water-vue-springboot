@@ -71,5 +71,7 @@ public interface Permission {
     String CUSTOMER_WATER_INFO = "getWaterInfo";
     //全镇月度总水费详情
     String CUSTOMERS_WATER_COST = "waterCostByMonth";
+    //今日录入水费详情
+    String CUSTOMERS_WATER_COST_TO_DAY = "waterCostByToDay";
     // 水务系统  结束
 }

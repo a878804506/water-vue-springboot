@@ -14,5 +14,7 @@ public interface WaterInfoRepository extends BaseRepository<WaterInfo, Long> {
     int countByModifyTimeBetween(Date startTime, Date endTime);
 
     List<WaterInfo> findByYearAndMonth(int year,int month);
+
+    List<WaterInfo> findByModifyTimeBetween(Date startDate, Date endDate);
 }
 

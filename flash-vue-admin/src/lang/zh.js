@@ -34,7 +34,8 @@ export default {
     waterCost: '水费管理',
     customerWaterInfo: '账单管理',
     customerWaterMeter: '起止码管理',
-    waterCostByMonth: '全镇月度水费详情'
+    waterCostByMonth: '全镇月度水费详情',
+    waterCostByToDay: '今日录入详情'
     //  水务系统 结束
   },
   navbar: {

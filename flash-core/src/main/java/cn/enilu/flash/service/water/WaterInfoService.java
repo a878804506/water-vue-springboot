@@ -263,5 +263,18 @@ public class WaterInfoService extends BaseService<WaterInfo, Long, WaterInfoRepo
         result.put("practicalCustomerWaterInfo", practicalCustomerWaterInfo);
         return result;
     }
+
+    public Object getToDayTabs() {
+        int toDayCustomers = waterInfoRepository.countByModifyTimeBetween(WaterCommonUtil.getStartDate(new Date()), WaterCommonUtil.getEndDate(new Date()));
+        int page = toDayCustomers % 50 == 0 ? toDayCustomers / 50 : toDayCustomers / 50 + 1;
+        if(page == 0){
+            return new ArrayList<>();
+        }
+        List<String> result = new ArrayList<>();
+        for (int i = 1; i <= page; i++) {
+            result.add("第"+((i-1)*50+1)+"---"+(i*50)+"户");
+        }
+        return result;
+    }
 }
 
