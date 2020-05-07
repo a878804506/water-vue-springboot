@@ -68,17 +68,43 @@ public class JwtUtil {
      * @param user 用户
      * @return 加密的token
      */
-    public static String sign(User user) {
+    public static String sign(User user,boolean isSystemUser,String openId) {
         try {
             Date date = new Date(System.currentTimeMillis()+EXPIRE_TIME);
             Algorithm algorithm = Algorithm.HMAC256(user.getPassword());
             // 附带username信息
             return JWT.create()
+                    .withClaim("isSystemUser", isSystemUser)
+                    .withClaim("openId", openId)
                     .withClaim("username", user.getAccount())
                     .withClaim("userId",user.getId())
                     .withExpiresAt(date)
                     .sign(algorithm);
         } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+    }
+
+    //判断是不是系统登录账号
+    public static Boolean checkIsSystemUser(String token) {
+        try {
+            DecodedJWT jwt = JWT.decode(token);
+            return jwt.getClaim("isSystemUser").asBoolean();
+        } catch (JWTDecodeException e) {
+            return null;
+        }
+    }
+
+    /**
+     *  获取第三方登录用户的openId
+     * @param token
+     * @return
+     */
+    public static String getOtherLoginUserOpenId(String token) {
+        try {
+            DecodedJWT jwt = JWT.decode(token);
+            return jwt.getClaim("openId").asString();
+        } catch (JWTDecodeException e) {
             return null;
         }
     }

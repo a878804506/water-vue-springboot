@@ -6,7 +6,7 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || 'web-flash admin' // page title
+const name = defaultSettings.title || 'One Cloud' // page title
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
 // For example, Mac: sudo npm run
@@ -39,7 +39,7 @@ module.exports = {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
         // target: `http://localhost:${port}/mock`,
-        target:`http://172.16.0.177:8082`,//不使用mock模拟数据直接请求flash-api服务
+        target:`http://172.16.0.177:8082/oneCloud`,//不使用mock模拟数据直接请求flash-api服务
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''

@@ -49,12 +49,14 @@ export default {
     size: 'Global Size'
   },
   login: {
-    title: 'web-flash',
+    title: 'One Cloud',
     errorAccount: 'Please enter the correct user name',
     errorPassword: 'The password can not be less than 5 digits',
     logIn: 'Log in',
     username: 'Username',
-    password: 'Password'
+    password: 'Password',
+    otherLogin: 'Other Login',
+    otherLoginTips: 'Please Choose a Way To Login'
   },
   button: {
     add: 'Add',
@@ -80,6 +82,8 @@ export default {
     optionSuccess: 'success',
     uploadError: 'Upload Error',
     isRequired: ' is required',
+    twoPasswordsAreInconsistent: 'Two Passwords Are Inconsistent',
+    bindMessage: 'Bind Success',
     week: {
       mon: 'Mon',
       tue: 'Tue',

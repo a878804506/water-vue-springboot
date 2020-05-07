@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'web-flash Admin',
+  title: '一云智慧',
 
   /**
    * @type {boolean} true | false

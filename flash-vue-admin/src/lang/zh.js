@@ -49,12 +49,14 @@ export default {
     size: '布局大小'
   },
   login: {
-    title: 'web-flash',
+    title: '一云智慧云平台',
     errorAccount:'请输入5到32位的数字和字母',
     errorPassword:'密码至少位5位',
     logIn: '登录',
     username: '账号',
-    password: '密码'
+    password: '密码',
+    otherLogin: '第三方登录',
+    otherLoginTips: '请使用一下方式进行登陆'
   },
 
   button: {
@@ -81,6 +83,8 @@ export default {
     optionSuccess: '操作成功',
     uploadError: '上传文件失败',
     isRequired: '不能为空',
+    twoPasswordsAreInconsistent: '两次密码不一致',
+    bindMessage: '绑定成功',
     week: {
       mon: '周一',
       tue: '周二',

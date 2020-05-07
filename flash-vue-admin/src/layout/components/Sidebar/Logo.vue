@@ -24,8 +24,8 @@ export default {
   },
   data() {
     return {
-      title: 'web-flash Admin',
-      logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+      title: '一云智慧云平台',
+      logo: 'http://staticfile.erdongchen.top/oneCloud/oneCloud.png'
     }
   }
 }

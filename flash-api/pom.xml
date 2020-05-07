@@ -26,6 +26,13 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
         </dependency>
+        <dependency>
+            <groupId>dingding</groupId>
+            <artifactId>dingding-api</artifactId>
+            <scope>system</scope>
+            <version>1.0</version>
+            <systemPath>${project.basedir}/src/main/lib/taobao-sdk-java.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>

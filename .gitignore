@@ -32,7 +32,6 @@ vue-admin-template-tabnav/
 *.dmg
 *.gz
 *.iso
-*.jar
 *.rar
 *.tar
 *.zip

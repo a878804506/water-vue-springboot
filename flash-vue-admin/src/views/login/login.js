@@ -1,9 +1,11 @@
 
 import { isvalidUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
+import SocialSign from './components/SocialSignin'
+
 export default {
   name: 'login',
-  components: { LangSelect },
+  components: { LangSelect, SocialSign },
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!isvalidUsername(value)) {
@@ -29,7 +31,8 @@ export default {
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,
-      pwdType: 'password'
+      pwdType: 'password',
+      showDialog: false
     }
   },
   methods: {

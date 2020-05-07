@@ -88,7 +88,7 @@ public class UserController extends BaseController {
         if (userId == null) {
             throw new ApplicationException(BizExceptionEnum.REQUEST_NULL);
         }
-        if (userId.intValue() <= 2) {
+        if (userId.intValue() < 1) {
             return Rets.failure("不能删除初始用户");
         }
         User user = userService.get(userId);

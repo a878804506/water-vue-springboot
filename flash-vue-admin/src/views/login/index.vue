@@ -1,5 +1,6 @@
 <template>
-  <div class="login-container" style=" background-image: url(/img/bg.jpg);">
+  <!--<div class="login-container" style=" background-image: url(/img/bg.jpg);">-->
+  <div class="login-container" >
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form cyh-css" auto-complete="on"
              label-position="left">
 
@@ -50,13 +51,22 @@
           <span style="margin-right:18px;">{{ $t('login.username') }} : developer</span>
           <span>{{ $t('login.password') }} : developer</span>
         </div>
+        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
+          {{ $t('login.otherLogin') }}
+        </el-button>
       </div>
     </el-form>
+
+    <el-dialog :title="$t('login.otherLoginTips')" :visible.sync="showDialog">
+      <br>
+      <social-sign />
+    </el-dialog>
+
     <vue-particles
-      color="#fff"
+      color="#00bfff"
       :particleOpacity="0.7"
       :particlesNumber="60"
-      shapeType="circle"
+      shapeType="star"
       :particleSize="4"
       linesColor="#fff"
       :linesWidth="1"
@@ -68,7 +78,6 @@
       hoverMode="grab"
       :clickEffect="true"
       clickMode="push"
-      class="lizi"
     >
     </vue-particles>
   </div>
@@ -86,6 +95,16 @@
     margin-left: -250px;
     margin-top: -200px;
     z-index: 999;
+  }
+  .thirdparty-button {
+    position: absolute;
+    right: 0;
+    bottom: 6px;
+  }
+  @media only screen and (max-width: 470px) {
+    .thirdparty-button {
+      display: none;
+    }
   }
 </style>
 

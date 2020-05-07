@@ -33,3 +33,18 @@ export function updatePwd(params) {
   })
 }
 
+export function checkDingDingLogin(params) {
+  return request({
+    url: '/account/dingdingCallback',
+    method: 'get',
+    params
+  })
+}
+
+export function bindSystemUser(params) {
+  return request({
+    url: '/account/bindSystemUser',
+    method: 'post',
+    params
+  })
+}

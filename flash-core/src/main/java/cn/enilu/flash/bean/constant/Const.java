@@ -33,4 +33,8 @@ public interface Const {
      */
     String API_MENU_NAME = "接口文档";
 
+    /**
+     * 第三方登录平台
+     */
+    int OTHER_LOGIN_USER_ID = -2;
 }

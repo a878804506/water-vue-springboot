@@ -1,6 +1,6 @@
 import defaultSettings from '@/settings'
 
-const title = defaultSettings.title || 'web-flash Admin'
+const title = defaultSettings.title || 'One Cloud'
 
 export default function getPageTitle(pageTitle) {
   if (pageTitle) {
