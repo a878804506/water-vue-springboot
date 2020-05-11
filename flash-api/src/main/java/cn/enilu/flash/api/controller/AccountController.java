@@ -9,6 +9,7 @@ import cn.enilu.flash.bean.dictmap.CommonDict;
 import cn.enilu.flash.bean.entity.system.OtherUser;
 import cn.enilu.flash.bean.entity.system.User;
 import cn.enilu.flash.bean.vo.front.Rets;
+import cn.enilu.flash.cache.TokenCache;
 import cn.enilu.flash.core.log.LogManager;
 import cn.enilu.flash.core.log.LogTaskFactory;
 import cn.enilu.flash.security.JwtUtil;
@@ -50,6 +51,9 @@ public class AccountController extends BaseController {
 
     @Autowired
     private OtherUserService otherUserService;
+
+    @Autowired
+    private TokenCache tokenCache;
 
     @Value("${dingding.getUserInfoByTempCode}")
     private String dingDingGetUserInfoURL;
@@ -98,6 +102,10 @@ public class AccountController extends BaseController {
             logger.info("token:{}", token);
             result.put("token", token);
             LogManager.me().executeLog(LogTaskFactory.loginLog(user.getId(), HttpUtil.getIp()));
+
+            ShiroUser shiroUser = ShiroFactroy.me().createShiroUser(user);
+            tokenCache.setUser(token,shiroUser);
+
             return Rets.success(result);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -127,7 +135,11 @@ public class AccountController extends BaseController {
                 // 第三方登录 且没有绑定本系统的账号 名称显示昵称
                 user.setName(otherUser.getNick());
             }
-            ShiroUser shiroUser = ShiroFactroy.me().shiroUser(user);
+            ShiroUser shiroUser = tokenCache.getUser(token);
+            if(null == shiroUser){
+                return Rets.failure("token失效，请重新登陆！");
+            }
+
             Map map = Maps.newHashMap("name", user.getName(), "role", "admin", "roles", shiroUser.getRoleCodes());
             map.put("permissions", shiroUser.getUrls());
             Map profile = (Map) Mapl.toMaplist(user);

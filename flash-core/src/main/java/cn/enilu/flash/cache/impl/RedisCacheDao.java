@@ -15,10 +15,17 @@ import java.io.Serializable;
  * @version 2018/9/12 0012
  */
 @Component
-public class EhcacheDao implements CacheDao {
-    //缓存常量，永不过期
+public class RedisCacheDao implements CacheDao {
+    /**
+     * 缓存常量，永不过期
+     */
     public static  final String CONSTANT = "CONSTANT";
+
+    /**
+     * 缓存用户信息、token信息
+     */
     public static  final String SESSION = "SESSION";
+
     @Resource
     private CacheManager cacheManager;
 
@@ -45,7 +52,6 @@ public class EhcacheDao implements CacheDao {
     public void set(Serializable key, Object val) {
         Cache cache = cacheManager.getCache(CONSTANT);
         cache.put(key,val);
-
     }
 
     @Override

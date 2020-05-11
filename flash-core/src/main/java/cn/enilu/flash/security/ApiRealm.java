@@ -1,6 +1,7 @@
 package cn.enilu.flash.security;
 
 import cn.enilu.flash.bean.core.ShiroUser;
+import cn.enilu.flash.cache.TokenCache;
 import cn.enilu.flash.service.system.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +30,8 @@ public class ApiRealm extends AuthorizingRealm {
     private UserService userService;
     @Autowired
     private ShiroFactroy shiroFactroy;
+    @Autowired
+    private TokenCache tokenCache;
 
 
     /**
@@ -66,15 +69,16 @@ public class ApiRealm extends AuthorizingRealm {
             throw new AuthenticationException("token invalid");
         }
 
-        ShiroUser userBean =  ShiroFactroy.me().shiroUser(userService.findByAccount(username));
-        if (userBean == null) {
-            throw new AuthenticationException("User didn't existed!");
+        ShiroUser shiroUser = tokenCache.getUser(token);
+        if(shiroUser == null){
+            // redis中的token 过期
+            throw new AuthenticationException("Username or password error!");
         }
-
-        if (! JwtUtil.verify(token, username, userBean.getPassword())) {
+        if (! JwtUtil.verify(token, username, shiroUser.getPassword())) {
+            // jwt生成的token 过期  ，实际上 redis的失效时间与token的失效时间一致
             throw new AuthenticationException("Username or password error");
         }
-
+        tokenCache.setUser(token, shiroUser);
         return new SimpleAuthenticationInfo(token, token, "my_realm");
     }
 }

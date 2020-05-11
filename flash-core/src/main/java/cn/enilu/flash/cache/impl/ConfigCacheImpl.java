@@ -28,7 +28,7 @@ public class ConfigCacheImpl implements ConfigCache {
 
     @Override
     public Object get(String key) {
-        return (String) cacheDao.hget(EhcacheDao.CONSTANT,key);
+        return (String) cacheDao.hget(RedisCacheDao.CONSTANT,key);
     }
 
     @Override
@@ -55,12 +55,12 @@ public class ConfigCacheImpl implements ConfigCache {
 
     @Override
     public void set(String key, Object val) {
-        cacheDao.hset(EhcacheDao.CONSTANT,key,val);
+        cacheDao.hset(RedisCacheDao.CONSTANT,key,val);
     }
 
     @Override
     public void del(String key, String val) {
-        cacheDao.hdel(EhcacheDao.CONSTANT,val);
+        cacheDao.hdel(RedisCacheDao.CONSTANT,val);
     }
 
     @Override

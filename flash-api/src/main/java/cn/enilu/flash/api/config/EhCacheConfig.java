@@ -15,8 +15,8 @@ import org.springframework.core.io.ClassPathResource;
  * @author enilu
  *
  */
-@Configuration
-@EnableCaching
+/*@Configuration
+*/
 public class EhCacheConfig {
 
 
