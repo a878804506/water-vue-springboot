@@ -27,8 +27,8 @@ public class StartJob implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments applicationArguments) throws Exception {
-        log.info("start Job >>>>>>>>>>>>>>>>>>>>>>>");
         List<QuartzJob> list = jobService.getTaskList();
+        log.info("start Job >>>>>>>>>>>>>>>>>>>>>>>"+list.size());
         for (QuartzJob quartzJob : list) {
             jobService.addJob(quartzJob);
         }

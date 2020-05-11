@@ -14,15 +14,12 @@ import cn.enilu.flash.service.message.sms.SmsSender;
 import cn.enilu.flash.utils.StringUtil;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang.text.StrSubstitutor;
-import org.nutz.lang.Lang;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.stereotype.Service;
 
-import java.text.MessageFormat;
 import java.util.*;
 /**
  * MessageService
@@ -101,12 +98,13 @@ public class MessageService extends BaseService<Message,Long,MessageRepository> 
         if (args != null) {
             Collections.addAll(argList, args);
         }
-        String content = MessageFormat.format(template, Lang.collection2array(argList));
-        return content;
+//        String content = MessageFormat.format(template, Lang.collection2array(argList));
+        return "";
     }
 
     private String getContent(String template, Map<String, Object> dataMap) {
-        return StrSubstitutor.replace(template, dataMap);
+//        return StrSubstitutor.replace(template, dataMap);
+        return "";
     }
 
     private void saveMessage(Integer type, String tplCode, String receiver, String content, Boolean sendResult) {
