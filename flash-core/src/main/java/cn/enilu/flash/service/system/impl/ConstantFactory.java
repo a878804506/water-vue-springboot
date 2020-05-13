@@ -434,4 +434,8 @@ public class ConstantFactory implements IConstantFactory {
         return getDictsByName("水务系统客户状态", String.valueOf(status));
     }
 
+    @Override
+    public String getCommodityInfoType(String type) {
+        return getDictsByName("商品分类", type);
+    }
 }

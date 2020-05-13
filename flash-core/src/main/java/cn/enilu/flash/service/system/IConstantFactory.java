@@ -179,4 +179,9 @@ public interface IConstantFactory {
      */
     String getCustomerStatusName(Integer status);
 
+    /**
+     * 进销存
+     * 获取商品分类
+     */
+    String getCommodityInfoType(String type);
 }

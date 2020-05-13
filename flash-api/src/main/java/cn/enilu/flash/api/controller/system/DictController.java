@@ -79,4 +79,13 @@ public class DictController extends BaseController {
         return Rets.success();
     }
 
+    /**
+     * 获取一个字典项的所有字典
+     */
+    @RequestMapping(value = "/getDictByPid",method = RequestMethod.GET)
+    @RequiresPermissions(value = {Permission.DICT})
+    public Object getDictByPid(Long pid) {
+        List<Dict> list = dictService.findByPid(pid);
+        return Rets.success(list);
+    }
 }

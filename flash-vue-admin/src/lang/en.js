@@ -35,8 +35,16 @@ export default {
     customerWaterInfo: 'Customer Water Info',
     customerWaterMeter: 'Customer Water Meter',
     waterCostByMonth: 'Month Water Cost',
-    waterCostByToDay: 'ToDay Water Cost'
+    waterCostByToDay: 'ToDay Water Cost',
     //  水务系统 结束
+
+    //进销存 开始
+    commodity: 'Inventory managerment',
+    commodityInfo: 'Commondity managerment',
+    commodityInventory: 'Commodity Inventory',
+    commodityInventoryStatistics: 'Inventory Statistics',
+    commoditySalesStatistics: 'Sales Statistics'
+    //进销存 结束
   },
   navbar: {
     logOut: 'Log Out',
@@ -71,8 +79,13 @@ export default {
     export: 'Export',
     //  水务系统 开始
     waterCreateTable: 'Create Bill',
-    waterDownloadExcel: '下载Excel'
+    waterDownloadExcel: '下载Excel',
     //  水务系统 结束
+
+    // 进销存 开始
+    inInventory: '入库',
+    outInventory: '出库'
+    // 进销存 结束
   },
   common: {
     mustSelectOne: 'Please select the record to operate!',

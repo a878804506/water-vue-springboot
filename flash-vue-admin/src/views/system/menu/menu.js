@@ -35,7 +35,7 @@ export default {
         ],
         code: [
           { required: true, message: '请输入编码', trigger: 'blur' },
-          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+          { min: 2, max: 40, message: '长度在 2 到 40 个字符', trigger: 'blur' }
         ],
         url: [
           { required: true, message: '请输入请求地址', trigger: 'blur' }

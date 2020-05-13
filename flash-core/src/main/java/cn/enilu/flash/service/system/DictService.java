@@ -65,12 +65,32 @@ public class DictService extends BaseService<Dict,Long,DictRepository> {
     }
 
     public void editDict(Long dictId, String dictName, String dicts) {
-        //删除之前的字典
-        this.delteDict(dictId);
+        // 字典主体
+        Dict dict = this.get(dictId);
+        dict.setName(dictName);
+        this.update(dict);
+
+        //删除这个字典的子词典
+        List<Dict> subList = dictRepository.findByPid(dictId);
+        dictRepository.deleteAll(subList);
 
         //重新添加新的字典
-        this.addDict(dictName,dicts);
-
+        //解析dictValues
+        List<Map<String, String>> items = MutiStrFactory.parseKeyValue(dicts);
+        //添加字典条目
+        for (Map<String, String> item : items) {
+            String num = item.get(MutiStrFactory.MUTI_STR_KEY);
+            String name = item.get(MutiStrFactory.MUTI_STR_VALUE);
+            Dict itemDict = new Dict();
+            itemDict.setPid(dict.getId());
+            itemDict.setName(name);
+            try {
+                itemDict.setNum(num);
+            }catch (NumberFormatException e){
+                logger.error(e.getMessage(),e);
+            }
+            this.dictRepository.save(itemDict);
+        }
         dictCache.cache();
     }
 

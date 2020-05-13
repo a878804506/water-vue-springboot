@@ -17,7 +17,7 @@ import java.util.Date;
  */
 public class JwtUtil {
     // 过期时间60分钟
-    public static final long EXPIRE_TIME = 60*1000;
+    public static final long EXPIRE_TIME = 60*1000*60;
 
     /**
      * 校验token是否正确

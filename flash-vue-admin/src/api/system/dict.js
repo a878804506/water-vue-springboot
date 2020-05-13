@@ -30,7 +30,15 @@ export function remove(id) {
     url: '/dict',
     method: 'delete',
     params: {
-      id:id
+      id: id
     }
+  })
+}
+
+export function getDictByPid(params) {
+  return request({
+    url: '/dict/getDictByPid',
+    method: 'get',
+    params
   })
 }

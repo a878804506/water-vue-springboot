@@ -35,8 +35,16 @@ export default {
     customerWaterInfo: '账单管理',
     customerWaterMeter: '起止码管理',
     waterCostByMonth: '全镇月度水费详情',
-    waterCostByToDay: '今日录入详情'
+    waterCostByToDay: '今日录入详情',
     //  水务系统 结束
+
+    //进销存 开始
+    commodity: '进销存',
+    commodityInfo: '商品管理',
+    commodityInventory: '商品库存',
+    commodityInventoryStatistics: '出入库统计',
+    commoditySalesStatistics: '销售统计'
+    //进销存 结束
   },
   navbar: {
     logOut: '退出登录',
@@ -72,8 +80,13 @@ export default {
     export: '导出',
     //  水务系统 开始
     waterCreateTable: '账单生成',
-    waterDownloadExcel: '下载Excel'
+    waterDownloadExcel: '下载Excel',
     //  水务系统 结束
+
+    // 进销存 开始
+    inInventory: '入库',
+    outInventory: '出库'
+    // 进销存 结束
   },
   common: {
     mustSelectOne: '请选中操作项!',
