@@ -14,6 +14,12 @@
         <module>flash-generator</module>
     </modules>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.6.RELEASE</version>
+    </parent>
+
     <properties>
         <spring.boot.version>2.1.1.RELEASE</spring.boot.version>
         <springframework.version>5.1.3.RELEASE</springframework.version>
