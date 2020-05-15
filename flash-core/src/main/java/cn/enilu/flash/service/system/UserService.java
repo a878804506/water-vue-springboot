@@ -28,6 +28,9 @@ public class UserService  extends BaseService<User,Long,UserRepository> {
             return user;
         }
         user = userRepository.findByAccount(account);
+        if(null == user){
+            return null;
+        }
         redisCacheDao.hset(RedisCacheDao.SESSION,account,user);
         return user;
     }

@@ -5,6 +5,7 @@ import cn.enilu.flash.cache.TokenCache;
 import cn.enilu.flash.service.system.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -25,7 +26,7 @@ import java.util.Set;
 @Service
 public class ApiRealm extends AuthorizingRealm {
 
-    private     Logger logger = LogManager.getLogger(getClass());
+    private Logger logger = LogManager.getLogger(getClass());
     @Autowired
     private UserService userService;
     @Autowired
@@ -43,6 +44,7 @@ public class ApiRealm extends AuthorizingRealm {
     }
 
     /**
+     * 授权方法
      * 只有当需要检测用户权限的时候才会调用此方法，例如checkRole,checkPermission之类的
      */
     @Override
@@ -58,6 +60,7 @@ public class ApiRealm extends AuthorizingRealm {
     }
 
     /**
+     * 认证方法
      * 默认使用此方法进行用户名正确与否验证，错误抛出异常即可。
      */
     @Override
@@ -68,16 +71,22 @@ public class ApiRealm extends AuthorizingRealm {
         if (username == null) {
             throw new AuthenticationException("token invalid");
         }
-
         ShiroUser shiroUser = tokenCache.getUser(token);
-        if(shiroUser == null){
+        if (shiroUser == null) {
+            try {
+                SecurityUtils.getSubject().logout();
+            } catch (Exception ex) {
+                logger.error("退出登录错误", ex.getMessage());
+            }
             // redis中的token 过期
-            throw new AuthenticationException("Username or password error!");
+            return null;
+//            throw new AuthenticationException("登陆信息过期，请重新登陆!");
         }
-        if (! JwtUtil.verify(token, username, shiroUser.getPassword())) {
+        /*if (!JwtUtil.verify(token, username, shiroUser.getPassword())) {
             // jwt生成的token 过期  ，实际上 redis的失效时间与token的失效时间一致
-            throw new AuthenticationException("Username or password error");
-        }
+            return null;
+//            throw new AuthenticationException("登陆信息过期，请重新登陆");
+        }*/
         tokenCache.setUser(token, shiroUser);
         return new SimpleAuthenticationInfo(token, token, "my_realm");
     }

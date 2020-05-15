@@ -1,16 +1,22 @@
 package cn.enilu.flash.api.interceptor;
 
+import cn.enilu.flash.bean.vo.front.Ret;
+import cn.enilu.flash.bean.vo.front.Rets;
 import cn.enilu.flash.security.JwtToken;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @author ：enilu
@@ -28,12 +34,16 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
         HttpServletRequest req = (HttpServletRequest) request;
-        String authorization = req.getHeader("Authorization");
-        return authorization != null;
+        System.out.println(req.getServletPath());
+        if (req.getServletPath().equals("/account/login")) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
-     *登录验证
+     * 登录验证
      */
     @Override
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
@@ -62,8 +72,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             try {
                 executeLogin(request, response);
             } catch (Exception e) {
-                response401(request, response);
-                return true;
+                System.out.println("登陆出错：" + e.getMessage());
+                return false;
             }
         }
         return true;
@@ -87,16 +97,37 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         return super.preHandle(request, response);
     }
 
-    /**
-     * 将非法请求跳转到 /401
-     */
-    private void response401(ServletRequest req, ServletResponse resp) {
+    @Override
+    protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException {
+        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
+        //获取当前用户
+        Subject subject = this.getSubject(httpServletRequest, httpServletResponse);
+        //判断是否已经认证
+        if (subject.getPrincipal() == null) {
+            //没有认证则重定向到登录页面
+            saveRequestAndReturnApiAccessError(httpServletRequest, httpServletResponse);
+            return false;
+        }
+        return true;
+    }
+
+
+    private void saveRequestAndReturnApiAccessError(HttpServletRequest request, HttpServletResponse response) {
+        saveRequest(request);
+        Ret ret = Rets.expire();
         try {
-            HttpServletResponse httpServletResponse = (HttpServletResponse) resp;
-//            httpServletResponse.sendRedirect("/401");
-            httpServletResponse.setStatus(401);
+            flushMsgStrToClient(response, ret);
         } catch (Exception e) {
-            logger.error(e.getMessage(),e);
+            e.printStackTrace();
         }
     }
+
+    public static void flushMsgStrToClient(ServletResponse response, Object object) throws IOException, ServletException {
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(JSONObject.toJSONString(object));
+        response.getWriter().flush();
+    }
+
+
 }
