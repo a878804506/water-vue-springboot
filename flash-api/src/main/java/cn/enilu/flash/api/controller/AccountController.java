@@ -137,7 +137,7 @@ public class AccountController extends BaseController {
             }
             ShiroUser shiroUser = tokenCache.getUser(token);
             if(null == shiroUser){
-                return Rets.failure("token失效，请重新登陆！");
+                return Rets.expire();
             }
 
             Map map = Maps.newHashMap("name", user.getName(), "role", "admin", "roles", shiroUser.getRoleCodes());
@@ -219,37 +219,30 @@ public class AccountController extends BaseController {
 
             Map<String, Object> result = new HashMap<>(1);
             String token ;
+            User user ;
             if(null != loginUser.getUserid()){
                 // 钉钉登陆用户 已经绑定到了系统用户中 ，那么就用系统用户登录系统
-                token = this.loginUserByUserId(loginUser.getUserid(),true,null);
+                user =  userService.get(Long.valueOf(loginUser.getUserid()));
+                token = JwtUtil.sign(user,true ,null);
                 result.put("isSystemUser",true);
             }else{
                 // 钉钉登录的用户 未绑定系统用户，则作为访客登陆
-                token = this.loginUserByUserId(Const.OTHER_LOGIN_USER_ID,false,response.getUserInfo().getOpenid());
+                user =  userService.get(Long.valueOf(Const.OTHER_LOGIN_USER_ID));
+                token = JwtUtil.sign(user,false ,loginUser.getOpenid());
                 result.put("isSystemUser",false);
             }
+            logger.info("token:{}", token);
+            LogManager.me().executeLog(LogTaskFactory.loginLog(user.getId(), HttpUtil.getIp()));
+
+            ShiroUser shiroUser = ShiroFactroy.me().createShiroUser(user);
+            tokenCache.setUser(token,shiroUser);
+
             result.put("token", token);
             return Rets.success(result);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
         return Rets.failure("登录时失败");
-    }
-
-    /**
-     * 第三方登录的时候 如果已经绑定了本系统里面的用户，则登陆本系统里面的用户
-     * @param userId
-     * @return token
-     */
-    public String loginUserByUserId(int userId,boolean isSystemUser,String openId){
-        String token ;
-        User user = userService.get(Long.valueOf(userId));
-
-        token = JwtUtil.sign(user,isSystemUser ,openId);
-        logger.info("token:{}", token);
-
-        LogManager.me().executeLog(LogTaskFactory.loginLog(user.getId(), HttpUtil.getIp()));
-        return token;
     }
 
     @BussinessLog(value = "第三方登录绑定账号", key = "account", dict = CommonDict.class)
@@ -296,8 +289,11 @@ public class AccountController extends BaseController {
             Map<String, String> result = new HashMap<>(1);
             result.put("token", token);
             LogManager.me().executeLog(LogTaskFactory.loginLog(user.getId(), HttpUtil.getIp()));
-            return Rets.success(result);
 
+            ShiroUser shiroUser = ShiroFactroy.me().createShiroUser(user);
+            tokenCache.setUser(token,shiroUser);
+
+            return Rets.success(result);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }

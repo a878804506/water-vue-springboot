@@ -35,7 +35,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
         HttpServletRequest req = (HttpServletRequest) request;
         System.out.println(req.getServletPath());
-        if (req.getServletPath().equals("/account/login")) {
+        if (req.getServletPath().equals("/account/login") ||
+                req.getServletPath().equals("/account/dingdingCallback")) {
             return false;
         } else {
             return true;
