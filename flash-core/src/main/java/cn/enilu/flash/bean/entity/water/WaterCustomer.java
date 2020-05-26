@@ -4,8 +4,7 @@ import cn.enilu.flash.bean.entity.BaseEntity;
 import lombok.Data;
 import org.hibernate.annotations.Table;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 /**
  * 客户信息表
@@ -24,5 +23,4 @@ public class WaterCustomer extends BaseEntity {
     private String starttime;
     @Column(name="status",columnDefinition = "INT COMMENT '客户状态（1：正常、0：报停）'")
     private Integer status;
-
 }

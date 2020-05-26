@@ -1,14 +1,13 @@
-import {remove, getList, save} from '@/api/water/waterMeter'
+import { getList, save} from '@/api/water/waterMeter'
 
 export default {
   data() {
     return {
       formVisible: false,
-      formTitle: '添加客户起止码表',
+      formTitle: '',
       isAdd: true,
       form: {
         cid: '',
-        cname: '',
         one: '',
         two: '',
         three: '',
@@ -107,7 +106,6 @@ export default {
     resetForm() {
       this.form = {
         cid: '',
-        cname: '',
         one: '',
         two: '',
         three: '',
@@ -123,18 +121,11 @@ export default {
         id: ''
       }
     },
-    add() {
-      this.resetForm()
-      this.formTitle = '添加客户起止码表',
-        this.formVisible = true
-      this.isAdd = true
-    },
     save() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           save({
             cid: this.form.cid,
-            cname: this.form.cname,
             one: this.form.one,
             two: this.form.two,
             three: this.form.three,
@@ -175,32 +166,8 @@ export default {
       if (this.checkSel()) {
         this.isAdd = false
         this.form = this.selRow
-        this.formTitle = '编辑 ' + this.selRow.cname + ' 起止码表'
+        this.formTitle = '编辑 ' + this.selRow.waterCustomer.name + ' 起止码表'
         this.formVisible = true
-      }
-    },
-    remove() {
-      if (this.checkSel()) {
-        var id = this.selRow.id
-        this.$confirm(this.$t('common.deleteConfirm'), this.$t('common.tooltip'), {
-          confirmButtonText: this.$t('button.submit'),
-          cancelButtonText: this.$t('button.cancel'),
-          type: 'warning'
-        }).then(() => {
-          remove(id).then(response => {
-            this.$message({
-              message: this.$t('common.optionSuccess'),
-              type: 'success'
-            })
-            this.fetchData()
-          }).catch(err => {
-            this.$notify.error({
-              title: '错误',
-              message: err
-            })
-          })
-        }).catch(() => {
-        })
       }
     }
   }

@@ -9,7 +9,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {// 以/开头的服务器请求都通过该代理转发,可以设置为/或者api，如果设置成api，api.js中所有请求都要以api开头
-        target: 'http://localhost:8082',
+        target: 'http://172.16.0.177:8082',
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/' //这里理解成用‘/api’代替target里面的地址，组件中我们调接口时直接用/api代替
@@ -19,7 +19,7 @@ module.exports = {
     },
 
     // Various Dev Server settings
-   host: 'localhost', // can be overwritten by process.env.HOST
+   host: '172.16.0.177', // can be overwritten by process.env.HOST
    port: 8088, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,

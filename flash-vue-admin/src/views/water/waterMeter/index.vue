@@ -31,7 +31,7 @@
       </el-table-column>
       <el-table-column label="客户姓名">
         <template slot-scope="scope">
-          {{scope.row.cname}}
+          {{scope.row.waterCustomer.name}}
         </template>
       </el-table-column>
       <el-table-column label="一月">

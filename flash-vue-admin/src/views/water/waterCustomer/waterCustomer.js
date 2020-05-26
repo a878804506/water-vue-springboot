@@ -33,7 +33,7 @@ export default {
       rules: {
         name: [
           {required: true, message: '请输入客户姓名', trigger: 'blur'},
-          {min: 2, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur'}
+          {min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur'}
         ],
         price: [
           {required: true, message: '请输入定价', trigger: 'blur'}

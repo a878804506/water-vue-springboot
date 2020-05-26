@@ -60,7 +60,7 @@ public class WaterCustomerController {
         if (tWaterCustomer.getId() == null) {
             waterCustomerService.insertCustomerAndMeter(tWaterCustomer);
         } else {
-            waterCustomerService.updateCustomerAndMeter(tWaterCustomer);
+            waterCustomerService.updateCustomer(tWaterCustomer);
         }
         return Rets.success();
     }

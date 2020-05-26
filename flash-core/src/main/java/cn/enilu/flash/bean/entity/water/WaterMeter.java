@@ -4,8 +4,7 @@ import cn.enilu.flash.bean.entity.BaseEntity;
 import lombok.Data;
 import org.hibernate.annotations.Table;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 /**
  * 客户起止码表
@@ -17,9 +16,8 @@ public class WaterMeter extends BaseEntity {
     public WaterMeter() {
     }
 
-    public WaterMeter(int cid, String cname) {
+    public WaterMeter(Integer cid) {
         this.cid = cid;
-        this.cname = cname;
         this.one = 0d;
         this.two = 0d;
         this.three = 0d;
@@ -35,10 +33,20 @@ public class WaterMeter extends BaseEntity {
         this.thirteen = 0d;
     }
 
+    /**
+     * cascade 表的级联操作
+     * referencedColumnName 参考列名，默认的情况下hi列表的主键
+     * insertable 是否可以插入
+     * updateable 是否可以更新
+     * columnDefinition 列定义
+     * foreignKey 外键
+     */
+    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @JoinColumn(name="cid",referencedColumnName = "id",insertable = false , updatable = false)
+    private WaterCustomer waterCustomer;
+
     @Column(name = "cid", columnDefinition = "INT COMMENT '客户编号'")
     private Integer cid;
-    @Column(name = "cname", columnDefinition = "VARCHAR(20) COMMENT '客户姓名'")
-    private String cname;
     @Column(name = "one", columnDefinition = "DOUBLE COMMENT '一月'")
     private Double one;
     @Column(name = "two", columnDefinition = "DOUBLE COMMENT '二月'")
@@ -68,4 +76,5 @@ public class WaterMeter extends BaseEntity {
      */
     @Column(name = "thirteen", columnDefinition = "DOUBLE COMMENT '十二月'")
     private Double thirteen;
+
 }

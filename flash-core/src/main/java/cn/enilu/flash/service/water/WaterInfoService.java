@@ -193,7 +193,7 @@ public class WaterInfoService extends BaseService<WaterInfo, Long, WaterInfoRepo
             result.put("type", 1);
         } else if (meterCode - lastMonthWaterCount > 50) {
             result.put("result", false);
-            result.put("msg", waterMeter.getCname() + "的本月用水量大于50吨水，是否继续？");
+            result.put("msg", waterMeter.getWaterCustomer().getName() + "的本月用水量大于50吨水，是否继续？");
             result.put("type", 0);
         } else {
             result.put("result", true);

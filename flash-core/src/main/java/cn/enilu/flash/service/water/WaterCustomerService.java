@@ -5,7 +5,6 @@ import cn.enilu.flash.bean.entity.water.WaterCustomer;
 import cn.enilu.flash.bean.entity.water.WaterMeter;
 import cn.enilu.flash.dao.water.WaterCustomerRepository;
 
-import cn.enilu.flash.dao.water.WaterMeterRepository;
 import cn.enilu.flash.service.BaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,25 +18,18 @@ public class WaterCustomerService extends BaseService<WaterCustomer, Long, Water
 
     @Autowired
     private WaterMeterService waterMeterService;
-    @Autowired
-    private WaterMeterRepository waterMeterRepository;
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public WaterCustomer insertCustomerAndMeter(WaterCustomer waterCustomer) {
         waterCustomer = this.insert(waterCustomer);
-        WaterMeter waterMeter = new WaterMeter(waterCustomer.getId().intValue(),waterCustomer.getName());
+        WaterMeter waterMeter = new WaterMeter(waterCustomer.getId().intValue());
         waterMeterService.insert(waterMeter);
         return waterCustomer;
     }
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public void updateCustomerAndMeter(WaterCustomer waterCustomer) {
-        waterCustomer = this.update(waterCustomer);
-        WaterMeter waterMeter = waterMeterRepository.findByCid(waterCustomer.getId().intValue());
-        if(!waterMeter.getCname().equals(waterCustomer.getName())){
-            waterMeter.setCname(waterCustomer.getName());
-            waterMeterService.update(waterMeter);
-        }
+    public void updateCustomer(WaterCustomer waterCustomer) {
+        this.update(waterCustomer);
     }
 }
 

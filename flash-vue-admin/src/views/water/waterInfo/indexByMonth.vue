@@ -35,7 +35,7 @@
 
     <el-table :data="practicalCustomerWaterInfo" v-loading="listLoading" border height="600" >
       <el-table-column label="当前所选月份未录入账单的客户起止码信息" align="center" >
-        <el-table-column prop="cname" label="客户姓名" align="center"></el-table-column>
+        <el-table-column prop="waterCustomer.name" label="客户姓名" align="center"></el-table-column>
         <el-table-column prop="one" label="一月" align="center"></el-table-column>
         <el-table-column prop="two" label="二月" align="center"></el-table-column>
         <el-table-column prop="three" label="三月" align="center"></el-table-column>

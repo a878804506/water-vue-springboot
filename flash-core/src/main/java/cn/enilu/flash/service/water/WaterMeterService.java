@@ -37,7 +37,13 @@ public class WaterMeterService extends BaseService<WaterMeter, Long, WaterMeterR
             /**
              * 查询本年
              */
-            return this.queryPage(page);
+            String table = WaterConstant.WATER_METTER ;
+            String excu_page_sql = WaterCommonUtil.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_METTER_PAGE, table,WaterConstant.WATER_CUSTOMER, name, (page.getCurrent() - 1) * page.getLimit(), page.getLimit());
+            List<WaterMeter> records = waterMeterRepository.query(excu_page_sql);
+            String excu_page_count_sql = WaterCommonUtil.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_METTER_PAGE_COUNT, table,WaterConstant.WATER_CUSTOMER, name);
+            page.setRecords(records);
+            page.setTotal(Integer.valueOf(waterMeterRepository.getBySql(excu_page_count_sql) + ""));
+            return page;
         } else {
             /**
              * 查询往年表码值
