@@ -9,6 +9,7 @@ import cn.enilu.flash.dao.water.WaterCustomerRepository;
 import cn.enilu.flash.dao.water.WaterInfoRepository;
 import cn.enilu.flash.dao.water.WaterMeterRepository;
 import cn.enilu.flash.service.BaseService;
+import cn.enilu.flash.utils.factory.Page;
 import cn.enilu.flash.utils.water.NumToCNMoneyUtil;
 import cn.enilu.flash.utils.water.OperateExcelUtil;
 import cn.enilu.flash.utils.water.WaterCommonUtil;
@@ -275,6 +276,31 @@ public class WaterInfoService extends BaseService<WaterInfo, Long, WaterInfoRepo
             result.add("第"+((i-1)*50+1)+"---"+(i*50)+"户");
         }
         return result;
+    }
+
+    public Object getToDayData(Page page) {
+        Map<String,Object> results = new HashMap<>();
+        page = this.queryPage(page);
+
+        List<WaterInfo> records = page.getRecords();
+        Double water = 0d ; // 总用水量
+        Double cost = 0d; // 总水费
+        for(WaterInfo waterInfo : records){
+            water += waterInfo.getCount();
+            cost += waterInfo.getCost();
+        }
+
+        List<Map<String,Object>> totalDatas = new ArrayList<>();
+        Map<String,Object> total = new HashMap<>();
+        total.put("thisCount",records.size());
+        total.put("toDayCount",waterInfoRepository.countByModifyTimeBetween(WaterCommonUtil.getStartDate(new Date()), WaterCommonUtil.getEndDate(new Date())));
+        total.put("water",new BigDecimal(water).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        total.put("cost",new BigDecimal(cost).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        totalDatas.add(total);
+
+        results.put("totalDatas",totalDatas);
+        results.put("customerDatas",page.getRecords());
+        return results;
     }
 }
 

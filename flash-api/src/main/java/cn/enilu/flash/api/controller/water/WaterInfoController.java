@@ -1,21 +1,27 @@
 package cn.enilu.flash.api.controller.water;
 
 
+import cn.enilu.flash.bean.constant.factory.PageFactory;
 import cn.enilu.flash.bean.core.BussinessLog;
 import cn.enilu.flash.bean.dictmap.CommonDict;
 import cn.enilu.flash.bean.entity.water.WaterBill;
 import cn.enilu.flash.bean.enumeration.Permission;
 import cn.enilu.flash.bean.vo.front.Rets;
+import cn.enilu.flash.bean.vo.query.SearchFilter;
 import cn.enilu.flash.service.water.WaterInfoService;
+import cn.enilu.flash.utils.factory.Page;
 import cn.enilu.flash.utils.water.OperateExcelUtil;
+import cn.enilu.flash.utils.water.WaterCommonUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.Map;
 
 @RestController
@@ -89,5 +95,17 @@ public class WaterInfoController {
     @RequiresPermissions(value = {Permission.CUSTOMERS_WATER_COST_TO_DAY})
     public Object getToDayTabs() {
         return Rets.success(waterInfoService.getToDayTabs());
+    }
+
+    @RequestMapping(value = "/getToDayData", method = RequestMethod.GET)
+    @BussinessLog(value = "查询今日录入水费详情", key = "name", dict = CommonDict.class)
+    @RequiresPermissions(value = {Permission.CUSTOMERS_WATER_COST_TO_DAY})
+    public Object getToDayData() {
+        Page page = new PageFactory().defaultPage();
+        page.addFilter(SearchFilter.build("modifyTime", SearchFilter.Operator.GT, WaterCommonUtil.getStartDate(new Date())));
+        page.addFilter(SearchFilter.build("modifyTime", SearchFilter.Operator.LT, WaterCommonUtil.getEndDate(new Date())));
+        // 手动排序 id正序
+        page.setSort(new Sort(Sort.Direction.ASC,"modifyTime"));
+        return Rets.success(waterInfoService.getToDayData(page));
     }
 }

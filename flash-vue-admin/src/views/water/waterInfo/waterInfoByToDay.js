@@ -1,10 +1,16 @@
-import {getToDayTabs} from '@/api/water/waterInfo'
+import {getToDayTabs, getToDayData} from '@/api/water/waterInfo'
 
 export default {
   data() {
     return {
       tabs: null,
-      listLoading: false
+      listLoading: false,
+      listQuery: {
+        page: 1,
+        limit: 50
+      },
+      totalDatas: [],
+      customerDatas: []
     }
   },
   filters: {
@@ -33,18 +39,32 @@ export default {
   },
   methods: {
     init() {
-      getToDayTabs({}).then(response => {
-        this.$message({
-          message: this.$t('common.optionSuccess'),
-          type: 'success'
-        })
+      this.listLoading = true
+      getToDayTabs().then(response => {
+        if (response.data.length === 0) {
+          this.$message({
+            message: this.$t('common.toDayNoData'),
+            type: 'warning'
+          })
+          this.listLoading = false
+          return
+        }
         this.tabs = response.data
+        // 进入页面查询第一页数据
+        this.getToDayData()
       })
     },
-    search() {
-      if (this.checkInput()) {
-        this.listLoading = true
-      }
+    getToDayData() {
+      getToDayData(this.listQuery).then(response => {
+        this.totalDatas = response.data.totalDatas
+        this.customerDatas = response.data.customerDatas
+        this.listLoading = false
+      })
+    },
+    clickTab(tab, event) {
+      this.listQuery.page = tab.index - 0 + 1
+      this.listLoading = true
+      this.getToDayData()
     }
   }
 }

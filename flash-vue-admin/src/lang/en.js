@@ -110,7 +110,8 @@ export default {
     mustInputIdAndMeterCode: 'illegal parameter:the customer ID or meter code !',
     FirstCreateBill: 'Please create customer bill first!',
     createSuccess: 'Create Success',
-    illegalParameter: 'Illegal parameter!'
+    illegalParameter: 'Illegal parameter!',
+    toDayNoData: 'Not create Any customer bill ToDay !'
     //  水务系统 结束
   },
 

@@ -46,3 +46,11 @@ export function getToDayTabs() {
     method: 'get'
   })
 }
+
+export function getToDayData(params) {
+  return request({
+    url: '/water/info/getToDayData',
+    method: 'get',
+    params
+  })
+}
