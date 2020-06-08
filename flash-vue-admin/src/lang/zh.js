@@ -48,7 +48,8 @@ export default {
 
     //音乐 开始
     music: '一云音乐',
-    musicSync: '网络音乐同步'
+    musicSync: '网络音乐同步',
+    musicSyncTask: '音乐同步任务'
     //音乐 结束
   },
   navbar: {

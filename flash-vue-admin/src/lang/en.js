@@ -48,7 +48,8 @@ export default {
 
     //音乐 开始
     music: 'OneCloud Music',
-    musicSync: 'NetWork Music Sync'
+    musicSync: 'NetWork Music Sync',
+    musicSyncTask: 'Music Sync Task'
     //音乐 结束
   },
   navbar: {

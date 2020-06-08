@@ -44,8 +44,11 @@ export default {
     },
     searchSongs() {
       this.listLoading = true
-      searchSongs(this.listQuery).then(response => {
+      const datas = JSON.parse(JSON.stringify(this.listQuery))
+      datas.page = datas.page - 1
+      searchSongs(datas).then(response => {
         this.songsList = response.data.list
+        console.log(this.listQuery)
       })
       this.listLoading = false
     },
@@ -57,10 +60,12 @@ export default {
         })
         return
       }
+      const datas = JSON.parse(JSON.stringify(this.listQuery))
+      const page = datas.page - 1
       syncSongs({
         musicSync: JSON.stringify(this.selectedRow),
         platform: this.listQuery.platform,
-        page: this.listQuery.page,
+        page: page,
         pageSize: this.listQuery.pageSize,
         keyword: this.listQuery.keyword,
         syncType: this.listQuery.syncType
