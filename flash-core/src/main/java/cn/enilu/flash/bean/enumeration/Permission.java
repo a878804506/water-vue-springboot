@@ -74,4 +74,8 @@ public interface Permission {
     //今日录入水费详情
     String CUSTOMERS_WATER_COST_TO_DAY = "waterCostByToDay";
     // 水务系统  结束
+
+    // 音乐系统  开始
+    String MUSIC_SYNC = "musicSync";
+    // 音乐系统  结束
 }

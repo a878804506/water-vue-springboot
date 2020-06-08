@@ -43,8 +43,13 @@ export default {
     commodityInfo: 'Commondity managerment',
     commodityInventory: 'Commodity Inventory',
     commodityInventoryStatistics: 'Inventory Statistics',
-    commoditySalesStatistics: 'Sales Statistics'
+    commoditySalesStatistics: 'Sales Statistics',
     //进销存 结束
+
+    //音乐 开始
+    music: 'OneCloud Music',
+    musicSync: 'NetWork Music Sync'
+    //音乐 结束
   },
   navbar: {
     logOut: 'Log Out',
@@ -83,9 +88,13 @@ export default {
     //  水务系统 结束
 
     // 进销存 开始
-    inInventory: '入库',
-    outInventory: '出库'
+    inInventory: 'In Inventory',
+    outInventory: 'Out Inventory',
     // 进销存 结束
+
+    //音乐 开始
+    musicSync: 'Sync Music'
+    //音乐 结束
   },
   common: {
     mustSelectOne: 'Please select the record to operate!',

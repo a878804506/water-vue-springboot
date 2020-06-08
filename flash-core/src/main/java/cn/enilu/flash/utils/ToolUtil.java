@@ -16,14 +16,13 @@
 package cn.enilu.flash.utils;
 
 
+import cn.enilu.flash.security.JwtUtil;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 高频方法集合类
@@ -118,4 +117,31 @@ public class ToolUtil {
         return str;
     }
 
+    /**
+     * 替换掉模板里面的字符串
+     *  使用String.format 替换字符串
+     * @param str 字符串
+     * @param params 参数
+     * @return
+     */
+    public static String replaceTemplate(String str, Object... params) {
+        if (StringUtil.isNotNullOrEmpty(str) && params.length != 0) {
+            return String.format(str, params);
+        }
+        return null;
+    }
+
+    public static Long getCurrentAuditor() {
+        try {
+            String token = HttpUtil.getRequest().getHeader("Authorization");
+            if (StringUtil.isNotEmpty(token)) {
+                return JwtUtil.getUserId(token);
+            }
+        }catch (Exception e){
+            //返回系统用户id
+            return Constants.SYSTEM_USER_ID;
+        }
+        //返回系统用户id
+        return Constants.SYSTEM_USER_ID;
+    }
 }
