@@ -49,8 +49,13 @@ export default {
     //音乐 开始
     music: '一云音乐',
     musicSync: '网络音乐同步',
-    musicSyncTask: '音乐同步任务'
+    musicSyncTask: '音乐同步任务',
     //音乐 结束
+
+    //pdf 开始
+    pdf: 'pdf管理',
+    pdfManagement: 'pdf在线解析'
+    //pdf 结束
   },
   navbar: {
     logOut: '退出登录',

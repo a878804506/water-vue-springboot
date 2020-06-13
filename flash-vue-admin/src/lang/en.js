@@ -49,8 +49,13 @@ export default {
     //音乐 开始
     music: 'OneCloud Music',
     musicSync: 'NetWork Music Sync',
-    musicSyncTask: 'Music Sync Task'
+    musicSyncTask: 'Music Sync Task',
     //音乐 结束
+
+    //pdf 开始
+    pdf: 'PDF Management',
+    pdfManagement: 'PDF Analysis Online'
+    //pdf 结束
   },
   navbar: {
     logOut: 'Log Out',
