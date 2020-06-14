@@ -74,7 +74,8 @@ public class ExcelUtil {
                 result = cell.getStringCellValue();
                 break;
             case NUMERIC:
-                result = cell.getNumericCellValue() + "";
+                cell.setCellType(CellType.STRING);
+                result = cell.getStringCellValue();
                 break;
             case BOOLEAN:
             case ERROR:

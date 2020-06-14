@@ -5,6 +5,8 @@
         <el-col :span="24">
           <el-button type="success" size="mini" icon="el-icon-plus" @click.native="add">{{ $t('button.add') }}
           </el-button>
+
+          <el-button type="primary" size="mini" icon="el-icon-search" @click.native="search">刷新</el-button>
         </el-col>
       </el-row>
     </div>
@@ -65,12 +67,12 @@
           {{scope.row.createTime}}
         </template>
       </el-table-column>
-      <el-table-column label="生成的文件">
+      <!--<el-table-column label="生成的文件">
         <template slot-scope="scope">
           <span v-if="scope.row.pdfStatus == '1'">{{scope.row.createPdf}}</span>
           <span v-if="scope.row.pdfStatus != '1'">/</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <!--<el-table-column label="生成pdf的数量"  width="115px">
         <template slot-scope="scope">
           <span v-if="scope.row.pdfStatus == '1'">{{scope.row.createPdfCount}}</span>
@@ -126,8 +128,15 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label-width="150px" label="excel开始行" prop="oldExcelStartRow">
-              <el-input-number v-model="formData.oldExcelStartRow" placeholder="请输入excel开始行" :step='1'
-                               step-strictly :min='1'></el-input-number>
+              <el-select v-model="formData.oldExcelStartRow" size="medium">
+                <el-option
+                  v-for="item in excelRows"
+                  :key="item.id"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -147,7 +156,7 @@
             <el-form-item label-width="150px" label="上传pdf文件" required>
               <el-upload :auto-upload="true" :before-upload="old_pdfBeforeUpload" accept=".pdf"
                          name="file" :http-request="uploadPdfFile" action="" :on-remove="removePdf"
-                         >
+                         ref="uploadPdf">
                 <el-button size="small" type="primary" icon="el-icon-upload">点击上传PDF</el-button>
                 <div slot="tip" class="el-upload__tip">只能上传不超过 50MB 的.pdf文件</div>
               </el-upload>
@@ -157,7 +166,7 @@
             <el-form-item label-width="150px" label="上传excel文件" required>
               <el-upload :auto-upload="true" :before-upload="old_excelBeforeUpload" accept=".xls,.xlsx"
                          name="file" :http-request="uploadPdfFile" action="" :on-remove="removeExcel"
-                         >
+                         ref="uploadExcel">
                 <el-button size="small" type="primary" icon="el-icon-upload">点击上传EXCEL</el-button>
                 <div slot="tip" class="el-upload__tip">只能上传不超过 50MB 的.xls,.xlsx文件</div>
               </el-upload>
@@ -172,7 +181,7 @@
 
         <el-form-item>
           <el-button type="primary" @click="submitForm">{{ $t('button.submit') }}</el-button>
-          <el-button @click.native="formVisible = false">{{ $t('button.cancel') }}</el-button>
+          <el-button @click="resetForm">{{ $t('button.cancel') }}</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>

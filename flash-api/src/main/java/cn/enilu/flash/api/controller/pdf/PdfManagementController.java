@@ -89,7 +89,7 @@ public class PdfManagementController {
         return Rets.failure("添加失败");
     }
 
-    @RequestMapping(value = "/download", method = RequestMethod.POST)
+    @RequestMapping(value = "/download", method = RequestMethod.GET)
     @BussinessLog(value = "文件下载", key = "name", dict = CommonDict.class)
     public void download(@RequestParam Long id, HttpServletResponse response) {
         if (null == id) {
@@ -112,7 +112,7 @@ public class PdfManagementController {
             os = response.getOutputStream();
             // 清空输出流
             response.reset();
-            response.setContentType("application/octet-stream");
+            response.setContentType("application/x-download;charset=GBK");
             response.setHeader("Content-Disposition", "attachment;filename=" + new String(pdfManagement.getCreatePdf().getBytes("utf-8"), "iso-8859-1"));
             //读取流
             File f = new File(fileBasePath + pdfManagement.getId() + File.separator + pdfManagement.getCreatePdf());

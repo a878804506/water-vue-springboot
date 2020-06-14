@@ -70,6 +70,9 @@ public class AnalysisPdfJob extends JobExecuter {
 
         @Override
         public void run() {
+            pdfManagement.setPdfStatus(2);
+            pdfManagementService.update(pdfManagement);
+
             File pdfFile = new File(fileBasePath + pdfManagement.getOldPdf());
             File excelFile = new File(fileBasePath + pdfManagement.getOldExcel());
             if (!pdfFile.exists() || !excelFile.exists()) {
@@ -103,8 +106,8 @@ public class AnalysisPdfJob extends JobExecuter {
             List<File> srcFiles = splitPDF(pdfsPath, columns);
             // 在吧生成的pdfs打包 zip
             // 逻辑在此
-            String zipFilePath = pdfsPath+ File.separator + pdfManagement.getName() + ".zip";
-            ZipUtil.toZip(srcFiles,zipFilePath);
+            String zipFilePath = pdfsPath + File.separator + pdfManagement.getName() + ".zip";
+            ZipUtil.toZip(srcFiles, zipFilePath);
             //更新任务状态
             pdfManagement.setPdfStatus(1);
             pdfManagement.setCreatePdf(pdfManagement.getName() + ".zip");
@@ -138,9 +141,11 @@ public class AnalysisPdfJob extends JobExecuter {
                         pdfManagement.setOldPdfEndPage(endPage);
                     }
                     // 循环拆分成每页一个pdf
+                    Integer oldExcelStartRow = pdfManagement.getOldExcelStartRow();
                     for (int p = startPage; p <= endPage; p++) {
                         // Create a writer for the outputstream
-                        String newPdfName = StringUtils.isNotBlank(columns.get(p - 1)) ? columns.get(p - 1) : p + "";
+                        int readRow = oldExcelStartRow + p - 1;
+                        String newPdfName = StringUtils.isNotBlank(columns.get(readRow)) ? columns.get(readRow) : p + "";
                         OutputStream outputStream = new FileOutputStream(pdfsPath + File.separator + newPdfName + ".pdf");
                         PdfWriter writer = PdfWriter.getInstance(document, outputStream);
                         document.open();
@@ -153,7 +158,7 @@ public class AnalysisPdfJob extends JobExecuter {
                         document.close();
                         outputStream.close();
 
-                        File  pdfFile = new File(pdfsPath + File.separator + newPdfName + ".pdf");
+                        File pdfFile = new File(pdfsPath + File.separator + newPdfName + ".pdf");
                         createPdfFIleList.add(pdfFile);
                     }
                 }

@@ -20,15 +20,6 @@ export function updaloadFile(data) {
   })
 }
 
-export function download(data) {
-  return request({
-    url: '/pdf/management/download',
-    method: 'post',
-    data: qs.stringify(data),
-    responseType: 'blob'
-  })
-}
-
 export function save(data) {
   return request({
     url: '/pdf/management/',

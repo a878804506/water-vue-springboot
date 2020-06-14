@@ -1,4 +1,4 @@
-import {getList, save, updaloadFile, download} from '@/api/pdf/pdfManagement'
+import {getList, save, updaloadFile} from '@/api/pdf/pdfManagement'
 
 export default {
   data() {
@@ -19,7 +19,7 @@ export default {
         name: '',
         oldPdfStartPage: 1,
         oldPdfEndPage: undefined,
-        oldExcelStartRow: 1,
+        oldExcelStartRow: 0,
         oldExcelStartColumn: 0,
         oldPdf: '',
         oldExcel: ''
@@ -152,6 +152,48 @@ export default {
           label: 'Z列',
           value: 25
         }
+      ],
+      excelRows: [
+        {
+          label: '第一行',
+          value: 0
+        },
+        {
+          label: '第二行',
+          value: 1
+        },
+        {
+          label: '第三行',
+          value: 2
+        },
+        {
+          label: '第四行',
+          value: 3
+        },
+        {
+          label: '第五行',
+          value: 4
+        },
+        {
+          label: '第六行',
+          value: 5
+        },
+        {
+          label: '第七行',
+          value: 6
+        },
+        {
+          label: '第八行',
+          value: 7
+        },
+        {
+          label: '第九行',
+          value: 8
+        },
+        {
+          label: '第十行',
+          value: 9
+        }
       ]
     }
   },
@@ -210,13 +252,20 @@ export default {
       this.formVisible = true
     },
     resetForm() {
+      this.formVisible = false
       this.formData.name = ''
       this.formData.oldPdfStartPage = 1
       this.formData.oldPdfEndPage = undefined
-      this.formData.oldExcelStartRow = 1
-      this.formData.oldExcelStartColumn = 1
+      this.formData.oldExcelStartRow = 0
+      this.formData.oldExcelStartColumn = 0
       this.formData.oldPdf = ''
       this.formData.oldExcel = ''
+      if (this.$refs['uploadPdf'] !== undefined) {
+        this.$refs['uploadPdf'].clearFiles()
+      }
+      if (this.$refs['uploadExcel'] !== undefined) {
+        this.$refs['uploadExcel'].clearFiles()
+      }
     },
     old_pdfBeforeUpload(file) {
       let isRightSize = file.size / 1024 / 1024 < 50
@@ -295,7 +344,6 @@ export default {
               type: 'success'
             })
             this.resetForm()
-            this.formVisible = false
             this.fetchData()
           })
         } else {
@@ -304,18 +352,9 @@ export default {
         }
       })
     },
-    download(id, name) {
-      download({id: id}).then(response => {
-        let url = window.URL.createObjectURL(new Blob([response]))
-        let link = document.createElement('a')
-        link.style.display = 'none'
-        link.href = url
-        link.setAttribute('download', name + '.zip')
-        document.body.appendChild(link)
-        link.click()
-        URL.revokeObjectURL(link.href) //释放url 对象
-        document.body.removeChild(link)
-      })
+    download(id) {
+      let url = "onecloud/pdf/management/download?id=" + id
+      window.open(url)
     }
   }
 }
