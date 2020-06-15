@@ -142,9 +142,10 @@ public class AnalysisPdfJob extends JobExecuter {
                     }
                     // 循环拆分成每页一个pdf
                     Integer oldExcelStartRow = pdfManagement.getOldExcelStartRow();
+                    int i = 0;
                     for (int p = startPage; p <= endPage; p++) {
                         // Create a writer for the outputstream
-                        int readRow = oldExcelStartRow + p - 1;
+                        int readRow = oldExcelStartRow + i;
                         String newPdfName = StringUtils.isNotBlank(columns.get(readRow)) ? columns.get(readRow) : p + "";
                         OutputStream outputStream = new FileOutputStream(pdfsPath + File.separator + newPdfName + ".pdf");
                         PdfWriter writer = PdfWriter.getInstance(document, outputStream);
@@ -160,6 +161,7 @@ public class AnalysisPdfJob extends JobExecuter {
 
                         File pdfFile = new File(pdfsPath + File.separator + newPdfName + ".pdf");
                         createPdfFIleList.add(pdfFile);
+                        ++i;
                     }
                 }
             } catch (Exception e) {

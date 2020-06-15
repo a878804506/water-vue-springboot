@@ -45,13 +45,13 @@
         </template>
       </el-table-column>
       <el-table-column label="excel开始行" width="100px">
-        <template slot-scope="scope">
-          {{scope.row.oldExcelStartRow}}
+        <template slot-scope="scope" >
+          {{excelRows[scope.row.oldExcelStartRow].label}}
         </template>
       </el-table-column>
       <el-table-column label="excel开始列" width="100px">
         <template slot-scope="scope">
-          {{scope.row.oldExcelStartColumn}}
+          {{excelColumns[scope.row.oldExcelStartColumn].label}}
         </template>
       </el-table-column>
       <el-table-column label="状态" width="75px">
