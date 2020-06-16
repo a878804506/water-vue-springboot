@@ -87,7 +87,7 @@
       </el-table-column>
       <el-table-column label="操作"  width="80px">
         <template slot-scope="scope">
-          <span v-if="scope.row.pdfStatus == '1'"><a style="color:#1890ff" @click="download(scope.row.id,scope.row.name)">下载</a></span>
+          <span v-if="scope.row.pdfStatus == '1'"><a style="color:#1890ff" @click="download(scope.row.id)">下载</a></span>
           <span v-if="scope.row.pdfStatus != '1'"></span>
         </template>
       </el-table-column>
@@ -160,6 +160,7 @@
                 <el-button size="small" type="primary" icon="el-icon-upload">点击上传PDF</el-button>
                 <div slot="tip" class="el-upload__tip">只能上传不超过 300MB 的.pdf文件</div>
               </el-upload>
+              <el-progress :percentage="progressPdf"></el-progress>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -170,6 +171,7 @@
                 <el-button size="small" type="primary" icon="el-icon-upload">点击上传EXCEL</el-button>
                 <div slot="tip" class="el-upload__tip">只能上传不超过 300MB 的.xls,.xlsx文件</div>
               </el-upload>
+              <el-progress :percentage="progressExcel"></el-progress>
             </el-form-item>
           </el-col>
 

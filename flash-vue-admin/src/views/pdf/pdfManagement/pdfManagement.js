@@ -1,4 +1,5 @@
-import { getList, save, updaloadFile } from '@/api/pdf/pdfManagement'
+import {getList, save, updaloadFile} from '@/api/pdf/pdfManagement'
+import request from '@/utils/request'
 
 export default {
   data() {
@@ -231,10 +232,12 @@ export default {
           value: 18
         },
         {
-          label: '第十十行',
+          label: '第二十行',
           value: 19
         }
-      ]
+      ],
+      progressPdf: 0,
+      progressExcel: 0
     }
   },
   computed: {},
@@ -345,43 +348,65 @@ export default {
     uploadPdfFile(file) {
       const formData = new FormData()
       formData.append('file', file.file)
-      updaloadFile({
-        formData,
+      var config = {
         // 上传进度
-        onUploadProgress: (progressEvent) => {
-          let num = progressEvent.loaded / progressEvent.total * 100 | 0  // 百分比
-          file.onProgress({ percent: num })     // 进度条
+        onUploadProgress: progressEvent => {
+          // 百分比
+          let num = progressEvent.loaded / progressEvent.total * 100 | 0
+          // 进度条
+          this.progressPdf = num
         }
-      }).then(response => {
+      }
+      request.defaults.timeout = 1000 * 60 * 60 * 2
+      request.post('/pdf/management/updaloadFile', formData, config).then(response => {
         this.formData.oldPdf = file.file.name
-        // 上传成功(打钩的小图标)
-        file.onSuccess()
         this.$message({
           message: response.data,
           type: 'success'
         })
+        // 上传成功(打钩的小图标)
+        file.onSuccess()
       })
     },
     // 上传文件
-    uploadExcelFile(param) {
+    uploadExcelFile(file) {
       const formData = new FormData()
-      formData.append('file', param.file)
-      updaloadFile(formData).then(response => {
-        this.formData.oldExcel = param.file.name
-
+      formData.append('file', file.file)
+      var config = {
+        // 上传进度
+        onUploadProgress: progressEvent => {
+          // 百分比
+          let num = progressEvent.loaded / progressEvent.total * 100 | 0
+          // 进度条
+          this.progressExcel = num
+        }
+      }
+      request.defaults.timeout = 1000 * 60 * 60 * 2
+      request.post('/pdf/management/updaloadFile', formData, config).then(response => {
+        this.formData.oldExcel = file.file.name
         this.$message({
           message: response.data,
           type: 'success'
         })
+        // 上传成功(打钩的小图标)
+        file.onSuccess()
       })
     },
     // 用户移除了上传的pdf文件
     removePdf(file, fileList) {
-      this.formData.oldPdf = ''
+      console.log(file)
+      console.log(fileList)
+      if (fileList.length === 0) {
+        this.formData.oldPdf = ''
+        this.progressPdf = 0
+      }
     },
     // 用户移除了上传的excel文件
     removeExcel(file, fileList) {
-      this.formData.oldExcel = ''
+      if (fileList.length === 0) {
+        this.formData.oldExcel = ''
+        this.progressExcel = 0
+      }
     },
     // 提交表单
     submitForm() {
@@ -410,8 +435,11 @@ export default {
       })
     },
     download(id) {
-      let url = 'onecloud/pdf/management/download?id=' + id
-      window.open(url)
+      let link = document.createElement('a')
+      link.style.display = 'none'
+      link.href = 'onecloud/pdf/management/download?id=' + id
+      document.body.appendChild(link)
+      link.click()
     }
   }
 }
