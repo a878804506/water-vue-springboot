@@ -1,6 +1,8 @@
 package cn.enilu.flash.utils;
 
 
+import cn.enilu.flash.bean.exception.MyExcelException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -8,7 +10,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -27,7 +31,7 @@ public class ExcelUtil {
      * @param startCol 开始读取的列号
      * @return 返回那一列的所有数据
      */
-    public static Map<Integer, String> readExcel(String path, int startCol) {
+    public static Map<Integer, String> readExcel(String path, int startCol) throws MyExcelException{
         Map<Integer, String> columns = new HashMap<>();
 
         String fileType = path.substring(path.lastIndexOf(".") + 1);
@@ -46,15 +50,24 @@ public class ExcelUtil {
             }
 
             //读取第一个工作页sheet
+            List<String> excelList = new ArrayList<>();
             Sheet sheet = wb.getSheetAt(0);
-            for (int i = 0; i < sheet.getLastRowNum(); i++) {
+            for (int i = 0; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
                 Cell cell = row.getCell(startCol);
-                columns.put(i, getCellValueByType(cell));
+                String temp = getCellValueByType(cell);
+                if(StringUtils.isNoneBlank(temp)){
+                    if(excelList.contains(temp)){
+                        throw new MyExcelException("解析到excel中有重复的名字，无法为单页pdf重命名！");
+                    }else{
+                        excelList.add(temp);
+                    }
+                }
+                columns.put(i, temp);
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
+        }finally {
             try {
                 if (is != null) is.close();
             } catch (IOException e) {

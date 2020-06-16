@@ -1,4 +1,4 @@
-import {getList, save, updaloadFile} from '@/api/pdf/pdfManagement'
+import { getList, save, updaloadFile } from '@/api/pdf/pdfManagement'
 
 export default {
   data() {
@@ -45,7 +45,7 @@ export default {
           required: true,
           message: '请输入excel开始列',
           trigger: 'blur'
-        }],
+        }]
       },
       excelColumns: [
         {
@@ -193,6 +193,46 @@ export default {
         {
           label: '第十行',
           value: 9
+        },
+        {
+          label: '第十一行',
+          value: 10
+        },
+        {
+          label: '第十二行',
+          value: 11
+        },
+        {
+          label: '第十三行',
+          value: 12
+        },
+        {
+          label: '第十四行',
+          value: 13
+        },
+        {
+          label: '第十五行',
+          value: 14
+        },
+        {
+          label: '第十六行',
+          value: 15
+        },
+        {
+          label: '第十七行',
+          value: 16
+        },
+        {
+          label: '第十八行',
+          value: 17
+        },
+        {
+          label: '第十九行',
+          value: 18
+        },
+        {
+          label: '第十十行',
+          value: 19
         }
       ]
     }
@@ -268,9 +308,9 @@ export default {
       }
     },
     old_pdfBeforeUpload(file) {
-      let isRightSize = file.size / 1024 / 1024 < 50
+      let isRightSize = file.size / 1024 / 1024 < 300
       if (!isRightSize) {
-        this.$message.error('文件大小超过 50MB')
+        this.$message.error('文件大小超过 300MB')
         return false
       }
       let isAccept = new RegExp('.pdf').test(file.type)
@@ -285,9 +325,9 @@ export default {
       return true
     },
     old_excelBeforeUpload(file) {
-      let isRightSize = file.size / 1024 / 1024 < 50
+      let isRightSize = file.size / 1024 / 1024 < 300
       if (!isRightSize) {
-        this.$message.error('文件大小超过 50MB')
+        this.$message.error('文件大小超过 300MB')
         return false
       }
       const xls = file.name.split('.')
@@ -302,16 +342,33 @@ export default {
       return true
     },
     // 上传文件
-    uploadPdfFile(param) {
+    uploadPdfFile(file) {
+      const formData = new FormData()
+      formData.append('file', file.file)
+      updaloadFile({
+        formData,
+        // 上传进度
+        onUploadProgress: (progressEvent) => {
+          let num = progressEvent.loaded / progressEvent.total * 100 | 0  // 百分比
+          file.onProgress({ percent: num })     // 进度条
+        }
+      }).then(response => {
+        this.formData.oldPdf = file.file.name
+        // 上传成功(打钩的小图标)
+        file.onSuccess()
+        this.$message({
+          message: response.data,
+          type: 'success'
+        })
+      })
+    },
+    // 上传文件
+    uploadExcelFile(param) {
       const formData = new FormData()
       formData.append('file', param.file)
       updaloadFile(formData).then(response => {
-        const xls = param.file.name.split('.')
-        if (xls[1] === 'xls' || xls[1] === 'xlsx') {
-          this.formData.oldExcel = param.file.name
-        } else if (new RegExp('.pdf').test(param.file.type)) {
-          this.formData.oldPdf = param.file.name
-        }
+        this.formData.oldExcel = param.file.name
+
         this.$message({
           message: response.data,
           type: 'success'
@@ -353,7 +410,7 @@ export default {
       })
     },
     download(id) {
-      let url = "onecloud/pdf/management/download?id=" + id
+      let url = 'onecloud/pdf/management/download?id=' + id
       window.open(url)
     }
   }

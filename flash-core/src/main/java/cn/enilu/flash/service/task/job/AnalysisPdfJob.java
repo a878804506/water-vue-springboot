@@ -1,6 +1,7 @@
 package cn.enilu.flash.service.task.job;
 
 import cn.enilu.flash.bean.entity.pdf.PdfManagement;
+import cn.enilu.flash.bean.exception.MyExcelException;
 import cn.enilu.flash.bean.vo.query.SearchFilter;
 import cn.enilu.flash.service.pdf.PdfManagementService;
 import cn.enilu.flash.service.task.JobExecuter;
@@ -94,8 +95,16 @@ public class AnalysisPdfJob extends JobExecuter {
             }
 
             //解析excel  批量命名
-            Map<Integer, String> columns = ExcelUtil.readExcel(pdfsPath + File.separator + pdfManagement.getOldExcel(),
-                    pdfManagement.getOldExcelStartColumn());
+            Map<Integer, String> columns = null;
+            try {
+                columns = ExcelUtil.readExcel(pdfsPath + File.separator + pdfManagement.getOldExcel(),
+                        pdfManagement.getOldExcelStartColumn());
+            } catch (MyExcelException e) {
+                pdfManagement.setPdfStatus(0);
+                pdfManagement.setFailReason(e.getMessage());
+                pdfManagementService.update(pdfManagement);
+                return;
+            }
             if (columns.size() == 0) {
                 pdfManagement.setPdfStatus(0);
                 pdfManagement.setFailReason("没有读取到Excel指定行和列的数据！");
@@ -143,10 +152,16 @@ public class AnalysisPdfJob extends JobExecuter {
                     // 循环拆分成每页一个pdf
                     Integer oldExcelStartRow = pdfManagement.getOldExcelStartRow();
                     int i = 0;
+                    int count = 0;
                     for (int p = startPage; p <= endPage; p++) {
                         // Create a writer for the outputstream
                         int readRow = oldExcelStartRow + i;
-                        String newPdfName = StringUtils.isNotBlank(columns.get(readRow)) ? columns.get(readRow) : p + "";
+                        String newPdfName = "";
+                        if(StringUtils.isNotBlank(columns.get(readRow))){
+                            newPdfName = columns.get(readRow);
+                        }else{
+                            newPdfName = "第"+(++count)+"个未匹配到的pdf";
+                        }
                         OutputStream outputStream = new FileOutputStream(pdfsPath + File.separator + newPdfName + ".pdf");
                         PdfWriter writer = PdfWriter.getInstance(document, outputStream);
                         document.open();

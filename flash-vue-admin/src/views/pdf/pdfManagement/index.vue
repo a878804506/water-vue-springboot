@@ -158,17 +158,17 @@
                          name="file" :http-request="uploadPdfFile" action="" :on-remove="removePdf"
                          ref="uploadPdf">
                 <el-button size="small" type="primary" icon="el-icon-upload">点击上传PDF</el-button>
-                <div slot="tip" class="el-upload__tip">只能上传不超过 50MB 的.pdf文件</div>
+                <div slot="tip" class="el-upload__tip">只能上传不超过 300MB 的.pdf文件</div>
               </el-upload>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label-width="150px" label="上传excel文件" required>
               <el-upload :auto-upload="true" :before-upload="old_excelBeforeUpload" accept=".xls,.xlsx"
-                         name="file" :http-request="uploadPdfFile" action="" :on-remove="removeExcel"
+                         name="file" :http-request="uploadExcelFile" action="" :on-remove="removeExcel"
                          ref="uploadExcel">
                 <el-button size="small" type="primary" icon="el-icon-upload">点击上传EXCEL</el-button>
-                <div slot="tip" class="el-upload__tip">只能上传不超过 50MB 的.xls,.xlsx文件</div>
+                <div slot="tip" class="el-upload__tip">只能上传不超过 300MB 的.xls,.xlsx文件</div>
               </el-upload>
             </el-form-item>
           </el-col>
