@@ -6,6 +6,8 @@ import cn.enilu.flash.dao.BaseRepository;
 
 
 public interface MusicStationRepository extends BaseRepository<MusicStation,Long>{
+    MusicStation findById(String id);
 
+    void deleteById(String id);
 }
 

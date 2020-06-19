@@ -50,6 +50,7 @@ export default {
     music: 'OneCloud Music',
     musicSync: 'NetWork Music Sync',
     musicSyncTask: 'Music Sync Task',
+    musicStation: 'Station Music',
     //音乐 结束
 
     //pdf 开始

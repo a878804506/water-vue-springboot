@@ -1,38 +1,22 @@
-import { remove, getList, save } from '@/api/music/musicStation'
+import {remove, getList} from '@/api/music/musicStation'
+import {getPlatformsList} from '@/api/music/musicSync'
 
 export default {
   data() {
     return {
       formVisible: false,
-      formTitle: '添加站内音乐',
       isAdd: true,
-      form: {
-        name:'',
-        singers:'',
-        picUrl:'',
-        hasHq:'',
-        hasSq:'',
-        hasMv:'',
-        hasAlbum:'',
-        albumId:'',
-        albumName:'',
-        hasSync128:'',
-        quality128Url:'',
-        hasSyncHq:'',
-        qualityHqUrl:'',
-        hasSyncSq:'',
-        qualitySqUrl:'',
-        id: ''
-      },
       listQuery: {
         page: 1,
         limit: 20,
-        id: undefined
+        platform: undefined,
+        keyword: ''
       },
       total: 0,
       list: null,
       listLoading: true,
-      selRow: {}
+      selRow: {},
+      platformDatas: []
     }
   },
   filters: {
@@ -45,24 +29,18 @@ export default {
       return statusMap[status]
     }
   },
-  computed: {
-
-    //表单验证
-    rules() {
-      return {
-        // cfgName: [
-        //   { required: true, message: this.$t('config.name') + this.$t('common.isRequired'), trigger: 'blur' },
-        //   { min: 3, max: 2000, message: this.$t('config.name') + this.$t('config.lengthValidation'), trigger: 'blur' }
-        // ]
-      }
-    }
-  },
   created() {
     this.init()
   },
   methods: {
     init() {
+      this.getPlatformsList()
       this.fetchData()
+    },
+    getPlatformsList() {
+      getPlatformsList().then(response => {
+        this.platformDatas = response.data
+      })
     },
     fetchData() {
       this.listLoading = true
@@ -76,7 +54,8 @@ export default {
       this.fetchData()
     },
     reset() {
-      this.listQuery.id = ''
+      this.listQuery.platform = ''
+      this.listQuery.keyword = ''
       this.fetchData()
     },
     handleFilter() {
@@ -105,65 +84,6 @@ export default {
     handleCurrentChange(currentRow, oldCurrentRow) {
       this.selRow = currentRow
     },
-    resetForm() {
-      this.form = {
-        name:'',
-        singers:'',
-        picUrl:'',
-        hasHq:'',
-        hasSq:'',
-        hasMv:'',
-        hasAlbum:'',
-        albumId:'',
-        albumName:'',
-        hasSync128:'',
-        quality128Url:'',
-        hasSyncHq:'',
-        qualityHqUrl:'',
-        hasSyncSq:'',
-        qualitySqUrl:'',
-        id: ''
-      }
-    },
-    add() {
-      this.resetForm()
-      this.formTitle = '添加站内音乐',
-      this.formVisible = true
-      this.isAdd = true
-    },
-    save() {
-      this.$refs['form'].validate((valid) => {
-        if (valid) {
-          save({
-      name:this.form.name,
-      singers:this.form.singers,
-      picUrl:this.form.picUrl,
-      hasHq:this.form.hasHq,
-      hasSq:this.form.hasSq,
-      hasMv:this.form.hasMv,
-      hasAlbum:this.form.hasAlbum,
-      albumId:this.form.albumId,
-      albumName:this.form.albumName,
-      hasSync128:this.form.hasSync128,
-      quality128Url:this.form.quality128Url,
-      hasSyncHq:this.form.hasSyncHq,
-      qualityHqUrl:this.form.qualityHqUrl,
-      hasSyncSq:this.form.hasSyncSq,
-      qualitySqUrl:this.form.qualitySqUrl,
-            id: this.form.id
-          }).then(response => {
-            this.$message({
-              message: this.$t('common.optionSuccess'),
-              type: 'success'
-            })
-            this.fetchData()
-            this.formVisible = false
-          })
-        } else {
-          return false
-        }
-      })
-    },
     checkSel() {
       if (this.selRow && this.selRow.id) {
         return true
@@ -173,14 +93,6 @@ export default {
         type: 'warning'
       })
       return false
-    },
-    edit() {
-      if (this.checkSel()) {
-        this.isAdd = false
-        this.form = this.selRow
-        this.formTitle = '编辑站内音乐'
-        this.formVisible = true
-      }
     },
     remove() {
       if (this.checkSel()) {
@@ -196,7 +108,7 @@ export default {
               type: 'success'
             })
             this.fetchData()
-          }).catch( err=> {
+          }).catch(err => {
             this.$notify.error({
               title: '错误',
               message: err

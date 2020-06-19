@@ -58,23 +58,11 @@ public class MusicStation {
     @Column(name = "album_name", columnDefinition = "VARCHAR(100) COMMENT '专辑名称'")
     private String albumName;
 
-    @Column(name = "has_sync128", columnDefinition = "INT COMMENT '是否同步了标准品质音乐'")
-    private Boolean hasSync128;
+    @Column(name = "music_type", columnDefinition = "INT COMMENT '音乐类型'")
+    private Integer musicType;
 
-    @Column(name = "quality128_url", columnDefinition = "VARCHAR(255) COMMENT '同步的标准品质音乐播放地址'")
-    private String quality128Url;
-
-    @Column(name = "has_sync_hq", columnDefinition = "INT COMMENT '是否同步了高品质音乐'")
-    private Boolean hasSyncHq;
-
-    @Column(name = "quality_hq_url", columnDefinition = "VARCHAR(255) COMMENT '同步的高品质音乐播放地址'")
-    private String qualityHqUrl;
-
-    @Column(name = "has_sync_sq", columnDefinition = "INT COMMENT '是否同步了无损音乐'")
-    private Boolean hasSyncSq;
-
-    @Column(name = "quality_sq_url", columnDefinition = "VARCHAR(255) COMMENT '同步的无损音乐播放地址'")
-    private String qualitySqUrl;
+    @Column(name = "music_url", columnDefinition = "VARCHAR(255) COMMENT '音乐播放地址'")
+    private String musicUrl;
 
     @CreatedDate
     @Column(name = "create_time",columnDefinition="DATETIME COMMENT '创建时间/注册时间'",updatable = false)
@@ -140,12 +128,6 @@ public class MusicStation {
         result = 31 * result + (hasAlbum != null ? hasAlbum.hashCode() : 0);
         result = 31 * result + (albumId != null ? albumId.hashCode() : 0);
         result = 31 * result + (albumName != null ? albumName.hashCode() : 0);
-        result = 31 * result + (hasSync128 != null ? hasSync128.hashCode() : 0);
-        result = 31 * result + (quality128Url != null ? quality128Url.hashCode() : 0);
-        result = 31 * result + (hasSyncHq != null ? hasSyncHq.hashCode() : 0);
-        result = 31 * result + (qualityHqUrl != null ? qualityHqUrl.hashCode() : 0);
-        result = 31 * result + (hasSyncSq != null ? hasSyncSq.hashCode() : 0);
-        result = 31 * result + (qualitySqUrl != null ? qualitySqUrl.hashCode() : 0);
         return result;
     }
 }

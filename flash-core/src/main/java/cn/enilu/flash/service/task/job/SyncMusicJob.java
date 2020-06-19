@@ -155,19 +155,17 @@ public class SyncMusicJob extends JobExecuter {
 
                 String fileName = uploadFileToOSS(playerUrl, getMusicSuffix(musicSync.getSyncType()));
                 musicSync.setSyncStatus(1);
+                temp.setMusicUrl(fileName);
 
                 switch (musicSync.getSyncType()) {
                     case "128":
-                        temp.setHasSync128(true);
-                        temp.setQuality128Url(fileName);
+                        temp.setMusicType(1);
                         break;
                     case "320":
-                        temp.setHasSyncHq(true);
-                        temp.setQualityHqUrl(fileName);
+                        temp.setMusicType(2);
                         break;
                     case "flac":
-                        temp.setHasSyncSq(true);
-                        temp.setQualitySqUrl(fileName);
+                        temp.setMusicType(3);
                         break;
                     default:
                         logger.error("没有匹配到歌曲的品质类型！");
