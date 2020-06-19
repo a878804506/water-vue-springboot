@@ -64,9 +64,20 @@ public class MusicStationController {
             }
             ossClient.deleteObject(aliyunMusicBucket,musicStation.getMusicUrl());
             musicStationService.deleteById(id);
+            if(null != ossClient){
+                ossClient.shutdown();
+            }
             return Rets.success();
         }else{
             return Rets.failure("删除失败");
         }
+    }
+
+    @RequestMapping(value = "/getMusic", method = RequestMethod.GET)
+    public Object list(@RequestParam String id) {
+
+        MusicStation musicStation = musicStationService.getOne(id);
+
+        return Rets.success("");
     }
 }
