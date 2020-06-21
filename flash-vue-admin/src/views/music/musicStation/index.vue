@@ -19,11 +19,17 @@
         <el-form-item>
           <el-button type="success" size="mini" icon="el-icon-search" @click.native="search">{{ $t('button.search') }}
           </el-button>
-          <el-button type="primary" size="mini" icon="el-icon-refresh" @click.native="reset">{{ $t('button.reset') }}</el-button>
+          <el-button type="primary" size="mini" icon="el-icon-refresh" @click.native="reset">{{ $t('button.reset') }}
+          </el-button>
+          <el-button type="primary" size="mini" icon="el-icon-service" @click.native="getMusicById">试听</el-button>
           <el-button type="danger" size="mini" icon="el-icon-delete" @click.native="remove">{{ $t('button.delete') }}
           </el-button>
         </el-form-item>
+        <el-form-item style="float: right">
+          <audio ref="audio" :src="musicEntity.src" controls="controls"></audio>
+        </el-form-item>
       </el-form>
+
     </div>
 
     <el-table :data="list" v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row
@@ -85,11 +91,11 @@
           <span v-if="scope.row.musicType === 3">无损品质</span>
         </template>
       </el-table-column>
-      <el-table-column label="音乐播放地址">
+      <!--<el-table-column label="音乐播放地址">
         <template slot-scope="scope">
           {{scope.row.musicUrl}}
         </template>
-      </el-table-column>
+      </el-table-column>-->
     </el-table>
 
     <el-pagination
@@ -107,7 +113,6 @@
 </template>
 
 <script src="./musicStation.js"></script>
-
 
 <style rel="stylesheet/scss" lang="scss" scoped>
   @import "src/styles/common.scss";

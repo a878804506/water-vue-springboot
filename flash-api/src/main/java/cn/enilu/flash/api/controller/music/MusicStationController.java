@@ -16,10 +16,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/music/station")
@@ -27,6 +32,8 @@ public class MusicStationController {
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private MusicStationService musicStationService;
+    @Autowired
+    private StringRedisTemplate redisMusicTemplate;
 
     @Value("${aliyun.sdk.oss.Endpoint}")
     private String aliyunSdkOss;
@@ -39,6 +46,9 @@ public class MusicStationController {
 
     @Value("${aliyun.musicBucket}")
     private String aliyunMusicBucket;
+
+    @Value("${spring.redis.music.timeout}")
+    private Long musicTimeout;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public Object list(@RequestParam(required = false) Integer platform,
@@ -73,11 +83,26 @@ public class MusicStationController {
         }
     }
 
-    @RequestMapping(value = "/getMusic", method = RequestMethod.GET)
+    @RequestMapping(value = "/getMusicById", method = RequestMethod.GET)
     public Object list(@RequestParam String id) {
 
         MusicStation musicStation = musicStationService.getOne(id);
-
-        return Rets.success("");
+        if(null == musicStation){
+            return Rets.failure("歌曲不存在");
+        }
+        String url = "";
+        // redis 相关：
+        if(redisMusicTemplate.hasKey(musicStation.getMusicUrl())){
+            // 从缓存中取值
+            url = redisMusicTemplate.opsForValue().get(musicStation.getMusicUrl());
+            return Rets.success(url);
+        }else{
+            OSS ossClient = new OSSClientBuilder().build(aliyunSdkOss, aliyunSdkOssAccessKeyId, aliyunSdkOssAccessKeySecret);
+            Date expiration = new Date(new Date().getTime()+musicTimeout);
+            url = ossClient.generatePresignedUrl(aliyunMusicBucket, musicStation.getMusicUrl(), expiration).toString();
+            // 加入缓存
+            redisMusicTemplate.opsForValue().set(musicStation.getMusicUrl(),url,musicTimeout, TimeUnit.MILLISECONDS);
+            return Rets.success(url);
+        }
     }
 }

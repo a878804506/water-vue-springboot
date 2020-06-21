@@ -62,6 +62,7 @@
         <aliyunoss.version>3.8.0</aliyunoss.version>
         <itextpdf.version>5.5.13</itextpdf.version>
         <poi.version>4.1.2</poi.version>
+        <redis.clients.version>2.9.0</redis.clients.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -348,6 +349,13 @@
                 <version>${poi.version}</version>
             </dependency>
             <!-- excel 解析工具类 end-->
+            <!-- jedis start-->
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${redis.clients.version}</version>
+            </dependency>
+            <!-- jedis end-->
         </dependencies>
 
     </dependencyManagement>

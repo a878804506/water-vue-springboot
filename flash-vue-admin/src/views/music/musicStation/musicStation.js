@@ -1,5 +1,5 @@
-import {remove, getList} from '@/api/music/musicStation'
-import {getPlatformsList} from '@/api/music/musicSync'
+import { remove, getList, getMusicById } from '@/api/music/musicStation'
+import { getPlatformsList } from '@/api/music/musicSync'
 
 export default {
   data() {
@@ -16,7 +16,10 @@ export default {
       list: null,
       listLoading: true,
       selRow: {},
-      platformDatas: []
+      platformDatas: [],
+      musicEntity: {
+        src: ''
+      }
     }
   },
   filters: {
@@ -52,6 +55,23 @@ export default {
     },
     search() {
       this.fetchData()
+    },
+    // 试听
+    getMusicById() {
+      if (this.checkSel()) {
+        getMusicById({ id: this.selRow.id }).then(response => {
+          this.musicEntity.src = response.data
+          this.$refs.audio.load()
+          let playPromise = this.$refs.audio.play()
+          if (playPromise !== undefined) {
+            playPromise.then(() => {
+              this.$refs.audio.play()
+            }).catch(() => {
+              this.$refs.audio.play()
+            })
+          }
+        })
+      }
     },
     reset() {
       this.listQuery.platform = ''

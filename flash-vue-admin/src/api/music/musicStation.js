@@ -8,6 +8,14 @@ export function getList(params) {
   })
 }
 
+export function getMusicById(params) {
+  return request({
+    url: '/music/station/getMusicById',
+    method: 'get',
+    params
+  })
+}
+
 export function remove(id) {
   return request({
     url: '/music/station',
