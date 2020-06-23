@@ -38,7 +38,7 @@ public class MusicStationService extends BaseService<MusicStation, Long, MusicSt
                     p = builder.and(p, builder.like(root.get("name"), "%" + keyword + "%"));
                     p = builder.or(p, builder.like(root.get("singers"), "%" + keyword + "%"));
                 }
-                if (null != platform) {
+                if (null != platform && platform != 0) {
                     p = builder.and(p, builder.equal(root.get("platformId"), platform));
                 }
                 return p;

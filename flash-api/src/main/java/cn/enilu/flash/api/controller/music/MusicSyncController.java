@@ -1,5 +1,6 @@
 package cn.enilu.flash.api.controller.music;
 
+import cn.enilu.flash.bean.entity.music.MusicPlatform;
 import cn.enilu.flash.bean.entity.music.MusicSync;
 import cn.enilu.flash.bean.enumeration.Permission;
 import cn.enilu.flash.bean.vo.front.Rets;
@@ -12,8 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 音乐同步操作接口
@@ -58,9 +58,29 @@ public class MusicSyncController {
         return Rets.success(result.getJSONObject("data"));
     }
 
+    /**
+     *  获取全平台列表
+     * @param needTran 是否进行转换，用于app上
+     * @return
+     */
     @RequestMapping(value = "/getPlatformsList", method = RequestMethod.GET)
-    public Object getPlatformsList() {
-        return Rets.success(musicSyncService.getPlatformsList());
+    public Object getPlatformsList(@RequestParam(required = false)Boolean needTran) {
+        List<MusicPlatform> platformsList = musicSyncService.getPlatformsList();
+        if(null != needTran && needTran){
+            List<Map<String,Object>> resultList = new ArrayList<>();
+            Map<String,Object> all_temp = new HashMap<>();
+            all_temp.put("title","全部");
+            all_temp.put("value",0);
+            resultList.add(all_temp);
+            for(MusicPlatform musicPlatform :platformsList){
+                Map<String,Object> temp = new HashMap<>();
+                temp.put("title",musicPlatform.getNameCn());
+                temp.put("value",musicPlatform.getId());
+                resultList.add(temp);
+            }
+           return Rets.success(resultList);
+        }
+        return Rets.success(platformsList);
     }
 
     /**
