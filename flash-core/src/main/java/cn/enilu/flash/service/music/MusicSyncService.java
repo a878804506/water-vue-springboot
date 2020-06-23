@@ -1,8 +1,10 @@
 package cn.enilu.flash.service.music;
 
+import cn.enilu.flash.bean.constant.cache.CacheKey;
 import cn.enilu.flash.bean.entity.music.MusicPlatform;
 import cn.enilu.flash.bean.entity.music.MusicSync;
 import cn.enilu.flash.bean.entity.system.Task;
+import cn.enilu.flash.cache.impl.RedisCacheDao;
 import cn.enilu.flash.dao.music.MusicPlatformRepository;
 import cn.enilu.flash.dao.music.MusicSyncRepository;
 import cn.enilu.flash.service.task.TaskService;
@@ -10,6 +12,7 @@ import cn.enilu.flash.utils.HttpClientUtil;
 import cn.enilu.flash.utils.ToolUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,9 @@ public class MusicSyncService {
     @Autowired
     private TaskService taskService;
 
+    @Autowired
+    private RedisCacheDao redisCacheDao;
+
     /**
      * 站外音乐搜索
      *
@@ -49,17 +55,41 @@ public class MusicSyncService {
     public JSONObject searchMusic(String platform, String keyword, Integer page, Integer pageSize) throws Exception {
         String musicSearchUrltemp = ToolUtil.replaceTemplate(musicSearchUrl, platform, keyword, page, pageSize);
         Map<String, String> header = new HashMap<>();
-        // 查询音乐同步任务的信息，里面有unlockCode
-        Task task = taskService.get(2l);
-        JSONObject jsonObject = JSON.parseObject(task.getData());
-        header.put("unlockCode", jsonObject.getString("unlockCode"));
+        // 先从缓存中查找
+        String unlockCode = redisCacheDao.get(CacheKey.MUSIC_UNLOCKCODE);
+        if(StringUtils.isEmpty(unlockCode)){
+            // 查询音乐同步任务的信息，里面有unlockCode
+            Task task = taskService.get(2l);
+            JSONObject jsonObject = JSON.parseObject(task.getData());
+            unlockCode = jsonObject.getString("unlockCode");
+            redisCacheDao.set(CacheKey.MUSIC_UNLOCKCODE,unlockCode);
+        }
+        header.put("unlockCode", unlockCode);
         String searchList = HttpClientUtil.doGet(musicSearchUrltemp, header, null);
         JSONObject json = (JSONObject) JSON.parse(searchList);
         return json;
     }
 
     public List<MusicPlatform> getPlatformsList() {
-        return musicPlatformRepository.findAll();
+        // 先从缓存中查找
+        List redisPlatformList = redisCacheDao.get(CacheKey.MUSIC_PLATFORM, List.class);
+        if(null == redisPlatformList){
+            List<MusicPlatform> all = musicPlatformRepository.findAll();
+            redisCacheDao.set(CacheKey.MUSIC_PLATFORM,all);
+            return all;
+        }else{
+            return redisPlatformList;
+        }
+    }
+
+    public String getPlatformsEnglishName(Integer platformId) {
+        List<MusicPlatform> platformsList = this.getPlatformsList();
+        for (MusicPlatform musicPlatform : platformsList) {
+            if (musicPlatform.getId() == platformId) {
+                return musicPlatform.getNameEn();
+            }
+        }
+        return null;
     }
 
     /**

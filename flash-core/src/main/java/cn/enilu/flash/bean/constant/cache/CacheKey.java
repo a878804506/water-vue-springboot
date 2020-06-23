@@ -30,4 +30,7 @@ public interface CacheKey {
     String MENU_NAME = "menu_name_" ;
     String SYS_USER_NAME = "SYS_USER_NAME" ;
     String FILE_INFO = "file_info" ;
+
+    String MUSIC_PLATFORM = "music_platform";
+    String MUSIC_UNLOCKCODE = "unlockCode";
 }
