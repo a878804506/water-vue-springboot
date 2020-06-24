@@ -76,6 +76,7 @@ public class MusicSyncController {
                 Map<String,Object> temp = new HashMap<>();
                 temp.put("title",musicPlatform.getNameCn());
                 temp.put("value",musicPlatform.getId());
+                temp.put("en",musicPlatform.getNameEn());
                 resultList.add(temp);
             }
            return Rets.success(resultList);
@@ -117,5 +118,10 @@ public class MusicSyncController {
             return Rets.success("添加的音乐中有部分音乐已重复添加，已经为您过滤");
         }
         return Rets.success("所选音乐已添加至待同步列表中");
+    }
+
+    @RequestMapping(value = "/getUnlockCode", method = RequestMethod.GET)
+    public Object getUnlockCode() {
+        return Rets.success(musicSyncService.getUnlockCode());
     }
 }

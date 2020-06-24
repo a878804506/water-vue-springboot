@@ -9,21 +9,14 @@ import cn.enilu.flash.bean.exception.ApplicationException;
 import cn.enilu.flash.bean.vo.front.Rets;
 import cn.enilu.flash.service.music.MusicStationService;
 import cn.enilu.flash.utils.factory.Page;
-import com.aliyun.oss.OSS;
-import com.aliyun.oss.OSSClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/music/station")
@@ -31,23 +24,9 @@ public class MusicStationController {
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private MusicStationService musicStationService;
-    @Autowired
-    private StringRedisTemplate redisMusicTemplate;
 
-    @Value("${aliyun.sdk.oss.Endpoint}")
-    private String aliyunSdkOss;
 
-    @Value("${aliyun.sdk.oss.AccessKeyId}")
-    private String aliyunSdkOssAccessKeyId;
 
-    @Value("${aliyun.sdk.oss.AccessKeySecret}")
-    private String aliyunSdkOssAccessKeySecret;
-
-    @Value("${aliyun.musicBucket}")
-    private String aliyunMusicBucket;
-
-    @Value("${spring.redis.music.timeout}")
-    private Long musicTimeout;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public Object list(@RequestParam(required = false) Integer platform,
@@ -66,42 +45,27 @@ public class MusicStationController {
         }
         MusicStation musicStation = musicStationService.getOne(id);
         if(null != musicStation){
-            OSS ossClient = new OSSClientBuilder().build(aliyunSdkOss, aliyunSdkOssAccessKeyId, aliyunSdkOssAccessKeySecret);
-            boolean hasFile = ossClient.doesObjectExist(aliyunMusicBucket, musicStation.getMusicUrl(),true);
-            if(!hasFile){
-                return Rets.failure("OSS上没有该文件");
-            }
-            ossClient.deleteObject(aliyunMusicBucket,musicStation.getMusicUrl());
+            // 删除oss上的文件
+            musicStationService.deleteOSSFile(musicStation.getMusicUrl());
+            // 删除记录
             musicStationService.deleteById(id);
-            if(null != ossClient){
-                ossClient.shutdown();
-            }
             return Rets.success();
         }else{
             return Rets.failure("删除失败");
         }
     }
 
+    /**
+     * 站内获取音乐url
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/getMusicById", method = RequestMethod.GET)
-    public Object list(@RequestParam String id) {
-
+    public Object getMusicById(@RequestParam String id) {
         MusicStation musicStation = musicStationService.getOne(id);
         if(null == musicStation){
             return Rets.failure("歌曲不存在");
         }
-        String url = "";
-        // redis 相关：
-        if(redisMusicTemplate.hasKey(musicStation.getMusicUrl())){
-            // 从缓存中取值
-            url = redisMusicTemplate.opsForValue().get(musicStation.getMusicUrl());
-            return Rets.success(url);
-        }else{
-            OSS ossClient = new OSSClientBuilder().build(aliyunSdkOss, aliyunSdkOssAccessKeyId, aliyunSdkOssAccessKeySecret);
-            Date expiration = new Date(new Date().getTime()+musicTimeout);
-            url = ossClient.generatePresignedUrl(aliyunMusicBucket, musicStation.getMusicUrl(), expiration).toString();
-            // 加入缓存
-            redisMusicTemplate.opsForValue().set(musicStation.getMusicUrl(),url,musicTimeout, TimeUnit.MILLISECONDS);
-            return Rets.success(url);
-        }
+        return Rets.success(musicStationService.getMusicById(musicStation.getMusicUrl()));
     }
 }

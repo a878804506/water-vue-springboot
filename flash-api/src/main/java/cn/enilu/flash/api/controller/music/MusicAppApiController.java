@@ -11,9 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,28 +27,11 @@ public class MusicAppApiController {
     @Autowired
     private MusicStationService musicStationService;
     @Autowired
-    private StringRedisTemplate redisMusicTemplate;
-    @Autowired
     private MusicSyncService musicSyncService;
-
-    @Value("${aliyun.sdk.oss.Endpoint}")
-    private String aliyunSdkOss;
-
-    @Value("${aliyun.sdk.oss.AccessKeyId}")
-    private String aliyunSdkOssAccessKeyId;
-
-    @Value("${aliyun.sdk.oss.AccessKeySecret}")
-    private String aliyunSdkOssAccessKeySecret;
-
-    @Value("${aliyun.musicBucket}")
-    private String aliyunMusicBucket;
-
-    @Value("${spring.redis.music.timeout}")
-    private Long musicTimeout;
 
     /**
      * @param searchType 搜索类型 0：站内搜索，1：站外搜索
-     * @param platformId   指定搜索的音乐平台id
+     * @param platformId 指定搜索的音乐平台id
      * @param keyword    搜索关键字
      * @return
      */
@@ -64,23 +45,27 @@ public class MusicAppApiController {
             Page<MusicStation> pageDatas = new PageFactory<MusicStation>().defaultPage();
             pageDatas.setSort(new Sort(Sort.Direction.DESC, "createTime"));
             pageDatas = musicStationService.queryPage(pageDatas, platformId, keyword);
+            pageDatas.getRecords().forEach(music -> music.setSearchType(searchType));
             return Rets.success(pageDatas);
         } else if (1 == searchType) {
             Page<MusicStation> pageDatas = new PageFactory<MusicStation>().defaultPage();
             try {
                 JSONObject jsonObject = musicSyncService.searchMusic(musicSyncService.getPlatformsEnglishName(platformId), keyword, page, limit);
-                if(jsonObject.getIntValue("code") != 200){
+                if (jsonObject.getIntValue("code") != 200) {
                     return Rets.failure("站外请求错误");
                 }
                 JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("list");
                 List<MusicStation> records = new ArrayList<>();
-                for(int i = 0 ; i < jsonArray.size() ; i++){
+                for (int i = 0; i < jsonArray.size(); i++) {
                     JSONObject temp = jsonArray.getJSONObject(i);
                     MusicStation m = new MusicStation();
                     m.setPicUrl(temp.getString("picUrl"));
                     m.setName(temp.getString("name"));
                     m.setSingers(temp.getString("singers"));
                     m.setAlbumName(temp.getString("albumName"));
+                    m.setSearchType(searchType);
+                    m.setId(temp.getString("id"));
+                    m.setPlatformId(platformId);
                     records.add(m);
                 }
                 pageDatas.setTotal(jsonObject.getJSONObject("data").getIntValue("total"));
@@ -95,4 +80,17 @@ public class MusicAppApiController {
         }
     }
 
+    @RequestMapping(value = "/getAppMusicUrl", method = RequestMethod.GET)
+    public Object list(@RequestParam Integer searchType,
+                       @RequestParam String id,
+                       @RequestParam(required = false) Integer platformId) {
+        if (0 == searchType) {
+            MusicStation musicStation = musicStationService.getOne(id);
+            return Rets.success(musicStationService.getMusicById(musicStation.getMusicUrl()));
+        } else if (1 == searchType) {
+            return Rets.failure("站外参数非法");
+        }else {
+            return Rets.failure("参数非法");
+        }
+    }
 }

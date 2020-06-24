@@ -77,6 +77,9 @@ public class MusicStation {
     @Column(name = "modify_by",columnDefinition="bigint COMMENT '最后更新人'")
     private Long modifyBy;
 
+    // 搜索平台类型 站内、站外
+    @Transient
+    private int searchType;
 
     public MusicStation(String id, String name, String singers, String picUrl,
                         Boolean hasHQ, Boolean hasSQ, Boolean hasMV, Boolean hasAlbum,

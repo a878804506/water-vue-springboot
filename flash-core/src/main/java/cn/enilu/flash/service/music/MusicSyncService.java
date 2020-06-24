@@ -55,6 +55,13 @@ public class MusicSyncService {
     public JSONObject searchMusic(String platform, String keyword, Integer page, Integer pageSize) throws Exception {
         String musicSearchUrltemp = ToolUtil.replaceTemplate(musicSearchUrl, platform, keyword, page, pageSize);
         Map<String, String> header = new HashMap<>();
+        header.put("unlockCode", this.getUnlockCode());
+        String searchList = HttpClientUtil.doGet(musicSearchUrltemp, header, null);
+        JSONObject json = (JSONObject) JSON.parse(searchList);
+        return json;
+    }
+
+    public String getUnlockCode(){
         // 先从缓存中查找
         String unlockCode = redisCacheDao.get(CacheKey.MUSIC_UNLOCKCODE);
         if(StringUtils.isEmpty(unlockCode)){
@@ -64,10 +71,7 @@ public class MusicSyncService {
             unlockCode = jsonObject.getString("unlockCode");
             redisCacheDao.set(CacheKey.MUSIC_UNLOCKCODE,unlockCode);
         }
-        header.put("unlockCode", unlockCode);
-        String searchList = HttpClientUtil.doGet(musicSearchUrltemp, header, null);
-        JSONObject json = (JSONObject) JSON.parse(searchList);
-        return json;
+        return unlockCode;
     }
 
     public List<MusicPlatform> getPlatformsList() {
