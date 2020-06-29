@@ -8,6 +8,7 @@ import cn.enilu.flash.utils.StringUtil;
 import cn.enilu.flash.utils.factory.Page;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.net.URL;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -97,8 +99,15 @@ public class MusicStationService extends BaseService<MusicStation, Long, MusicSt
             OSS ossClient = null;
             try {
                 ossClient = new OSSClientBuilder().build(aliyunSdkOss, aliyunSdkOssAccessKeyId, aliyunSdkOssAccessKeySecret);
-                Date expiration = new Date(new Date().getTime()+musicTimeout);
-                url = ossClient.generatePresignedUrl(aliyunMusicBucket, uuidFileName, expiration).toString();
+                while(true){
+                    Date expiration = new Date(new Date().getTime()+musicTimeout);
+                    url = ossClient.generatePresignedUrl(aliyunMusicBucket, uuidFileName, expiration).toString();
+                    System.out.println(url);
+                    if(url.split("%").length == 2){
+                        break;
+                    }
+                    Thread.sleep(1000);
+                }
                 // 加入缓存
                 redisMusicTemplate.opsForValue().set(uuidFileName,url,musicTimeout, TimeUnit.MILLISECONDS);
             }catch (Exception e){
