@@ -1,6 +1,7 @@
 package cn.enilu.flash.api.controller.pdf;
 
 import cn.enilu.flash.bean.entity.pdf.PdfManagement;
+import cn.enilu.flash.bean.enumeration.Permission;
 import cn.enilu.flash.service.pdf.PdfManagementService;
 
 import cn.enilu.flash.bean.core.BussinessLog;
@@ -12,6 +13,7 @@ import cn.enilu.flash.utils.factory.Page;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +66,7 @@ public class PdfManagementController {
 
     @RequestMapping(method = RequestMethod.POST)
     @BussinessLog(value = "保存pdf解析的信息", key = "name", dict = CommonDict.class)
+    @RequiresPermissions(value = {Permission.PDF_SAVE})
     public Object save(@ModelAttribute PdfManagement pdfManagement) {
         File pdfFile = new File(fileBasePath + pdfManagement.getOldPdf());
         File excelFile = new File(fileBasePath + pdfManagement.getOldExcel());
@@ -91,18 +94,16 @@ public class PdfManagementController {
 
     @RequestMapping(value = "/download", method = RequestMethod.GET)
     @BussinessLog(value = "文件下载", key = "name", dict = CommonDict.class)
+    @RequiresPermissions(value = {Permission.PDF_DOWNLOAD})
     public void download(@RequestParam Long id, HttpServletResponse response) {
         if (null == id) {
-//            return Rets.failure("参数非法");
             return;
         }
         PdfManagement pdfManagement = pdfManagementService.get(id);
         if (null == pdfManagement) {
-//            return Rets.failure("数据非法");
             return;
         }
         if(pdfManagement.getPdfStatus() != 1){
-//            return Rets.failure("文件下载失败");
             return;
         }
         OutputStream os = null;

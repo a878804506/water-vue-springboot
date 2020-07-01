@@ -17,6 +17,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ：enilu
@@ -26,7 +28,18 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-
+    // 没有带token时 需要过滤掉的url
+    static List<String> GREEN_URL = new ArrayList<>();
+    static {
+        //登录
+        GREEN_URL.add("/account/login");
+        // 钉钉登录回调
+        GREEN_URL.add("/account/dingdingCallback");
+        // 水务系统 excel下载
+        GREEN_URL.add("/water/info/downloadExcel");
+        // pdf解析后下载
+        GREEN_URL.add("/pdf/management/download");
+    }
     /**
      * 判断用户是否想要登入。
      * 检测header里面是否包含Authorization字段即可
@@ -34,9 +47,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
         HttpServletRequest req = (HttpServletRequest) request;
-        System.out.println(req.getServletPath());
-        if (req.getServletPath().equals("/account/login") ||
-                req.getServletPath().equals("/account/dingdingCallback")) {
+        System.out.println("访问的url"+req.getServletPath());
+        if (GREEN_URL.contains(req.getServletPath())) {
             return false;
         } else {
             return true;

@@ -1,6 +1,5 @@
 package cn.enilu.flash.api.controller;
 
-import cn.enilu.flash.api.utils.ApiConstants;
 import cn.enilu.flash.bean.constant.Const;
 import cn.enilu.flash.bean.constant.Constant;
 import cn.enilu.flash.bean.core.BussinessLog;
@@ -17,6 +16,7 @@ import cn.enilu.flash.security.ShiroFactroy;
 import cn.enilu.flash.service.system.OtherUserService;
 import cn.enilu.flash.service.system.UserService;
 import cn.enilu.flash.utils.*;
+import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.request.OapiSnsGetuserinfoBycodeRequest;
 import com.dingtalk.api.response.OapiSnsGetuserinfoBycodeResponse;
@@ -61,7 +61,7 @@ public class AccountController extends BaseController {
     @Value("${dingding.appId}")
     private String dingDingAppId;
 
-    @Value("${dingding.login}")
+    @NacosValue(value = "${dingding.login:true}",autoRefreshed = true)
     private Boolean dingDingLogin;
 
     @Value("${dingding.appSecret}")

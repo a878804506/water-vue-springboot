@@ -75,6 +75,10 @@ public interface Permission {
     String CUSTOMERS_WATER_COST_TO_DAY = "waterCostByToDay";
     // 水务系统  结束
 
+    //pdf解析后下载权限
+    String PDF_SAVE = "pdfSave";
+    String PDF_DOWNLOAD = "pdfDownload";
+
     // 音乐系统  开始
     String MUSIC_SYNC = "musicSync";
     // 音乐系统  结束
