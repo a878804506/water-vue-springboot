@@ -63,6 +63,7 @@
         <itextpdf.version>5.5.13</itextpdf.version>
         <poi.version>4.1.2</poi.version>
         <redis.clients.version>2.9.0</redis.clients.version>
+        <nacos-config-spring-boot.version>0.2.7</nacos-config-spring-boot.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -86,6 +87,11 @@
                 <version>${spring.boot.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.alibaba.boot</groupId>
+                <artifactId>nacos-config-spring-boot-starter</artifactId>
+                <version>${nacos-config-spring-boot.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.alibaba</groupId>
