@@ -19,10 +19,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @author ：enilu
- * @date ：Created in 2019/7/30 23:07
+ * @author ：cyh
+ * @date ：Created in 2020/7/2 23:07
  */
-public class JwtFilter extends BasicHttpAuthenticationFilter {
+public class NoHeaderTokenFilter extends BasicHttpAuthenticationFilter {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -33,7 +33,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
         HttpServletRequest req = (HttpServletRequest) request;
-        System.out.println("JwtFilter---访问的url"+req.getServletPath());
+        System.out.println("NoHeaderTokenFilter---访问的url"+req.getServletPath());
         return true;
     }
 
@@ -43,7 +43,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String authorization = httpServletRequest.getHeader("Authorization");
+        String authorization = httpServletRequest.getParameter("Authorization");
         JwtToken token = new JwtToken(authorization);
         // 提交给realm进行登入，如果错误他会抛出异常并被捕获
         getSubject(request, response).login(token);
@@ -66,7 +66,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             try {
                 executeLogin(request, response);
             } catch (Exception e) {
-                System.out.println("JwtFilter---出错：" + e.getMessage());
+                System.out.println("NoHeaderTokenFilter---出错：" + e.getMessage());
                 return false;
             }
         }
@@ -101,7 +101,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         if (subject.getPrincipal() == null) {
             //没有认证则重定向到登录页面
             saveRequestAndReturnApiAccessError(httpServletRequest, httpServletResponse);
-            System.out.println("JwtFilter---失效的url-->"+httpServletRequest.getServletPath());
+            System.out.println("NoHeaderTokenFilter---失效的url-->"+httpServletRequest.getServletPath());
             return false;
         }
         return true;

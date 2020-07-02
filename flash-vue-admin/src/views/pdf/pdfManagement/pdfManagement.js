@@ -1,5 +1,7 @@
 import {getList, save, updaloadFile} from '@/api/pdf/pdfManagement'
 import request from '@/utils/request'
+import {getApiUrl} from '@/utils/utils'
+import {getToken} from '@/utils/auth'
 
 export default {
   data() {
@@ -237,7 +239,8 @@ export default {
         }
       ],
       progressPdf: 0,
-      progressExcel: 0
+      progressExcel: 0,
+      downloadUrl: ''
     }
   },
   computed: {},
@@ -246,6 +249,7 @@ export default {
   },
   methods: {
     init() {
+      this.downloadUrl = getApiUrl() + '/pdf/management/download'
       this.fetchData()
     },
     fetchData() {
@@ -429,17 +433,12 @@ export default {
             this.fetchData()
           })
         } else {
-          console.log('-----------------')
           return false
         }
       })
     },
     download(id) {
-      let link = document.createElement('a')
-      link.style.display = 'none'
-      link.href = 'onecloud/pdf/management/download?id=' + id
-      document.body.appendChild(link)
-      link.click()
+      window.location.href = this.downloadUrl + '?id=' + id + '&Authorization=' + getToken()
     }
   }
 }

@@ -269,10 +269,16 @@ public class AccountController extends BaseController {
             }
             User user = userService.findByAccount(account);
             if (user == null) {
-                return Rets.failure("该用户不存在");
+                return Rets.failure("该账号不存在");
             }
             if (user.getId().intValue() < 1) {
-                return Rets.failure("不能绑定系统初始用户");
+                return Rets.failure("不能绑定系统初始账号");
+            }
+            if (user.getStatus() == 3) {
+                return Rets.failure("该用户不存在！");
+            }
+            if (user.getStatus() == 2) {
+                return Rets.failure("该账号被冻结不能绑定，请联系管理员！");
             }
             String passwdMd5 = MD5.md5(password, user.getSalt());
             //2,

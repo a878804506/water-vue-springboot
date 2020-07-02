@@ -1,5 +1,7 @@
 package cn.enilu.flash.api.config;
 
+import com.alibaba.nacos.api.config.annotation.NacosValue;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -19,14 +21,18 @@ import java.util.List;
 /**
  * swagger在线文档配置<br>
  * 项目启动后可通过地址：http://host:ip/swagger-ui.html 查看在线文档
- * @version 2018-07-24
  *
  * @author enilu
+ * @version 2018-07-24
  */
 
 @Configuration
 @EnableSwagger2
 public class Swagger2Configuration {
+
+    @NacosValue(value = "${swagger.enable:false}", autoRefreshed = true)
+    private Boolean enable;
+
     @Bean
     public Docket createRestApi() {
         //添加head参数start
@@ -37,6 +43,7 @@ public class Swagger2Configuration {
         //添加head参数end
 
         return new Docket(DocumentationType.SWAGGER_2)
+                .enable(enable)
                 .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("cn.enilu.flash.api.controller"))

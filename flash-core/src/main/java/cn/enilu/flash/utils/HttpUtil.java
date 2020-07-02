@@ -15,25 +15,37 @@
  */
 package cn.enilu.flash.utils;
 
+import cn.enilu.flash.bean.constant.Constant;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Enumeration;
-import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class HttpUtil {
 
     public static String getIp(){
-       return HttpUtil.getRequest().getRemoteHost();
+//       return HttpUtil.getRequest().getRemoteHost();
+
+        HttpServletRequest req = getRequest();
+        String ip = req.getHeader("x-forwarded-for");
+
+        if (ip == null || ip.length() == 0 || Constant.IP_UNKNOW.equalsIgnoreCase(ip)) {
+            ip = req.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || Constant.IP_UNKNOW.equalsIgnoreCase(ip)) {
+            ip = req.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || Constant.IP_UNKNOW.equalsIgnoreCase(ip)) {
+            ip = req.getRemoteAddr();
+        }
+        if (ip == null || ip.length() == 0 || Constant.IPV6_LOCALHOST.equals(ip)) {
+            ip =Constant.IPV4_LOCALHOST;
+        }
+        return ip;
     }
 
     /**

@@ -67,7 +67,7 @@ public class UserController extends BaseController {
             // 判断账号是否重复
             User theUser = userService.findByAccount(user.getAccount());
             if (theUser != null) {
-                throw new ApplicationException(BizExceptionEnum.USER_ALREADY_REG);
+                return Rets.failure(BizExceptionEnum.USER_ALREADY_REG.getMessage());
             }
             // 完善账号信息
             user.setSalt(RandomUtil.getRandomString(5));

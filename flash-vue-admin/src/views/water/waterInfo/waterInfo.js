@@ -1,5 +1,6 @@
 import {createWaterInfo, downloadExcel, checkMeterCode, getWaterInfo} from '@/api/water/waterInfo'
 import {getApiUrl} from '@/utils/utils'
+import {getToken} from '@/utils/auth'
 
 export default {
   data() {
@@ -205,7 +206,7 @@ export default {
         if (this.listQuery.month === 13) {
           this.waterBill.month = 13
         }
-        window.location.href = this.downloadUrl + '?year=' + this.waterBill.year + '&month=' + this.waterBill.month + '&excelFileName=' + this.waterBill.excelFileName
+        window.location.href = this.downloadUrl + '?year=' + this.waterBill.year + '&month=' + this.waterBill.month + '&excelFileName=' + this.waterBill.excelFileName + '&Authorization=' + getToken()
         this.reset()
         this.button.downloadButton = true
       }

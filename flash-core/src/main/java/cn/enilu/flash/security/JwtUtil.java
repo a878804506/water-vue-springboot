@@ -7,6 +7,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -43,6 +44,8 @@ public class JwtUtil {
      * @return token中包含的用户名
      */
     public static String getUsername(String token) {
+        if(StringUtils.isEmpty(token))
+            return null;
         try {
             DecodedJWT jwt = JWT.decode(token);
             return jwt.getClaim("username").asString();

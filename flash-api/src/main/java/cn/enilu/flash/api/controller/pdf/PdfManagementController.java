@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
 
 @RestController
 @RequestMapping("/pdf/management")
@@ -103,53 +104,41 @@ public class PdfManagementController {
         if (null == pdfManagement) {
             return;
         }
-        if(pdfManagement.getPdfStatus() != 1){
+        if (pdfManagement.getPdfStatus() != 1) {
             return;
         }
         OutputStream os = null;
         InputStream is = null;
         try {
-            //取得输出流
-            os = response.getOutputStream();
-            // 清空输出流
-            response.reset();
-            response.setContentType("application/x-download;charset=GBK");
-            response.setHeader("Content-Disposition", "attachment;filename=" + new String(pdfManagement.getCreatePdf().getBytes("utf-8"), "iso-8859-1"));
-            //读取流
-            File f = new File(fileBasePath + pdfManagement.getId() + File.separator + pdfManagement.getCreatePdf());
-            is = new FileInputStream(f);
-            //复制
-            byte[] buff = new byte[1024];
-            int i = is.read(buff);
-            while(i != -1){
-                os.write(buff,0,buff.length);
-                os.flush();
-                i = is.read(buff);
+            response.setCharacterEncoding("UTF-8");
+            // 第一步：设置响应类型
+            response.setContentType("application/force-download");// 应用程序强制下载
+            // 第二读取文件
+            InputStream in = new FileInputStream(fileBasePath + pdfManagement.getId() + File.separator + pdfManagement.getCreatePdf());
+            // 设置响应头，对文件进行url编码
+            String pdfFileName = URLEncoder.encode(pdfManagement.getCreatePdf(), "UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + pdfFileName);
+            response.setContentLength(in.available());
+            // 第三步：老套路，开始copy
+            OutputStream out = response.getOutputStream();
+            byte[] b = new byte[1024];
+            int len = 0;
+            while ((len = in.read(b)) != -1) {
+                out.write(b, 0, len);
             }
-
-//            IOUtils.copy(is, response.getOutputStream());
-//            response.getOutputStream().flush();
         } catch (IOException e) {
-//            return Rets.failure("文件下载失败！" + e.getMessage());
             e.printStackTrace();
             return;
         } finally {
             try {
-                if (is != null) {
+                if (is != null)
                     is.close();
-                }
-            } catch (IOException e) {
-                logger.error(ExceptionUtils.getFullStackTrace(e));
-            }
-            try {
-                if (os != null) {
+                if (os != null)
                     os.close();
-                }
             } catch (IOException e) {
                 logger.error(ExceptionUtils.getFullStackTrace(e));
             }
         }
-//        return Rets.success(pdfManagement.getCreatePdf() + " 文件开始下载");
     }
 
 
