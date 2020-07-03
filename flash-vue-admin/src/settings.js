@@ -2,6 +2,8 @@ module.exports = {
 
   title: '一云智慧',
 
+  showSettings: true,
+
   /**
    * @type {boolean} true | false
    * @description Whether fix the header

@@ -8,12 +8,16 @@
         <tags-view v-if="needTagsView" />
       </div>
       <app-main />
+      <right-panel v-if="rightCard">
+        <settings />
+      </right-panel>
     </div>
   </div>
 </template>
 
 <script>
-import { Navbar, Sidebar, AppMain, TagsView } from './components'
+import RightPanel from '@/components/RightPanel'
+import { Navbar, Sidebar, AppMain, TagsView ,Settings } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
 
 export default {
@@ -22,7 +26,9 @@ export default {
     Navbar,
     Sidebar,
     AppMain,
-    TagsView
+    TagsView,
+    RightPanel,
+    Settings
   },
   mixins: [ResizeMixin],
   computed: {
@@ -37,6 +43,9 @@ export default {
     },
     needTagsView() {
       return this.$store.state.settings.tagsView
+    },
+    rightCard() {
+      return this.$store.state.settings.showSettings
     },
     classObj() {
       return {
