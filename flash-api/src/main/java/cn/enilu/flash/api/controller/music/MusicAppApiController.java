@@ -86,6 +86,8 @@ public class MusicAppApiController {
                        @RequestParam(required = false) Integer platformId) {
         if (0 == searchType) {
             MusicStation musicStation = musicStationService.getOne(id);
+            if(null == musicStation)
+                return Rets.failure("没有获取到播放资源");
             return Rets.success(musicStationService.getMusicById(musicStation.getMusicUrl()));
         } else if (1 == searchType) {
             return Rets.failure("站外参数非法");

@@ -26,28 +26,59 @@
     </div>-->
 
     <div>
-      <h2>我的收藏</h2>
+      <h2>我的收藏
+        <el-button type="primary" icon="el-icon-plus" circle size="mini" @click="beforeFavorite('新建收藏组',true,'')"></el-button>
+      </h2>
+
       <div class="drawer-item">
-        <a @click="change">变换歌曲列表</a>
+        <ul>
+          <li v-for="( item, index ) in favoriteList">
+            <a @click="changeMusicList(item.id)">{{ item.favoriteName }}</a>
+            <el-link icon="el-icon-delete" type="danger" style="float: right" @click="deleteFavorite(item.id)">删除</el-link>
+            <el-link icon="el-icon-edit"  type="warning" style="float: right" @click="beforeFavorite('修改收藏组',true,item)">修改</el-link>
+          </li>
+        </ul>
       </div>
+
+      <el-dialog :title="title" :visible.sync="showFavoriteForm">
+        <el-form >
+          <el-form-item label="收藏组名称">
+            <el-input type="text" maxlength="10" v-model="favorite.favoriteName"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="beforeFavorite('',false,'')">取 消</el-button>
+          <el-button type="primary" @click="addFavorite">确 定</el-button>
+        </div>
+      </el-dialog>
     </div>
 
     <div>
       <h2>站内音乐鉴赏</h2>
-      <aplayer autoplay :music="music" :list="musicList"
+      <aplayer autoplay
+               :music="music"
+               :list="musicList"
                repeat="list"
                :shuffle="shuffle"
                listMaxHeight="600px"
                preload="auto"
                ref="aplayer"
                v-if="flushMusicList == true"
+               :token="token"
+               :serverAddress="serverAddress"
       ></aplayer>
     </div>
   </div>
+
+
+
 </template>
 <script>
+import { getToken } from '@/utils/auth'
+import { getApiUrl } from '@/utils/utils'
 import ThemePicker from '@/components/ThemePicker'
-import aplayer from 'vue-aplayer'
+import aplayer from './diy-vue-aplayer.min'
+import { getFavoriteList, saveOrUpdateFavorite, deleteFavorite, getFavoriteMusicList, getAppMusicUrl } from '@/api/music/musicFavorite'
 
 export default {
   components: {
@@ -56,15 +87,25 @@ export default {
   },
   data() {
     return {
-      music: {
-
-      },
-      musicList: [
-
-      ],
+      music: {},
+      musicList: [],
       flushMusicList: false,
       // 随机播放
-      shuffle: true
+      shuffle: true,
+      // 项目token  音乐插件里面用
+      token: getToken(),
+      //项目地址  音乐插件里面用
+      serverAddress: getApiUrl(),
+      //用户收藏列表
+      favoriteList: [],
+      // 添加收藏的 dialog
+      showFavoriteForm: false,
+      favorite: {
+        id: '',
+        favoriteName: ''
+      },
+      // 卡片名称
+      title: ''
     }
   },
   computed: {
@@ -102,6 +143,9 @@ export default {
       }
     }
   },
+  created() {
+    this.getFavoriteList()
+  },
   methods: {
     themeChange(val) {
       this.$store.dispatch('settings/changeSetting', {
@@ -109,59 +153,88 @@ export default {
         value: val
       })
     },
-    change() {
-      this.musicList = [
-        {
-          title: "红尘来去一场梦",
-          artist: "耳东",
-          src: "http://staticfile.erdongchen.top/blog/music/红尘来去一场梦.mp3",
-          pic: "http://staticfile.erdongchen.top/blog/music/红尘来去一场梦.jpg"
-        },
-        {
-          title: "菊花台",
-          artist: "耳东",
-          src: "http://staticfile.erdongchen.top/blog/music/菊花台.mp3",
-          pic: "http://staticfile.erdongchen.top/blog/music/菊花台.jpg"
-        },
-        {
-          title: "明明就",
-          artist: "耳东",
-          src: "http://staticfile.erdongchen.top/blog/music/明明就.mp3",
-          pic: "http://staticfile.erdongchen.top/blog/music/明明就.jpg"
-        },
-        {
-          title: "你是风儿我是沙",
-          artist: "耳东",
-          src: "http://staticfile.erdongchen.top/blog/music/你是风儿我是沙.mp3",
-          pic: "http://staticfile.erdongchen.top/blog/music/你是风儿我是沙.jpg"
-        },
-        {
-          title: "偏偏喜欢你",
-          artist: "耳东",
-          src: "http://staticfile.erdongchen.top/blog/music/偏偏喜欢你.mp3",
-          pic: "http://staticfile.erdongchen.top/blog/music/偏偏喜欢你.jpg"
-        },
-        {
-          title: "千里之外",
-          artist: "耳东",
-          src: "http://staticfile.erdongchen.top/blog/music/千里之外.mp3",
-          pic: "http://staticfile.erdongchen.top/blog/music/千里之外.jpg"
-        },
-        {
-          title: "青花瓷",
-          artist: "耳东",
-          src: "http://staticfile.erdongchen.top/blog/music/青花瓷.mp3",
-          pic: "http://staticfile.erdongchen.top/blog/music/青花瓷.jpg"
-        }
-      ]
-      if(this.musicList.size != 0){
+    async changeMusicList(favoriteId) {
+      await this.getFavoriteMusicList(favoriteId)
+      if (this.musicList.length == 0) {
+        this.$notify({
+          title: '警告',
+          message: '该收藏组暂无歌曲列表',
+          type: 'warning',
+          position: 'top-left',
+          duration: 3000
+        })
+        return
+      } else {
         this.music = this.musicList[0]
-      }
-      this.flushMusicList = false
-      this.$nextTick(() => {
+        this.music.src = await this.getAppMusicUrl(this.music.id)
         this.flushMusicList = true
+        /*this.$nextTick(() => {
+          this.flushMusicList = true
+        })*/
+      }
+    },
+    async getFavoriteMusicList(favoriteId) {
+      await getFavoriteMusicList({ favoriteId: favoriteId }).then(response => {
+        this.musicList = response.data
       })
-      this.$
+    },
+    async getAppMusicUrl(musicId) {
+      let src = ''
+      await getAppMusicUrl(
+        {
+          id: musicId,
+          searchType: 0
+        }).then(response => {
+        src = response.data
+      })
+      return src
+    },
+    getFavoriteList() {
+      getFavoriteList().then(response => {
+        this.favoriteList = response.data
+      })
+    },
+    addFavorite() {
+      if (this.favorite.favoriteName == null || this.favorite.favoriteName.length == 0) {
+        this.$notify({
+          title: '警告',
+          message: '请输入收藏组名称',
+          type: 'warning',
+          position: 'top-left',
+          duration: 3000
+        })
+        return
+      }
+      saveOrUpdateFavorite(this.favorite).then(response => {
+        this.favoriteList = response.data
+        this.showFavoriteForm = false
+        this.$notify({
+          title: '成功',
+          message: '操作成功',
+          type: 'success',
+          position: 'top-left',
+          duration: 3000
+        })
+      })
+    },
+    beforeFavorite(title, showFavoriteForm, item) {
+      this.title = title
+      this.showFavoriteForm = showFavoriteForm
+      this.favorite.id = item.id
+      this.favorite.favoriteName = item.favoriteName
+    },
+    deleteFavorite(id) {
+      deleteFavorite({ id: id }).then(response => {
+        this.favoriteList = response.data
+        this.showFavoriteForm = false
+        this.$notify({
+          title: '成功',
+          message: '删除成功',
+          type: 'success',
+          position: 'top-left',
+          duration: 3000
+        })
+      })
     }
   }
 }
