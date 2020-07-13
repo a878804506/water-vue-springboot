@@ -70,20 +70,19 @@
     </div>
   </div>
 
-
-
 </template>
+
 <script>
 import { getToken } from '@/utils/auth'
 import { getApiUrl } from '@/utils/utils'
 import ThemePicker from '@/components/ThemePicker'
-import aplayer from './diy-vue-aplayer.min'
 import { getFavoriteList, saveOrUpdateFavorite, deleteFavorite, getFavoriteMusicList, getAppMusicUrl } from '@/api/music/musicFavorite'
+import Aplayer from 'diy-vue-aplayer'
 
 export default {
   components: {
     ThemePicker,
-    aplayer
+    Aplayer
   },
   data() {
     return {
