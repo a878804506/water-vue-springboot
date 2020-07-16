@@ -1,5 +1,6 @@
 package cn.enilu.flash.service.music;
 
+import cn.enilu.flash.bean.constant.cache.Cache;
 import cn.enilu.flash.bean.constant.cache.CacheKey;
 import cn.enilu.flash.bean.entity.music.MusicPlatform;
 import cn.enilu.flash.bean.entity.music.MusicSync;
@@ -61,15 +62,15 @@ public class MusicSyncService {
         return json;
     }
 
-    public String getUnlockCode(){
+    public String getUnlockCode() {
         // 先从缓存中查找
-        String unlockCode = redisCacheDao.get(CacheKey.MUSIC_UNLOCKCODE);
-        if(StringUtils.isEmpty(unlockCode)){
+        String unlockCode = redisCacheDao.hget(Cache.MYKEY, CacheKey.MUSIC_UNLOCKCODE, String.class);
+        if (StringUtils.isEmpty(unlockCode)) {
             // 查询音乐同步任务的信息，里面有unlockCode
             Task task = taskService.get(2l);
             JSONObject jsonObject = JSON.parseObject(task.getData());
             unlockCode = jsonObject.getString("unlockCode");
-            redisCacheDao.set(CacheKey.MUSIC_UNLOCKCODE,unlockCode);
+            redisCacheDao.hset(Cache.MYKEY, CacheKey.MUSIC_UNLOCKCODE, unlockCode);
         }
         return unlockCode;
     }
@@ -77,11 +78,11 @@ public class MusicSyncService {
     public List<MusicPlatform> getPlatformsList() {
         // 先从缓存中查找
         List redisPlatformList = redisCacheDao.get(CacheKey.MUSIC_PLATFORM, List.class);
-        if(null == redisPlatformList){
+        if (null == redisPlatformList) {
             List<MusicPlatform> all = musicPlatformRepository.findAll();
-            redisCacheDao.set(CacheKey.MUSIC_PLATFORM,all);
+            redisCacheDao.set(CacheKey.MUSIC_PLATFORM, all);
             return all;
-        }else{
+        } else {
             return redisPlatformList;
         }
     }

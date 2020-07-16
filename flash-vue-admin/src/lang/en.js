@@ -55,8 +55,14 @@ export default {
 
     //pdf 开始
     pdf: 'PDF Management',
-    pdfManagement: 'PDF Analysis Online'
+    pdfManagement: 'PDF Analysis Online',
     //pdf 结束
+
+    //movie 开始
+    movie: 'Free Movie',
+    movieUrl: 'Movie Url Manage',
+    moviePlay: 'Play Movie'
+    //movie 结束
   },
   navbar: {
     logOut: 'Log Out',

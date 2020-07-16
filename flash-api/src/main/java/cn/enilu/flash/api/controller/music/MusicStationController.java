@@ -2,13 +2,14 @@ package cn.enilu.flash.api.controller.music;
 
 import cn.enilu.flash.bean.constant.factory.PageFactory;
 import cn.enilu.flash.bean.core.BussinessLog;
-import cn.enilu.flash.bean.dictmap.CommonDict;
 import cn.enilu.flash.bean.entity.music.MusicStation;
 import cn.enilu.flash.bean.enumeration.BizExceptionEnum;
+import cn.enilu.flash.bean.enumeration.Permission;
 import cn.enilu.flash.bean.exception.ApplicationException;
 import cn.enilu.flash.bean.vo.front.Rets;
 import cn.enilu.flash.service.music.MusicStationService;
 import cn.enilu.flash.utils.factory.Page;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,6 @@ public class MusicStationController {
     @Autowired
     private MusicStationService musicStationService;
 
-
-
-
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public Object list(@RequestParam(required = false) Integer platform,
                        @RequestParam(required = false) String keyword) {
@@ -38,7 +36,8 @@ public class MusicStationController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
-    @BussinessLog(value = "删除站内音乐", key = "id", dict = CommonDict.class)
+    @BussinessLog(value = "删除站内音乐")
+    @RequiresPermissions(value = {Permission.MUSIC_STATION_DELETE})
     public Object remove(String id) {
         if (id == null) {
             throw new ApplicationException(BizExceptionEnum.REQUEST_NULL);
@@ -57,10 +56,12 @@ public class MusicStationController {
 
     /**
      * 站内获取音乐url
+     * web站内音乐 试听按钮
      * @param id
      * @return
      */
     @RequestMapping(value = "/getMusicById", method = RequestMethod.GET)
+    @RequiresPermissions(value = {Permission.MUSIC_STATION_LISTEN})
     public Object getMusicById(@RequestParam String id) {
         MusicStation musicStation = musicStationService.getOne(id);
         if(null == musicStation){

@@ -1,6 +1,9 @@
 package cn.enilu.flash.security;
 
+import cn.enilu.flash.bean.vo.SpringContextHolder;
 import cn.enilu.flash.bean.vo.front.Rets;
+import cn.enilu.flash.cache.TokenCache;
+import cn.enilu.flash.utils.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.LogoutFilter;
@@ -24,6 +27,8 @@ public class SystemLogoutFilter extends LogoutFilter {
         Subject subject = getSubject(request, response);
         try {
             subject.logout();
+            TokenCache tokenCache = SpringContextHolder.getBean(TokenCache.class);
+            tokenCache.remove(HttpUtil.getToken());
         } catch (Exception ex) {
             logger.error("退出登录错误",ex);
         }

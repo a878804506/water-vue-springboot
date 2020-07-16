@@ -9,22 +9,13 @@ import javax.annotation.Resource;
 import java.io.Serializable;
 
 /**
- * EhcacheDao
+ * RedisCacheDao
  *
- * @author enilu
+ * @author cyh
  * @version 2018/9/12 0012
  */
 @Component
 public class RedisCacheDao implements CacheDao {
-    /**
-     * 缓存常量，永不过期
-     */
-    public static  final String CONSTANT = "CONSTANT";
-
-    /**
-     * 缓存用户信息、token信息
-     */
-    public static  final String SESSION = "SESSION";
 
     @Resource
     private CacheManager cacheManager;
@@ -50,27 +41,27 @@ public class RedisCacheDao implements CacheDao {
     }
     @Override
     public void set(Serializable key, Object val) {
-        Cache cache = cacheManager.getCache(CONSTANT);
+        Cache cache = cacheManager.getCache(cn.enilu.flash.bean.constant.cache.Cache.CONSTANT);
         cache.put(key,val);
     }
 
     @Override
     public <T>T get(Serializable key,Class<T> klass) {
-        return cacheManager.getCache(CONSTANT).get(String.valueOf(key),klass);
+        return cacheManager.getCache(cn.enilu.flash.bean.constant.cache.Cache.CONSTANT).get(String.valueOf(key),klass);
     }
 
     @Override
     public String get(Serializable key) {
-        return cacheManager.getCache(CONSTANT).get(String.valueOf(key),String.class);
+        return cacheManager.getCache(cn.enilu.flash.bean.constant.cache.Cache.CONSTANT).get(String.valueOf(key),String.class);
     }
 
     @Override
     public void del(Serializable key) {
-        cacheManager.getCache(CONSTANT).put(String.valueOf(key),null);
+        cacheManager.getCache(cn.enilu.flash.bean.constant.cache.Cache.CONSTANT).evict(String.valueOf(key));
     }
 
     @Override
     public void hdel(Serializable key, Serializable k) {
-        cacheManager.getCache(String.valueOf(key)).put(String.valueOf(k),null);
+        cacheManager.getCache(String.valueOf(key)).evict(String.valueOf(k));
     }
 }

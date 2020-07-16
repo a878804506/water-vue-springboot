@@ -81,5 +81,7 @@ public interface Permission {
 
     // 音乐系统  开始
     String MUSIC_SYNC = "musicSync";
+    String MUSIC_STATION_DELETE = "musicStationDelete";
+    String MUSIC_STATION_LISTEN = "musicStationListen";
     // 音乐系统  结束
 }

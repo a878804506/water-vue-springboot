@@ -1,5 +1,6 @@
 package cn.enilu.flash.cache.impl;
 
+import cn.enilu.flash.bean.constant.cache.Cache;
 import cn.enilu.flash.bean.entity.system.Cfg;
 import cn.enilu.flash.cache.CacheDao;
 import cn.enilu.flash.cache.ConfigCache;
@@ -28,7 +29,7 @@ public class ConfigCacheImpl implements ConfigCache {
 
     @Override
     public Object get(String key) {
-        return (String) cacheDao.hget(RedisCacheDao.CONSTANT,key);
+        return (String) cacheDao.hget(Cache.CONSTANT,key);
     }
 
     @Override
@@ -55,12 +56,12 @@ public class ConfigCacheImpl implements ConfigCache {
 
     @Override
     public void set(String key, Object val) {
-        cacheDao.hset(RedisCacheDao.CONSTANT,key,val);
+        cacheDao.hset(Cache.CONSTANT,key,val);
     }
 
     @Override
     public void del(String key, String val) {
-        cacheDao.hdel(RedisCacheDao.CONSTANT,val);
+        cacheDao.hdel(Cache.CONSTANT,val);
     }
 
     @Override

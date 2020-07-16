@@ -1,5 +1,6 @@
 package cn.enilu.flash.cache;
 
+import cn.enilu.flash.bean.constant.cache.Cache;
 import cn.enilu.flash.bean.core.ShiroUser;
 import cn.enilu.flash.cache.impl.RedisCacheDao;
 import cn.enilu.flash.utils.HttpUtil;
@@ -16,26 +17,26 @@ public class TokenCache {
     private RedisCacheDao redisCacheDao;
 
     public void put(String token, Long idUser) {
-        redisCacheDao.hset(RedisCacheDao.SESSION, token, idUser);
+        redisCacheDao.hset(Cache.SESSION, token, idUser);
     }
 
     public Long get(String token) {
-        return redisCacheDao.hget(RedisCacheDao.SESSION, token, Long.class);
+        return redisCacheDao.hget(Cache.SESSION, token, Long.class);
     }
 
     public Long getIdUser() {
-        return redisCacheDao.hget(RedisCacheDao.SESSION, HttpUtil.getToken(), Long.class);
+        return redisCacheDao.hget(Cache.SESSION, HttpUtil.getToken(), Long.class);
     }
 
     public void remove(String token) {
-        redisCacheDao.hdel(RedisCacheDao.SESSION, token + "user");
+        redisCacheDao.hdel(Cache.SESSION, token);
     }
 
     public void setUser(String token, ShiroUser shiroUser) {
-        redisCacheDao.hset(RedisCacheDao.SESSION, token + "user", shiroUser);
+        redisCacheDao.hset(Cache.SESSION, token, shiroUser);
     }
 
     public ShiroUser getUser(String token) {
-        return redisCacheDao.hget(RedisCacheDao.SESSION, token + "user", ShiroUser.class);
+        return redisCacheDao.hget(Cache.SESSION, token, ShiroUser.class);
     }
 }

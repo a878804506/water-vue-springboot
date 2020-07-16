@@ -1,5 +1,6 @@
 package cn.enilu.flash.cache.impl;
 
+import cn.enilu.flash.bean.constant.cache.Cache;
 import cn.enilu.flash.bean.constant.cache.CacheKey;
 import cn.enilu.flash.bean.entity.system.Dict;
 import cn.enilu.flash.cache.CacheDao;
@@ -25,7 +26,7 @@ public class DictCacheImpl implements DictCache {
 
     @Override
     public List<Dict> getDictsByPname(String dictName) {
-        return (List<Dict>) cacheDao.hget(RedisCacheDao.CONSTANT,CacheKey.DICT+dictName,List.class);
+        return (List<Dict>) cacheDao.hget(Cache.CONSTANT,CacheKey.DICT+dictName,List.class);
     }
 
     @Override
@@ -53,12 +54,12 @@ public class DictCacheImpl implements DictCache {
 
     @Override
     public Object get(String key) {
-        return cacheDao.hget(RedisCacheDao.CONSTANT,CacheKey.DICT+key);
+        return cacheDao.hget(Cache.CONSTANT,CacheKey.DICT+key);
     }
 
     @Override
     public void set(String key, Object val) {
-        cacheDao.hset(RedisCacheDao.CONSTANT,CacheKey.DICT+key,val);
+        cacheDao.hset(Cache.CONSTANT,CacheKey.DICT+key,val);
 
     }
 }
