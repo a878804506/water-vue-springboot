@@ -8,10 +8,7 @@ import cn.enilu.flash.service.task.JobExecuter;
 import cn.enilu.flash.utils.ExcelUtil;
 import cn.enilu.flash.utils.ZipUtil;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfImportedPage;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -134,9 +131,11 @@ public class AnalysisPdfJob extends JobExecuter {
             //生成的pdf文件列表
             List<File> createPdfFIleList = new ArrayList<>();
 
-            Document document = new Document();
+            PdfReader inputPDF = null;
+            Document document = null;
+            PdfCopy copy = null;
             try {
-                PdfReader inputPDF = new PdfReader(new FileInputStream(pdfsPath + File.separator + pdfManagement.getOldPdf()));
+                inputPDF = new PdfReader(new FileInputStream(pdfsPath + File.separator + pdfManagement.getOldPdf()));
                 int totalPages = inputPDF.getNumberOfPages();
 
                 if (totalPages > 0) {
@@ -162,7 +161,18 @@ public class AnalysisPdfJob extends JobExecuter {
                         }else{
                             newPdfName = "第"+(++count)+"个未匹配到的pdf";
                         }
-                        OutputStream outputStream = new FileOutputStream(pdfsPath + File.separator + newPdfName + ".pdf");
+
+                        document = new Document(inputPDF.getPageSize(1));
+                        copy = new PdfCopy(document,new FileOutputStream(pdfsPath + File.separator + newPdfName + ".pdf"));
+                        document.open();
+                        document.newPage();
+                        PdfImportedPage page = copy.getImportedPage(inputPDF,p);
+                        copy.addPage(page);
+
+                        document.close();
+                        copy.close();
+
+                        /*OutputStream outputStream = new FileOutputStream(pdfsPath + File.separator + newPdfName + ".pdf");
                         PdfWriter writer = PdfWriter.getInstance(document, outputStream);
                         document.open();
                         PdfContentByte cb = writer.getDirectContent(); // Holds the PDF data
@@ -172,7 +182,7 @@ public class AnalysisPdfJob extends JobExecuter {
                         cb.addTemplate(page, 0, 0);
                         outputStream.flush();
                         document.close();
-                        outputStream.close();
+                        outputStream.close();*/
 
                         File pdfFile = new File(pdfsPath + File.separator + newPdfName + ".pdf");
                         createPdfFIleList.add(pdfFile);
@@ -182,8 +192,8 @@ public class AnalysisPdfJob extends JobExecuter {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                if (document.isOpen())
-                    document.close();
+                if (inputPDF != null)
+                    inputPDF.close();
             }
             return createPdfFIleList;
         }
