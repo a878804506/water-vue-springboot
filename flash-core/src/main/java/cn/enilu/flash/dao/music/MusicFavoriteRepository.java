@@ -11,5 +11,6 @@ public interface MusicFavoriteRepository extends BaseRepository<MusicFavorite,Lo
 
     List<MusicFavorite> findByFavoriteUserId(Long userId);
 
+    MusicFavorite findByIdAndFavoriteUserId(Long favoriteId, Long userId);
 }
 

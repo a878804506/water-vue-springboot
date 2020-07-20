@@ -22,7 +22,8 @@
           <el-button type="primary" size="mini" icon="el-icon-refresh" @click.native="reset">{{ $t('button.reset') }}
           </el-button>
           <el-button type="primary" size="mini" icon="el-icon-service" @click.native="getMusicById">试听</el-button>
-          <el-button type="danger" size="mini" icon="el-icon-delete" @click.native="remove">{{ $t('button.delete') }}
+          <el-button type="danger" size="mini" icon="el-icon-delete" @click.native="remove" v-show="showDeleteBtn">{{
+            $t('button.delete') }}
           </el-button>
         </el-form-item>
         <el-form-item style="float: right">
@@ -44,6 +45,13 @@
           {{scope.row.singers}}
         </template>
       </el-table-column>
+      <el-table-column label="音乐品质">
+        <template slot-scope="scope">
+          <span v-if="scope.row.musicType === 1">标准品质</span>
+          <span v-if="scope.row.musicType === 2">高品质</span>
+          <span v-if="scope.row.musicType === 3">无损品质</span>
+        </template>
+      </el-table-column>
       <el-table-column label="图片地址">
         <template slot-scope="scope">
           <el-image :src="scope.row.picUrl" style="width: 60px;height:60px;border-radius: 100px" fit="fit"></el-image>
@@ -54,7 +62,7 @@
           {{platformDatas[scope.row.platformId-1].nameCn}}
         </template>
       </el-table-column>
-      <el-table-column label="有高品质音乐?">
+      <!--<el-table-column label="有高品质音乐?">
         <template slot-scope="scope">
           {{scope.row.hasHQ}}
         </template>
@@ -78,24 +86,43 @@
         <template slot-scope="scope">
           {{scope.row.albumId}}
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column label="专辑名称">
         <template slot-scope="scope">
           {{scope.row.albumName}}
         </template>
       </el-table-column>
-      <el-table-column label="音乐类型">
-        <template slot-scope="scope">
-          <span v-if="scope.row.musicType === 1">标准品质</span>
-          <span v-if="scope.row.musicType === 2">高品质</span>
-          <span v-if="scope.row.musicType === 3">无损品质</span>
-        </template>
-      </el-table-column>
+
       <!--<el-table-column label="音乐播放地址">
         <template slot-scope="scope">
           {{scope.row.musicUrl}}
         </template>
       </el-table-column>-->
+
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-popover
+            placement="top"
+            width="200"
+            :value="visible">
+            <P v-if="scope.row.userFavorite.isUserFavorite == false">收藏到...</P>
+            <P v-if="scope.row.userFavorite.isUserFavorite == true">取消收藏?</P>
+            <el-select v-model="selectedFavorite" size="medium" style="width: 150px" v-if="scope.row.userFavorite.isUserFavorite == false">
+              <el-option
+                v-for="item in favoriteList"
+                :key="item.id"
+                :label="item.favoriteName"
+                :value="item.id">
+              </el-option>
+            </el-select>
+            <div style="text-align: right;margin: 10px">
+              <el-button size="mini" type="primary" @click="optFavorite(scope.row)">确定</el-button>
+            </div>
+            <el-button slot="reference" icon="el-icon-star-off" circle
+                       :type="scope.row.userFavorite.isUserFavorite == false?'':'danger'"></el-button>
+          </el-popover>
+        </template>
+      </el-table-column>
     </el-table>
 
     <el-pagination

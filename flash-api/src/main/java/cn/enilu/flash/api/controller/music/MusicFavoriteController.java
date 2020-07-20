@@ -7,6 +7,7 @@ import cn.enilu.flash.bean.enumeration.BizExceptionEnum;
 import cn.enilu.flash.bean.exception.ApplicationException;
 import cn.enilu.flash.bean.vo.front.Rets;
 import cn.enilu.flash.service.music.MusicFavoriteService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class MusicFavoriteController {
     @RequestMapping(method = RequestMethod.POST)
     @BussinessLog(value = "新增编辑音乐收藏", key = "name", dict = CommonDict.class)
     public Object save(@ModelAttribute MusicFavorite tMusicFavorite) {
+        if(StringUtils.isEmpty(tMusicFavorite.getFavoriteName())){
+            return Rets.failure("参数非法！");
+        }
         if (tMusicFavorite.getId() == null) {
             List<MusicFavorite> favoriteList = musicFavoriteService.getFavoriteList();
             if(null != favoriteList && favoriteList.size() >= 10)

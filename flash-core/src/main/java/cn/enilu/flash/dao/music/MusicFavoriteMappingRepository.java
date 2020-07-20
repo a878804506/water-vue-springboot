@@ -10,5 +10,8 @@ import java.util.List;
 public interface MusicFavoriteMappingRepository extends BaseRepository<MusicFavoriteMapping,Long>{
 
     List<MusicFavoriteMapping> findByFavoriteId(Long favoriteId);
+
+    void deleteByMusicStationId(String musicStationId);
+
 }
 

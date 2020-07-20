@@ -1,14 +1,16 @@
 package cn.enilu.flash.service.music;
 
 
+import cn.enilu.flash.bean.entity.music.MusicFavorite;
+import cn.enilu.flash.bean.entity.music.MusicFavoriteMapping;
 import cn.enilu.flash.bean.entity.music.MusicStation;
+import cn.enilu.flash.cache.impl.RedisCacheDao;
 import cn.enilu.flash.dao.music.MusicStationRepository;
 import cn.enilu.flash.service.BaseService;
 import cn.enilu.flash.utils.StringUtil;
 import cn.enilu.flash.utils.factory.Page;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.net.URL;
-import java.util.Date;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -34,7 +35,13 @@ public class MusicStationService extends BaseService<MusicStation, Long, MusicSt
     @Autowired
     private MusicStationRepository musicStationRepository;
     @Autowired
+    private MusicFavoriteService musicFavoriteService;
+    @Autowired
+    private MusicFavoriteMappingService musicFavoriteMappingService;
+    @Autowired
     private StringRedisTemplate redisMusicTemplate;
+    @Autowired
+    private RedisCacheDao redisCacheDao;
 
     @Value("${aliyun.sdk.oss.Endpoint}")
     private String aliyunSdkOss;
@@ -70,8 +77,30 @@ public class MusicStationService extends BaseService<MusicStation, Long, MusicSt
             }
         };
         org.springframework.data.domain.Page<MusicStation> pageResult = musicStationRepository.findAll(specification, pageable);
+        List<MusicStation> result = pageResult.getContent();
+
+        List<MusicFavoriteMapping> resultMapping = new ArrayList<>();
+        musicFavoriteService.getFavoriteList().forEach(value -> {
+            resultMapping.addAll(musicFavoriteMappingService.getFavoriteMusicMappings(value.getId()));
+        });
+        result.forEach( musicStation -> {
+            Map<String,Object> userFavorite = new HashMap<>();
+            userFavorite.put("isUserFavorite",false);
+            musicStation.setUserFavorite(userFavorite);
+            for(MusicFavoriteMapping temp : resultMapping){
+                if(musicStation.getId().equals(temp.getMusicStationId())){
+                    MusicFavorite musicFavorite = musicFavoriteService.getFavoriteByIdAndUserId(temp.getFavoriteId());
+                    userFavorite.put("isUserFavorite",true);
+                    userFavorite.put("favoriteId",temp.getFavoriteId());
+                    userFavorite.put("favoriteName",musicFavorite.getFavoriteName());
+                    musicStation.setUserFavorite(userFavorite);
+                    break;
+                }
+            }
+        });
+
         page.setTotal(Integer.valueOf(pageResult.getTotalElements() + ""));
-        page.setRecords(pageResult.getContent());
+        page.setRecords(result);
         return page;
     }
 

@@ -194,7 +194,7 @@ export default {
       })
     },
     addFavorite() {
-      if (this.favorite.favoriteName == null || this.favorite.favoriteName.length == 0) {
+      if (this.favorite.favoriteName === '' || this.favorite.favoriteName.length == 0) {
         this.$notify({
           title: '警告',
           message: '请输入收藏组名称',

@@ -66,12 +66,14 @@ public class RoleService extends BaseService<Role,Long,RoleRepository> {
         relationRepository.deleteByRoleId(roleId);
 
         // 添加新的权限
+        List<Relation> relations = new ArrayList<>();
         for (Long id : Convert.toLongArray(true, Convert.toStrArray(",", ids))) {
-            Relation relation = new Relation();
-            relation.setRoleid(roleId);
-            relation.setMenuid(id);
-            relationRepository.save(relation);
+            Relation temp = new Relation();
+            temp.setRoleid(roleId);
+            temp.setMenuid(id);
+            relations.add(temp);
         }
+        relationRepository.saveAll(relations);
     }
 
     public void delRoleById(Long roleId) {

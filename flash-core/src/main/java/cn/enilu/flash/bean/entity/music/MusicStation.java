@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @ClassName MusicStation
@@ -80,6 +81,10 @@ public class MusicStation {
     // 搜索平台类型 站内、站外
     @Transient
     private int searchType;
+
+    // 查询列表时 附带个人收藏信息情况
+    @Transient
+    private Map<String,Object> userFavorite;
 
     public MusicStation(String id, String name, String singers, String picUrl,
                         Boolean hasHQ, Boolean hasSQ, Boolean hasMV, Boolean hasAlbum,
