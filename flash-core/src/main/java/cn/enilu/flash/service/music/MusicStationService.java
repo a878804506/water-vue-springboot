@@ -81,7 +81,13 @@ public class MusicStationService extends BaseService<MusicStation, Long, MusicSt
 
         List<MusicFavoriteMapping> resultMapping = new ArrayList<>();
         musicFavoriteService.getFavoriteList().forEach(value -> {
-            resultMapping.addAll(musicFavoriteMappingService.getFavoriteMusicMappings(value.getId()));
+            LinkedHashSet<String> favoriteMusicMappings = musicFavoriteMappingService.getFavoriteMusicMappings(value.getId());
+            favoriteMusicMappings.forEach(musicStationId -> {
+                MusicFavoriteMapping temp = new MusicFavoriteMapping();
+                temp.setMusicStationId(musicStationId);
+                temp.setFavoriteId(value.getId());
+                resultMapping.add(temp);
+            });
         });
         result.forEach( musicStation -> {
             Map<String,Object> userFavorite = new HashMap<>();

@@ -60,7 +60,7 @@
                :list="musicList"
                repeat="list"
                :shuffle="shuffle"
-               listMaxHeight="600px"
+               listMaxHeight="500px"
                preload="auto"
                ref="aplayer"
                v-if="flushMusicList == true"

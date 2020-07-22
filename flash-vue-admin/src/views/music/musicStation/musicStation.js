@@ -2,7 +2,7 @@ import { remove, getList, getMusicById } from '@/api/music/musicStation'
 import { getPlatformsList } from '@/api/music/musicSync'
 import store from '@/store'
 import { getFavoriteList } from '@/api/music/musicFavorite'
-import { saveOrUpdateFavoriteMapping } from '@/api/music/musicFavoriteMapping'
+import { saveOrUpdateFavoriteMapping, saveFavoriteMappingList } from '@/api/music/musicFavoriteMapping'
 
 export default {
   data() {
@@ -29,8 +29,16 @@ export default {
       selectedFavorite: '',
       // 用户收藏组集合
       favoriteList: [],
-      // 收藏/取消收藏按钮的悬停状态按钮
-      visible: false
+      // 收藏到。。。弹出框
+      favoriteDialog: false,
+      // 待收藏音乐id (单个收藏)
+      addFavoriteMusicId: '',
+
+      selectedRow: [],
+      // 表格多选框 显示与隐藏
+      moreSelectBox: true,
+      // 收藏、批量收藏的互斥按钮，提交收藏时显示的按钮不一样 true：显示收藏按钮，false：显示批量收藏按钮
+      showAddOrAddAll: true
     }
   },
   filters: {
@@ -92,41 +100,95 @@ export default {
         })
       }
     },
-    optFavorite(music) {
-      this.visible = false
-      console.log(music)
-      let isFavorite = false
-      if (music.userFavorite.isUserFavorite === false) {
-        if (this.selectedFavorite === '') {
+    delFavorite(music, e) {
+      let btn = e.currentTarget
+      btn.disabled = true
+      this.$confirm('取消收藏？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        saveOrUpdateFavoriteMapping({
+          favoriteId: this.selectedFavorite,
+          musicStationId: music.id,
+          isFavorite: false,
+          page: this.listQuery.page,
+          limit: this.listQuery.limit,
+          platform: this.listQuery.platform,
+          keyword: this.listQuery.keyword
+        }).then(response => {
           this.$message({
-            message: '请选择收藏列表',
-            type: 'warning'
+            message: '已取消收藏',
+            type: 'success'
           })
-          return
-        }
-        isFavorite = true
+          this.list = response.data.records
+          btn.disabled = false
+        })
+      }).catch(() => {
+        btn.disabled = false
+      })
+    },
+    beforeAddFavorite(music) {
+      this.favoriteDialog = true
+      this.showAddOrAddAll = true
+      this.addFavoriteMusicId = music.id
+    },
+    addFavorite() {
+      if (this.selectedFavorite === '') {
+        this.$message({
+          message: '请选择收藏列表',
+          type: 'warning'
+        })
+        return
       }
       saveOrUpdateFavoriteMapping({
         favoriteId: this.selectedFavorite,
-        musicStationId: music.id,
-        isFavorite: isFavorite,
+        musicStationId: this.addFavoriteMusicId,
+        isFavorite: true,
         page: this.listQuery.page,
         limit: this.listQuery.limit,
         platform: this.listQuery.platform,
         keyword: this.listQuery.keyword
       }).then(response => {
-        if (response.code === 20000) {
-          this.$message({
-            message: response.msg,
-            type: 'success'
-          })
-          this.list = response.data.records
-        } else {
-          this.$message({
-            message: response.msg,
-            type: 'warning'
-          })
-        }
+        this.$message({
+          message: '已收藏',
+          type: 'success'
+        })
+        this.favoriteDialog = false
+        this.list = response.data.records
+      })
+    },
+    showMoreSelect() {
+      this.moreSelectBox = false
+    },
+    beforeAddFavoriteList() {
+      this.favoriteDialog = true
+      this.showAddOrAddAll = false
+    },
+    addFavoriteList() {
+      this.moreSelectBox = true
+      this.favoriteDialog = false
+      console.log(this.selectedRow)
+      if (this.selectedRow.length == 0) {
+        return
+      }
+      var ids = []
+      this.selectedRow.forEach(item => {
+        ids.push(item.id)
+      })
+      saveFavoriteMappingList({
+        favoriteId: this.selectedFavorite,
+        musicStationIds: JSON.stringify(ids),
+        page: this.listQuery.page,
+        limit: this.listQuery.limit,
+        platform: this.listQuery.platform,
+        keyword: this.listQuery.keyword
+      }).then(response => {
+        this.$message({
+          message: '批量收藏成功',
+          type: 'success'
+        })
+        this.list = response.data.records
       })
     },
     getFavoriteList() {
@@ -164,6 +226,9 @@ export default {
     },
     handleCurrentChange(currentRow, oldCurrentRow) {
       this.selRow = currentRow
+    },
+    handleSelectionChange(selectedRow) {
+      this.selectedRow = selectedRow
     },
     checkSel() {
       if (this.selRow && this.selRow.id) {

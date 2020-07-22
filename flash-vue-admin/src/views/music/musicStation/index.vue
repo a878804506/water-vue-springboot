@@ -22,9 +22,11 @@
           <el-button type="primary" size="mini" icon="el-icon-refresh" @click.native="reset">{{ $t('button.reset') }}
           </el-button>
           <el-button type="primary" size="mini" icon="el-icon-service" @click.native="getMusicById">试听</el-button>
-          <el-button type="danger" size="mini" icon="el-icon-delete" @click.native="remove" v-show="showDeleteBtn">{{
-            $t('button.delete') }}
+          <el-button type="danger" size="mini" icon="el-icon-delete" @click.native="remove" v-show="showDeleteBtn">{{$t('button.delete') }}
           </el-button>
+
+          <el-button type="warning" size="mini" icon="el-icon-star-off" @click="showMoreSelect()" v-show="moreSelectBox">批量收藏</el-button>
+          <el-button type="success" size="mini" icon="el-icon-check" @click="beforeAddFavoriteList()" v-show="!moreSelectBox">确认收藏</el-button>
         </el-form-item>
         <el-form-item style="float: right">
           <audio ref="audio" :src="musicEntity.src" controls="controls"></audio>
@@ -34,7 +36,9 @@
     </div>
 
     <el-table :data="list" v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row
-              @current-change="handleCurrentChange">
+              @current-change="handleCurrentChange"
+              @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="70" v-if="!moreSelectBox"></el-table-column>
       <el-table-column label="歌曲名称">
         <template slot-scope="scope">
           {{scope.row.name}}
@@ -101,26 +105,10 @@
 
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-popover
-            placement="top"
-            width="200"
-            :value="visible">
-            <P v-if="scope.row.userFavorite.isUserFavorite == false">收藏到...</P>
-            <P v-if="scope.row.userFavorite.isUserFavorite == true">取消收藏?</P>
-            <el-select v-model="selectedFavorite" size="medium" style="width: 150px" v-if="scope.row.userFavorite.isUserFavorite == false">
-              <el-option
-                v-for="item in favoriteList"
-                :key="item.id"
-                :label="item.favoriteName"
-                :value="item.id">
-              </el-option>
-            </el-select>
-            <div style="text-align: right;margin: 10px">
-              <el-button size="mini" type="primary" @click="optFavorite(scope.row)">确定</el-button>
-            </div>
-            <el-button slot="reference" icon="el-icon-star-off" circle
-                       :type="scope.row.userFavorite.isUserFavorite == false?'':'danger'"></el-button>
-          </el-popover>
+          <el-button icon="el-icon-star-off" circle
+                     type="danger" @click="delFavorite(scope.row,$event)" v-show="scope.row.userFavorite.isUserFavorite == true"></el-button>
+          <el-button icon="el-icon-star-off" circle
+                     type="" @click="beforeAddFavorite(scope.row)" v-show="scope.row.userFavorite.isUserFavorite == false"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -136,6 +124,29 @@
       @prev-click="fetchPrev"
       @next-click="fetchNext">
     </el-pagination>
+
+    <el-dialog
+      title="收藏到..."
+      :visible.sync="favoriteDialog"
+      width="14%">
+      <el-row>
+        <el-col :span="12">
+          <el-select v-model="selectedFavorite" size="medium" style="width: 150px" >
+            <el-option
+              v-for="item in favoriteList"
+              :key="item.id"
+              :label="item.favoriteName"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-col>
+      </el-row>
+      <el-row style="margin-top: 10px">
+        <el-button type="primary" @click="addFavorite" v-show="showAddOrAddAll">收藏</el-button>
+        <el-button type="primary" @click="addFavoriteList" v-show="!showAddOrAddAll">批量收藏</el-button>
+        <el-button @click.native="favoriteDialog = false">取消</el-button>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
