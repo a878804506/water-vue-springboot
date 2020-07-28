@@ -50,6 +50,7 @@ export default {
     music: '一云音乐',
     musicSync: '网络音乐同步',
     musicSyncTask: '音乐同步任务',
+    musicNetwork: '网络音乐',
     musicStation: '站内音乐',
     //音乐 结束
 

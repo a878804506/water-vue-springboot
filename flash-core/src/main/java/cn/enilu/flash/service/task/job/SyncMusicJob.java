@@ -3,10 +3,11 @@ package cn.enilu.flash.service.task.job;
 import cn.enilu.flash.bean.entity.music.MusicPlatform;
 import cn.enilu.flash.bean.entity.music.MusicStation;
 import cn.enilu.flash.bean.entity.music.MusicSync;
-import cn.enilu.flash.dao.music.MusicPlatformRepository;
+import cn.enilu.flash.bean.entity.system.SysUrl;
 import cn.enilu.flash.dao.music.MusicStationRepository;
 import cn.enilu.flash.dao.music.MusicSyncRepository;
 import cn.enilu.flash.service.music.MusicSyncService;
+import cn.enilu.flash.service.system.SysUrlService;
 import cn.enilu.flash.service.task.JobExecuter;
 import cn.enilu.flash.utils.HttpClientUtil;
 import cn.enilu.flash.utils.ToolUtil;
@@ -62,32 +63,38 @@ public class SyncMusicJob extends JobExecuter {
     private MusicSyncService musicSyncService;
 
     @Autowired
-    private MusicPlatformRepository musicPlatformRepository;
-
-    @Autowired
     private MusicStationRepository musicStationRepository;
 
+    @Autowired
+    private SysUrlService sysUrlService;
+
+    /**
+     * 音乐平台列表
+     */
     private Map<String, Integer> musicPlatformMap = new HashMap<>();
+
+    /**
+     * url转义列表
+     */
+    private List<SysUrl> urlSymbolList = new ArrayList<>();
 
     private OSS ossClient = null;
 
     @Override
     public void execute(Map<String, Object> dataMap) throws Exception {
 
-        List<MusicPlatform> musicPlatformList = musicPlatformRepository.findAll();
+        List<MusicPlatform> musicPlatformList = musicSyncService.getPlatformsList();
         for (MusicPlatform temp : musicPlatformList) {
             musicPlatformMap.put(temp.getNameEn(), temp.getId());
         }
-
+        urlSymbolList = sysUrlService.getUrlSymbolList();
         // 查找 0待同步，2同步失败的数据   备注：1同步成功 3没有相应品质的音乐资源  4指定条件下没有找到该歌曲
         List<MusicSync> notSuccessSongs = musicSyncRepository.findBySyncStatusIn(Arrays.asList(0, 2));
 
         if (notSuccessSongs.size() != 0) {
             ossClient = new OSSClientBuilder().build(aliyunSdkOss, aliyunSdkOssAccessKeyId, aliyunSdkOssAccessKeySecret);
-
             Map<String, String> header = new HashMap<>();
             header.put("unlockCode", dataMap.get("unlockCode").toString());
-
             getPlayerUrls(notSuccessSongs, header);
         }
         if (ossClient != null) {
@@ -120,7 +127,7 @@ public class SyncMusicJob extends JobExecuter {
                     continue;
                 }
                 // 获取歌曲
-                String song = HttpClientUtil.doGet(ToolUtil.replaceTemplate(musicSongInfoUrl, musicSync.getPlatform(), musicSync.getId()), header, null);
+                String song = HttpClientUtil.doGet(ToolUtil.replaceTemplate(musicSongInfoUrl, musicSync.getPlatform(), getTransformationUrl(musicSync.getId())), header, null);
                 JSONObject songJSON = (JSONObject) JSON.parse(song);
                 if (500 == songJSON.getBigInteger("code").intValue()) {
                     logger.error("根据id获取歌曲时出错" + musicSync.toString());
@@ -133,11 +140,10 @@ public class SyncMusicJob extends JobExecuter {
                     musicSync.setSyncStatus(3);
                     continue;
                 }
-
-                Thread.sleep(1051);
+                Thread.sleep(500);
 
                 String songPlayerUrl = HttpClientUtil.doGet(ToolUtil.replaceTemplate(musicSongPlayerUrl, musicSync.getPlatform(),
-                        realSong.get("id").toString(), musicSync.getSyncType()), header, null);
+                        getTransformationUrl(realSong.get("id").toString()), musicSync.getSyncType()), header, null);
 
                 JSONObject songPlayerData = (JSONObject) JSON.parse(songPlayerUrl);
                 if (500 == songPlayerData.getBigInteger("code").intValue()) {
@@ -148,9 +154,7 @@ public class SyncMusicJob extends JobExecuter {
                 String playerUrl = songPlayerData.getJSONArray("data").get(0).toString();
 
                 // 成功获取到下载链接后的操作
-
-
-                MusicStation temp = new MusicStation(musicSync.getId(), musicSync.getName(), musicSync.getSingers(), realSong.get("picUrl").toString(),
+                MusicStation temp = new MusicStation(getTransformationUrl(musicSync.getId()), musicSync.getName(), musicSync.getSingers(), realSong.get("picUrl").toString(),
                         musicSync.getHasHQ(), musicSync.getHasSQ(), musicSync.getHasMV(), musicSync.getHasAlbum(), musicSync.getAlbumId(), musicSync.getAlbumName());
 
                 String fileName = uploadFileToOSS(playerUrl, getMusicSuffix(musicSync.getSyncType()));
@@ -177,7 +181,7 @@ public class SyncMusicJob extends JobExecuter {
             } catch (Exception e) {
                 logger.error("获取歌曲列表失败" + e.getMessage());
                 musicSync.setSyncStatus(2);
-            }finally {
+            } finally {
                 musicSyncRepository.saveAndFlush(musicSync);
             }
         }
@@ -235,5 +239,18 @@ public class SyncMusicJob extends JobExecuter {
         InputStream inputStream = new URL(playerUrl).openStream();
         ossClient.putObject(aliyunMusicBucket, fileName, inputStream);
         return fileName;
+    }
+
+    /**
+     * 对url中的id做转义
+     *
+     * @param id
+     * @return
+     */
+    private String getTransformationUrl(String id) {
+        for (SysUrl temp : urlSymbolList) {
+            id = id.replace(temp.getSymbol(),temp.getTransformation());
+        }
+        return id;
     }
 }

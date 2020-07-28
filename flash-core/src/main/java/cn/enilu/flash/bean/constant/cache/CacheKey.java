@@ -33,4 +33,6 @@ public interface CacheKey {
 
     String MUSIC_PLATFORM = "music_platform";
     String MUSIC_UNLOCKCODE = "unlockCode";
+
+    String SYSTEM_URL_SYMBOL = "system_url_symbol";
 }
