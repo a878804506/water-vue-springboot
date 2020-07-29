@@ -1,13 +1,18 @@
 <template>
   <div class="myBakImg">
-    <div class="myMusicDiv" ref="myMusicDiv">
-      <aplayer
-        autoplay
-        :music="music"
-        :list="musicList"
-        repeat="list"
-        listMaxHeight="500px"
-        preload="auto" float></aplayer>
+    <div class="myMusicDiv">
+      <aplayer autoplay
+               :music="music"
+               :list="musicList"
+               :shuffle="shuffle"
+               listMaxHeight="500px"
+               preload="auto"
+               ref="aplayer"
+               :token="token"
+               :serverAddress="serverAddress"
+               :stationModel="stationModel"
+               float
+      ></aplayer>
     </div>
     <div class="myDiv">
       <div class="myRow">
@@ -127,7 +132,7 @@
   }
   .myMusicDiv {
     float: left;
-    width: 400px;
+    width: 25%;
     position: fixed;
     z-index: 999;
   }

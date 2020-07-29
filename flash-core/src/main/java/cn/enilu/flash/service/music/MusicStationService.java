@@ -4,9 +4,10 @@ package cn.enilu.flash.service.music;
 import cn.enilu.flash.bean.entity.music.MusicFavorite;
 import cn.enilu.flash.bean.entity.music.MusicFavoriteMapping;
 import cn.enilu.flash.bean.entity.music.MusicStation;
-import cn.enilu.flash.cache.impl.RedisCacheDao;
+import cn.enilu.flash.bean.entity.system.SysUrl;
 import cn.enilu.flash.dao.music.MusicStationRepository;
 import cn.enilu.flash.service.BaseService;
+import cn.enilu.flash.service.system.SysUrlService;
 import cn.enilu.flash.utils.StringUtil;
 import cn.enilu.flash.utils.factory.Page;
 import com.aliyun.oss.OSS;
@@ -40,8 +41,6 @@ public class MusicStationService extends BaseService<MusicStation, Long, MusicSt
     private MusicFavoriteMappingService musicFavoriteMappingService;
     @Autowired
     private StringRedisTemplate redisMusicTemplate;
-    @Autowired
-    private RedisCacheDao redisCacheDao;
 
     @Value("${aliyun.sdk.oss.Endpoint}")
     private String aliyunSdkOss;
@@ -89,16 +88,16 @@ public class MusicStationService extends BaseService<MusicStation, Long, MusicSt
                 resultMapping.add(temp);
             });
         });
-        result.forEach( musicStation -> {
-            Map<String,Object> userFavorite = new HashMap<>();
-            userFavorite.put("isUserFavorite",false);
+        result.forEach(musicStation -> {
+            Map<String, Object> userFavorite = new HashMap<>();
+            userFavorite.put("isUserFavorite", false);
             musicStation.setUserFavorite(userFavorite);
-            for(MusicFavoriteMapping temp : resultMapping){
-                if(musicStation.getId().equals(temp.getMusicStationId())){
+            for (MusicFavoriteMapping temp : resultMapping) {
+                if (musicStation.getId().equals(temp.getMusicStationId())) {
                     MusicFavorite musicFavorite = musicFavoriteService.getFavoriteByIdAndUserId(temp.getFavoriteId());
-                    userFavorite.put("isUserFavorite",true);
-                    userFavorite.put("favoriteId",temp.getFavoriteId());
-                    userFavorite.put("favoriteName",musicFavorite.getFavoriteName());
+                    userFavorite.put("isUserFavorite", true);
+                    userFavorite.put("favoriteId", temp.getFavoriteId());
+                    userFavorite.put("favoriteName", musicFavorite.getFavoriteName());
                     musicStation.setUserFavorite(userFavorite);
                     break;
                 }
@@ -121,34 +120,35 @@ public class MusicStationService extends BaseService<MusicStation, Long, MusicSt
 
     /**
      * 站内获取播放的url  使用了redis缓存
+     *
      * @param uuidFileName
      * @return
      */
     public String getMusicById(String uuidFileName) {
         String url = "";
         // redis 相关：
-        if(redisMusicTemplate.hasKey(uuidFileName)){
+        if (redisMusicTemplate.hasKey(uuidFileName)) {
             // 从缓存中取值
             url = redisMusicTemplate.opsForValue().get(uuidFileName);
-        }else{
+        } else {
             OSS ossClient = null;
             try {
                 ossClient = new OSSClientBuilder().build(aliyunSdkOss, aliyunSdkOssAccessKeyId, aliyunSdkOssAccessKeySecret);
                 while(true){
-                    Date expiration = new Date(new Date().getTime()+musicTimeout);
+                    Date expiration = new Date(new Date().getTime() + musicTimeout);
                     url = ossClient.generatePresignedUrl(aliyunMusicBucket, uuidFileName, expiration).toString();
                     System.out.println(url);
-                    if(url.split("%").length == 2){
+                    if(!url.equalsIgnoreCase("%2b")){
                         break;
                     }
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 }
                 // 加入缓存
-                redisMusicTemplate.opsForValue().set(uuidFileName,url,musicTimeout, TimeUnit.MILLISECONDS);
-            }catch (Exception e){
-
-            }finally {
-                if(null != ossClient){
+                redisMusicTemplate.opsForValue().set(uuidFileName, url, musicTimeout, TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+                logger.error("获取oss上的url时出错：" + e.getMessage());
+            } finally {
+                if (null != ossClient) {
                     ossClient.shutdown();
                 }
             }
@@ -158,22 +158,23 @@ public class MusicStationService extends BaseService<MusicStation, Long, MusicSt
 
     /**
      * 删除OSS上的文件
+     *
      * @param uuidFileName
      * @return
      */
-    public Boolean deleteOSSFile(String uuidFileName){
-        OSS ossClient =null;
+    public Boolean deleteOSSFile(String uuidFileName) {
+        OSS ossClient = null;
         try {
             ossClient = new OSSClientBuilder().build(aliyunSdkOss, aliyunSdkOssAccessKeyId, aliyunSdkOssAccessKeySecret);
-            boolean hasFile = ossClient.doesObjectExist(aliyunMusicBucket, uuidFileName,true);
-            if(!hasFile){
+            boolean hasFile = ossClient.doesObjectExist(aliyunMusicBucket, uuidFileName, true);
+            if (!hasFile) {
                 return false;
             }
-            ossClient.deleteObject(aliyunMusicBucket,uuidFileName);
-        }catch (Exception e){
+            ossClient.deleteObject(aliyunMusicBucket, uuidFileName);
+        } catch (Exception e) {
             return false;
-        }finally {
-            if(null != ossClient){
+        } finally {
+            if (null != ossClient) {
                 ossClient.shutdown();
             }
         }

@@ -58,14 +58,13 @@
       <aplayer autoplay
                :music="music"
                :list="musicList"
-               repeat="list"
                :shuffle="shuffle"
                listMaxHeight="500px"
                preload="auto"
-               ref="aplayer"
                v-if="flushMusicList == true"
                :token="token"
                :serverAddress="serverAddress"
+               :stationModel="stationModel"
       ></aplayer>
     </div>
   </div>
@@ -91,6 +90,8 @@ export default {
       flushMusicList: false,
       // 随机播放
       shuffle: true,
+      // 站内音乐组件模型
+      stationModel: true,
       // 项目token  音乐插件里面用
       token: getToken(),
       //项目地址  音乐插件里面用

@@ -1,6 +1,8 @@
 import { getMusicNetworkConfig } from '@/api/music/musicNetwork'
 import { getPlatformsList } from '@/api/music/musicSync'
-import Aplayer from 'vue-aplayer'
+import { getToken } from '@/utils/auth'
+import { getApiUrl } from '@/utils/utils'
+import Aplayer from 'diy-vue-aplayer'
 
 export default {
   components: {
@@ -17,6 +19,14 @@ export default {
         keyword: '热歌榜',
         syncType: '320'
       },
+      // 随机播放
+      shuffle: true,
+      // 不是站内音乐组件模型
+      stationModel: false,
+      // 项目token  音乐插件里面用
+      token: getToken(),
+      //项目地址  音乐插件里面用
+      serverAddress: getApiUrl(),
       // 网络获取的音乐列表
       songsList: [],
       // 用户添加的音乐列表
@@ -153,7 +163,6 @@ export default {
           'unlockCode': this.unlockCode
         }
       }).then(res => {
-        console.log(res)
         result = res.data
       })
       return result
@@ -167,7 +176,6 @@ export default {
       await this.$axios.get(musicSongPlayerUrl, {
         headers: { 'unlockCode': this.unlockCode }
       }).then(res => {
-        console.log(res)
         result = res.data
       })
       return result
