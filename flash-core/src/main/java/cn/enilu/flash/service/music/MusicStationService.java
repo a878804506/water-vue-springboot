@@ -12,6 +12,7 @@ import cn.enilu.flash.utils.StringUtil;
 import cn.enilu.flash.utils.factory.Page;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,7 +139,7 @@ public class MusicStationService extends BaseService<MusicStation, Long, MusicSt
                     Date expiration = new Date(new Date().getTime() + musicTimeout);
                     url = ossClient.generatePresignedUrl(aliyunMusicBucket, uuidFileName, expiration).toString();
                     System.out.println(url);
-                    if(!url.equalsIgnoreCase("%2b")){
+                    if(!StringUtils.containsIgnoreCase(url,"%2B")) {
                         break;
                     }
                     Thread.sleep(500);

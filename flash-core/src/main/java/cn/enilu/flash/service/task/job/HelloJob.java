@@ -24,10 +24,11 @@ public class HelloJob extends JobExecuter {
     @Autowired
     private CfgService cfgService;
     @Override
-    public void execute(Map<String, Object> dataMap) throws Exception {
+    public String execute(Map<String, Object> dataMap) throws Exception {
         Cfg cfg = cfgService.get(1L);
         cfg.setCfgDesc("update by "+ DateUtil.getTime());
         cfgService.update(cfg);
         logger.info("hello :"+ JSON.toJSONString(dataMap));
+        return "HelloJob : 测试任务执行成功！";
     }
 }

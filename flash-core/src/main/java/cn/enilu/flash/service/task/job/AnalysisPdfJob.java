@@ -41,8 +41,8 @@ public class AnalysisPdfJob extends JobExecuter {
     private String fileBasePath;
 
     @Override
-    public void execute(Map<String, Object> dataMap) throws Exception {
-
+    public String execute(Map<String, Object> dataMap) throws Exception {
+        String result = "";
         // 查找状态为待运行的pdf解析任务
         SearchFilter condition = SearchFilter.build("pdfStatus", SearchFilter.Operator.EQ, 3);
         List<PdfManagement> pdfManagementList = pdfManagementService.queryAll(condition);
@@ -53,9 +53,12 @@ public class AnalysisPdfJob extends JobExecuter {
                 Thread pdfTask = new Thread(analysisPdfTask);
                 pdfTask.start();
             }
+            result = "本次执行了" + pdfManagementList.size() + "个pdf解析任务！";
         } else {
             logger.info("AnalysisPdfJob : 没有需要解析pdf的任务");
+            result = "AnalysisPdfJob : 没有需要解析pdf的任务！";
         }
+        return result;
     }
 
     class AnalysisPdfTask implements Runnable {
@@ -156,17 +159,17 @@ public class AnalysisPdfJob extends JobExecuter {
                         // Create a writer for the outputstream
                         int readRow = oldExcelStartRow + i;
                         String newPdfName = "";
-                        if(StringUtils.isNotBlank(columns.get(readRow))){
+                        if (StringUtils.isNotBlank(columns.get(readRow))) {
                             newPdfName = columns.get(readRow);
-                        }else{
-                            newPdfName = "第"+(++count)+"个未匹配到的pdf";
+                        } else {
+                            newPdfName = "第" + (++count) + "个未匹配到的pdf";
                         }
 
                         document = new Document(inputPDF.getPageSize(1));
-                        copy = new PdfCopy(document,new FileOutputStream(pdfsPath + File.separator + newPdfName + ".pdf"));
+                        copy = new PdfCopy(document, new FileOutputStream(pdfsPath + File.separator + newPdfName + ".pdf"));
                         document.open();
                         document.newPage();
-                        PdfImportedPage page = copy.getImportedPage(inputPDF,p);
+                        PdfImportedPage page = copy.getImportedPage(inputPDF, p);
                         copy.addPage(page);
 
                         document.close();

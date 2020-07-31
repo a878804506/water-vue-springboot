@@ -81,8 +81,8 @@ public class SyncMusicJob extends JobExecuter {
     private OSS ossClient = null;
 
     @Override
-    public void execute(Map<String, Object> dataMap) throws Exception {
-
+    public String execute(Map<String, Object> dataMap) throws Exception {
+        String result = "";
         List<MusicPlatform> musicPlatformList = musicSyncService.getPlatformsList();
         for (MusicPlatform temp : musicPlatformList) {
             musicPlatformMap.put(temp.getNameEn(), temp.getId());
@@ -94,16 +94,20 @@ public class SyncMusicJob extends JobExecuter {
         if (notSuccessSongs.size() != 0) {
             ossClient = new OSSClientBuilder().build(aliyunSdkOss, aliyunSdkOssAccessKeyId, aliyunSdkOssAccessKeySecret);
             Map<String, String> header = new HashMap<>();
-            header.put("unlockCode", dataMap.get("unlockCode").toString());
-            getPlayerUrls(notSuccessSongs, header);
+            header.put("unlockCode", musicSyncService.getUnlockCode());
+            List<String> successSyncMusic = getPlayerUrls(notSuccessSongs, header);
+            result = successSyncMusic.toString();
+        } else {
+            result = "SyncMusicJob : 暂无歌曲需要同步！";
         }
         if (ossClient != null) {
             ossClient.shutdown();
         }
+        return result;
     }
 
-    private void getPlayerUrls(List<MusicSync> notSuccessSongs, Map<String, String> header) {
-
+    private List<String> getPlayerUrls(List<MusicSync> notSuccessSongs, Map<String, String> header) {
+        List<String> result = new ArrayList<>();
         for (MusicSync musicSync : notSuccessSongs) {
             try {
                 JSONObject jsonObject = musicSyncService.searchMusic(musicSync.getPlatform(), musicSync.getKeyword(), musicSync.getPage(), musicSync.getPageSize());
@@ -176,8 +180,8 @@ public class SyncMusicJob extends JobExecuter {
                         break;
                 }
                 temp.setPlatformId(musicPlatformMap.get(musicSync.getPlatform()));
-
                 musicStationRepository.saveAndFlush(temp);
+                result.add(musicSync.getName() + "-" + musicSync.getPlatform() + "-" + musicSync.getSingers());
             } catch (Exception e) {
                 logger.error("获取歌曲列表失败" + e.getMessage());
                 musicSync.setSyncStatus(2);
@@ -185,6 +189,7 @@ public class SyncMusicJob extends JobExecuter {
                 musicSyncRepository.saveAndFlush(musicSync);
             }
         }
+        return result;
     }
 
     /**
@@ -249,7 +254,7 @@ public class SyncMusicJob extends JobExecuter {
      */
     private String getTransformationUrl(String id) {
         for (SysUrl temp : urlSymbolList) {
-            id = id.replace(temp.getSymbol(),temp.getTransformation());
+            id = id.replace(temp.getSymbol(), temp.getTransformation());
         }
         return id;
     }

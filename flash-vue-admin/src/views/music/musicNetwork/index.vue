@@ -11,7 +11,6 @@
                :token="token"
                :serverAddress="serverAddress"
                :stationModel="stationModel"
-               float
       ></aplayer>
     </div>
     <div class="myDiv">
@@ -95,9 +94,9 @@
   }
   .myRow {
     width: 50%;
-    margin: 0 auto;
+    margin: 0 auto 0 auto;
     padding-top: 18px;
-    padding-left: 10px;
+    padding-left: 55px;
   }
   .myPic {
     width: 15%;

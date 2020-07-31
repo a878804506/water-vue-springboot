@@ -64,6 +64,7 @@
         <poi.version>4.1.2</poi.version>
         <redis.clients.version>2.9.0</redis.clients.version>
         <nacos-config-spring-boot.version>0.2.7</nacos-config-spring-boot.version>
+        <jsoup.version>1.12.1</jsoup.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -362,6 +363,14 @@
                 <version>${redis.clients.version}</version>
             </dependency>
             <!-- jedis end-->
+
+            <!-- jsoup start-->
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>${jsoup.version}</version>
+            </dependency>
+            <!-- jsoup end-->
         </dependencies>
 
     </dependencyManagement>

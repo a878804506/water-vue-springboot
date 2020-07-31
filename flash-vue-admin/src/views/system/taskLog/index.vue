@@ -30,6 +30,11 @@
         </template>
       </el-table-column>
 
+      <el-table-column label="任务自定义消息">
+        <template slot-scope="scope">
+          {{scope.row.successLog}}
+        </template>
+      </el-table-column>
     </el-table>
 
     <el-pagination

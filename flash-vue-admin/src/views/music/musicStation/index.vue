@@ -128,7 +128,7 @@
     <el-dialog
       title="收藏到..."
       :visible.sync="favoriteDialog"
-      width="14%">
+      width="16%">
       <el-row>
         <el-col :span="12">
           <el-select v-model="selectedFavorite" size="medium" style="width: 150px" >

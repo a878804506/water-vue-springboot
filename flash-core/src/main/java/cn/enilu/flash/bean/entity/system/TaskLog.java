@@ -38,4 +38,7 @@ public class TaskLog{
 
     @Column(columnDefinition = "VARCHAR(500) COMMENT '抛出异常'")
     private String jobException;
+
+    @Column(columnDefinition = "VARCHAR(500) COMMENT '执行成功后自定义描述'")
+    private String successLog;
 }

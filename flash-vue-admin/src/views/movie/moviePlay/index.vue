@@ -2,7 +2,7 @@
   <div class="app-container">
     <div >
       <span class="controller">解析线路</span>
-      <el-select v-model="selectedLabel" placeholder="请选择" style="width: 300px">
+      <el-select v-model="selectedLabel" placeholder="请选择" style="width: 15%">
         <el-option v-for="url in urlList"
                    :key="url.id"
                    :label="url.urlName"
@@ -11,7 +11,7 @@
       </el-select>
 
       <span class="controller" style="margin-left: 25px">播放地址</span>
-      <el-input v-model="userUrl" placeholder="请将播放地址粘贴于此" style="width: 500px"></el-input>
+      <el-input v-model="userUrl" placeholder="请将播放地址粘贴于此" style="width: 40%"></el-input>
 
       <el-button type="success" icon="el-icon-view" style="margin-left: 25px" @click="playMovie">GO-点击开始解析</el-button>
 
@@ -21,7 +21,7 @@
     <!--http://jx.bwcxy.com/?v=https://www.iqiyi.com/v_19rr78nouw.html-->
     <div style="text-align: center; margin-top: 20px">
       <iframe :src="playUrl" width="80%" height="568px" frameborder="0" scrolling="auto"
-              style=""></iframe>
+              style="" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
     </div>
 
     <el-dialog

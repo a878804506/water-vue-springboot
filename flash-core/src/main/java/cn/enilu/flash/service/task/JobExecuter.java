@@ -50,7 +50,9 @@ public abstract class JobExecuter {
         //默认是成功 出异常后改成失败
         taskLog.setExecSuccess(TaskLog.EXE_SUCCESS_RESULT);
         try {
-            execute(dataMap);
+            // result 是任务执行成功后自定义返回的结果描述
+            String result = execute(dataMap);
+            taskLog.setSuccessLog(result);
         } catch (Exception e) {
             log.error("exeucte " + getClass().getName() + " error : ", e);
             exeResult = "执行失败\n";
@@ -68,8 +70,9 @@ public abstract class JobExecuter {
     /**
      *
      * @param dataMap 数据库配置的参数
+     * @return
      */
-    public abstract void execute(Map<String, Object> dataMap) throws Exception;
+    public abstract String execute(Map<String, Object> dataMap) throws Exception;
 
     public String getEmail() {
         return getEmail("snowalert@xuezhongdai.cn");
