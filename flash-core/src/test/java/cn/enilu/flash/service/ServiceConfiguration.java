@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 */
-/**
+/** 测试
  * Name: ServiceConfiguration<br>
  * User: Yao<br>
  * Date: 2018/2/27<br>
