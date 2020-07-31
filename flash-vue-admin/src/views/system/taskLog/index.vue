@@ -9,22 +9,22 @@
     </div>
     <el-table :data="list" v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row>
 
-      <el-table-column label="任务名">
+      <el-table-column label="任务名" width="240">
         <template slot-scope="scope">
           {{scope.row.name}}
         </template>
       </el-table-column>
-      <el-table-column label="执行时间">
+      <el-table-column label="执行时间" width="180">
         <template slot-scope="scope">
           {{scope.row.execAt}}
         </template>
       </el-table-column>
-      <el-table-column label="执行结果">
+      <el-table-column label="执行结果" width="130">
         <template slot-scope="scope">
           {{scope.row.execSuccess === 1 ? '成功' : '失败'}}
         </template>
       </el-table-column>
-      <el-table-column label="异常信息">
+      <el-table-column label="异常信息" width="530">
         <template slot-scope="scope">
           {{scope.row.jobExecption}}
         </template>
