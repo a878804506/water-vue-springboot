@@ -112,7 +112,7 @@ public class AnalysisPdfJob extends JobExecuter {
                 return;
             }
             // pdf拆分,并重命名
-            List<File> srcFiles = splitPDF(pdfsPath, columns);
+            List<String> srcFiles = splitPDF(pdfsPath, columns);
             // 在吧生成的pdfs打包 zip
             // 逻辑在此
             String zipFilePath = pdfsPath + File.separator + pdfManagement.getName() + ".zip";
@@ -130,15 +130,15 @@ public class AnalysisPdfJob extends JobExecuter {
          * @param pdfsPath 生成的单页pdf存放位置
          * @return 返回生成的pdf的数量
          */
-        public List<File> splitPDF(String pdfsPath, Map<Integer, String> columns) {
+        public List<String> splitPDF(String pdfsPath, Map<Integer, String> columns) {
             //生成的pdf文件列表
-            List<File> createPdfFIleList = new ArrayList<>();
+            List<String> createPdfFIleList = new ArrayList<>();
 
             PdfReader inputPDF = null;
-            Document document = null;
-            PdfCopy copy = null;
             try {
+                System.out.println("读取原始pdf开始：");
                 inputPDF = new PdfReader(new FileInputStream(pdfsPath + File.separator + pdfManagement.getOldPdf()));
+                System.out.println("读取原始pdf结束。。。");
                 int totalPages = inputPDF.getNumberOfPages();
 
                 if (totalPages > 0) {
@@ -156,6 +156,8 @@ public class AnalysisPdfJob extends JobExecuter {
                     int i = 0;
                     int count = 0;
                     for (int p = startPage; p <= endPage; p++) {
+                        Document document = null;
+                        PdfCopy copy = null;
                         // Create a writer for the outputstream
                         int readRow = oldExcelStartRow + i;
                         String newPdfName = "";
@@ -187,8 +189,8 @@ public class AnalysisPdfJob extends JobExecuter {
                         document.close();
                         outputStream.close();*/
 
-                        File pdfFile = new File(pdfsPath + File.separator + newPdfName + ".pdf");
-                        createPdfFIleList.add(pdfFile);
+                        createPdfFIleList.add(pdfsPath + File.separator + newPdfName + ".pdf");
+
                         ++i;
                     }
                 }

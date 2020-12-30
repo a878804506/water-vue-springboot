@@ -53,18 +53,18 @@ public class ZipUtil {
      * @param zipFilePath  指定zip包的生成路径
      * @throws RuntimeException 压缩失败会抛出运行时异常
      */
-    public static void toZip(List<File> srcFiles , String zipFilePath)throws RuntimeException {
+    public static void toZip(List<String> srcFiles , String zipFilePath)throws RuntimeException {
         long start = System.currentTimeMillis();
         ZipOutputStream zos = null ;
         OutputStream out = null ;
         try {
             out = new FileOutputStream(zipFilePath);
             zos = new ZipOutputStream(out);
-            for (File srcFile : srcFiles) {
+            for (String srcFilePath : srcFiles) {
                 byte[] buf = new byte[BUFFER_SIZE];
-                zos.putNextEntry(new ZipEntry(srcFile.getName()));
+                zos.putNextEntry(new ZipEntry(srcFilePath));
                 int len;
-                FileInputStream in = new FileInputStream(srcFile);
+                FileInputStream in = new FileInputStream(srcFilePath);
                 while ((len = in.read(buf)) != -1){
                     zos.write(buf, 0, len);
                 }
