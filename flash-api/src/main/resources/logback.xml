@@ -13,13 +13,15 @@
 	</appender>
 
 	<!-- 向文件输出日志 -->
-	<appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>/Users/maggie/app/web-flash/runtime/log/api_%d{yyyy-MM-dd}.log</fileNamePattern>
-			<maxHistory>1000</maxHistory>
+	<appender name="fileLogAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>logs/scada.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<maxFileSize>2GB</maxFileSize>
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>10GB</totalSizeCap>
 		</rollingPolicy>
 		<encoder>
-			<pattern>%d{yyyy-M-d HH:mm:ss} [%thread] %p [%logger{0}]:%L %msg%n</pattern>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %L - %msg%n</pattern>
 			<charset>UTF-8</charset>
 		</encoder>
 	</appender>
@@ -32,7 +34,7 @@
 
 	<!-- root级别的logger -->
 	<root level="INFO">
-		<appender-ref ref="file" />
+		<appender-ref ref="fileLogAppender" />
 		<appender-ref ref="stdout" />
 	</root>
 </configuration>

@@ -1,7 +1,6 @@
 package cn.enilu.flash.api.config;
 
-import com.alibaba.nacos.api.config.annotation.NacosValue;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -30,7 +29,7 @@ import java.util.List;
 @EnableSwagger2
 public class Swagger2Configuration {
 
-    @NacosValue(value = "${swagger.enable:false}", autoRefreshed = true)
+    @Value(value = "${swagger.enable}")
     private Boolean enable;
 
     @Bean

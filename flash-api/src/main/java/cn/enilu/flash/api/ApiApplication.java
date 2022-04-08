@@ -1,7 +1,6 @@
 package cn.enilu.flash.api;
 
 import cn.enilu.flash.dao.BaseRepositoryFactoryBean;
-import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -21,7 +20,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 // 开启使用缓存
 @EnableCaching
 @SpringBootApplication
-@NacosPropertySource(dataId = "onecloud",autoRefreshed = true)
 @ComponentScan(basePackages = "cn.enilu.flash")
 @EntityScan(basePackages="cn.enilu.flash.bean.entity")
 @EnableJpaRepositories(basePackages = "cn.enilu.flash.dao", repositoryFactoryBeanClass = BaseRepositoryFactoryBean.class)

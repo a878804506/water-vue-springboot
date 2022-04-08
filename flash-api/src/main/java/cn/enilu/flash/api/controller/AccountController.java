@@ -16,7 +16,6 @@ import cn.enilu.flash.security.ShiroFactroy;
 import cn.enilu.flash.service.system.OtherUserService;
 import cn.enilu.flash.service.system.UserService;
 import cn.enilu.flash.utils.*;
-import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.request.OapiSnsGetuserinfoBycodeRequest;
 import com.dingtalk.api.response.OapiSnsGetuserinfoBycodeResponse;
@@ -60,9 +59,6 @@ public class AccountController extends BaseController {
 
     @Value("${dingding.appId}")
     private String dingDingAppId;
-
-    @NacosValue(value = "${dingding.login:true}",autoRefreshed = true)
-    private Boolean dingDingLogin;
 
     @Value("${dingding.appSecret}")
     private String dingdingAppSecret;
@@ -194,8 +190,8 @@ public class AccountController extends BaseController {
 
     @RequestMapping(value = "/dingdingCallback", method = RequestMethod.GET)
     public Object dingdingCallback(@RequestParam("code") String code, @RequestParam("state") String state) {
-        if(null == dingDingLogin || dingDingLogin == false)
-            return Rets.failure("禁止钉钉扫码登陆！");
+//        if(null == dingDingLogin || dingDingLogin == false)
+//            return Rets.failure("禁止钉钉扫码登陆！");
 
         if( StringUtil.isEmpty(code) )
             return Rets.failure("无效的临时授权码！");
