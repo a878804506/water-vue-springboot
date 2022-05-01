@@ -60,7 +60,7 @@ public class LogController extends BaseController {
     @ResponseBody
     public Object list() {
         Page<OperationLog> page = new Page<OperationLog>();
-        page.addFilter(SearchFilter.build("userid", SearchFilter.Operator.EQ, getIdUser(HttpUtil.getRequest())));
+        page.addFilter(SearchFilter.build("userid", SearchFilter.Operator.EQ, getIdUser()));
         Page<OperationLog> pageResult = operationLogService.queryPage(page);
         return Rets.success(pageResult.getRecords());
     }

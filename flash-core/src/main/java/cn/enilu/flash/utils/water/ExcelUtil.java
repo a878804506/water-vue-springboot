@@ -1,89 +1,46 @@
-package cn.enilu.flash.api;
+package cn.enilu.flash.utils.water;
 
+import cn.enilu.flash.bean.entity.water.WaterBill;
+import cn.enilu.flash.utils.HttpUtil;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
-import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.*;
+import java.net.URLEncoder;
+import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class test {
+public class ExcelUtil {
 
     // 匹配"{exp}"
     private static final String REG = "\\{([a-zA-Z_]+)\\}";
     // 匹配"{xxx.exp}"
     private static final String REG_LIST = "\\{([a-zA-Z_]+)\\.([a-zA-Z_]+)\\}";
 
-    private static final Pattern PATTERN = Pattern.compile(REG);
-    private static final Pattern PATTERN_LIST = Pattern.compile(REG_LIST);
-
-
-    public static void main(String[] args) throws Exception {
-        ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
-        Resource resource = resourceResolver.getResource("classpath:templates" + File.separator + "water_template.xlsx");
-        System.out.println(resource.exists());
-        if (resource.exists() && resource.isFile()){
-            Map<String, Object> context = new HashMap<>();
-            context.put("id","9527");
-            context.put("title","这是标题");
-            context.put("year","2022");
-            context.put("month","7");
-            context.put("cname","陈韵辉");
-            context.put("address","这是地址");
-            context.put("firstNumber","001");
-            context.put("lastNumber","999");
-            context.put("waterCount","10");
-            context.put("price","1.7");
-            context.put("meterage.wan","1");
-            context.put("meterage.qian","2");
-            context.put("meterage.bai","3");
-            context.put("meterage.shi","4");
-            context.put("meterage.yuan","5");
-            context.put("meterage.jiao","6");
-            context.put("meterage.fen","7");
-            context.put("capacity.wan","11");
-            context.put("capacity.qian","22");
-            context.put("capacity.bai","33");
-            context.put("capacity.shi","44");
-            context.put("capacity.yuan","55");
-            context.put("capacity.jiao","66");
-            context.put("capacity.fen","77");
-            context.put("capitalization","十万");
-            context.put("cost.wan","111");
-            context.put("cost.qian","222");
-            context.put("cost.bai","333");
-            context.put("cost.shi","444");
-            context.put("cost.yuan","555");
-            context.put("cost.jiao","666");
-            context.put("cost.fen","777");
-
-
-            byte[] bytes = test.writeExcel(resource.getInputStream(), context);
-
-            File file0 = new File("C:\\Users\\admin\\Desktop\\testttttt.xlsx");
-
-            try (
-                    FileOutputStream bos = new FileOutputStream(file0);
-            )
-            {
-                bos.write(bytes);
-            }
-        }
-    }
+    private static final java.util.regex.Pattern PATTERN = java.util.regex.Pattern.compile(REG);
+    private static final java.util.regex.Pattern PATTERN_LIST = Pattern.compile(REG_LIST);
 
     /**
      * 根据模板生成Excel文件
      *
-     * @param inputStream  模版文件
      * @param context      表头或表尾数据集合
      * @return
      */
-    public static byte[] writeExcel(InputStream inputStream, Map<String, Object> context) {
+    public static byte[] writeExcel(Map<String, Object> context) throws Exception {
+
+//        ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+//        Resource resource = resourceResolver.getResource("classpath:templates" + File.separator + "water_template.xlsx");
+
+        ClassPathResource classPathResource = new ClassPathResource("templates" + File.separator + "water_template.xlsx");
+        InputStream inputStream =classPathResource.getInputStream();
+
         try (Workbook workbook = WorkbookFactory.create(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);// 获取配置文件sheet 页
             int listStartRowNum = -1;
@@ -159,5 +116,25 @@ public class test {
         } else {
             cell.setCellValue(value.toString());
         }
+    }
+
+    public static void fileDownload( WaterBill waterBill, byte[] bytes) throws Exception {
+
+        // 判断用户是要单月开票还是连月（1-2月）开票
+        String excelFileName = waterBill.getCid() + "-" + waterBill.getCname() + "的" + waterBill.getYear() + "年" + (waterBill.getMonth() == 13 ? "1-2" : waterBill.getMonth()) + "月收据.xlsx";
+
+        HttpServletResponse response = HttpUtil.getResponse();
+        response.setCharacterEncoding("UTF-8");
+        // 第一步：设置响应类型
+        response.setContentType("application/force-download");// 应用程序强制下载
+        // 设置响应头，对文件进行url编码
+        excelFileName = URLEncoder.encode(excelFileName, "UTF-8");
+        response.setHeader("Content-Disposition", "attachment;filename=" + excelFileName);
+        response.setContentLength(bytes.length);
+        // 第三步：老套路，开始copy
+        OutputStream out = response.getOutputStream();
+        out.write(bytes);
+        out.flush();
+        out.close();
     }
 }

@@ -2,7 +2,30 @@
   <div class="app-container">
     <div class="block">
       <el-form :inline="true" :model="listQuery">
-        <el-form-item label="月份">
+
+        <el-form-item label="">
+          <el-switch
+            v-model="listQuery.optType"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            active-text="单月"
+            inactive-text="连月">
+          </el-switch>
+        </el-form-item>
+
+        <el-form-item label="时间段" v-if="listQuery.optType === false">
+          <el-date-picker
+            v-model="listQuery.times"
+            @change="changeDatePicker"
+            class="month_date"
+            type="monthrange"
+            range-separator="至"
+            start-placeholder="开始月份"
+            end-placeholder="结束月份">
+          </el-date-picker>
+        </el-form-item>
+
+        <el-form-item label="月份"  v-if="listQuery.optType === true">
           <el-select v-model="listQuery.month" size="medium" class="month_input" @change="getWaterInfoData">
             <el-option
               v-for="item in month"
@@ -19,6 +42,13 @@
         <el-form-item label="水表止码" :span="6">
           <el-input v-model="listQuery.meterCode" size="medium" class="condition_input" placeholder="水表止码"
                     type="number"></el-input>
+        </el-form-item>
+        <el-form-item label="容量水费" :span="6">
+          <el-input v-model="listQuery.capacityCost" size="medium" class="condition_input" placeholder="容量水费"
+                    type="number"></el-input>
+        </el-form-item>
+        <el-form-item label="四舍五入?" :span="6">
+          <el-checkbox v-model="listQuery.half" size="medium" class="condition_checkbox"></el-checkbox>
         </el-form-item>
         <el-form-item>
           <el-button type="success" size="mini" icon="el-icon-edit" @click.native="create"
@@ -47,7 +77,10 @@
     <table v-loading="listLoading" align="center" valgin="center" width="80%" border="1" cellpadding="0" cellspacing="0"
            style="font-size: 18px">
       <tr>
-        <td colspan="13" align="center" height="35">
+        <td colspan="13" align="center" height="35" v-if="listQuery.optType === false">
+          <span class="colorFont">{{waterBill.times}}</span>
+        </td>
+        <td colspan="13" align="center" height="35" v-if="listQuery.optType === true">
           <span class="colorFont">{{waterBill.year}}</span>&nbsp;&nbsp;年&nbsp;&nbsp;
           <span class="colorFont">{{waterBill.month}}</span>&nbsp;&nbsp;月
         </td>
@@ -137,11 +170,19 @@
 
 <style rel="stylesheet/scss" lang="scss" scoped>
   .condition_input {
-    width: 110px;
+    width: 130px;
+  }
+
+  .condition_checkbox {
+    width: 30px;
   }
 
   .month_input {
     width: 90px;
+  }
+
+  .month_date {
+    width: 380px;
   }
 
   .colorFont {

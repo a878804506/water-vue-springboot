@@ -116,12 +116,11 @@ public class AccountController extends BaseController {
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public Object info() {
-        HttpServletRequest request = HttpUtil.getRequest();
         Long idUser = null;
-        String token = getToken(request);
+        String token = getToken();
         Boolean isSystemUser ;
         try {
-            idUser = getIdUser(request);
+            idUser = getIdUser();
             isSystemUser = JwtUtil.checkIsSystemUser(token);
         } catch (Exception e) {
             return Rets.expire();
@@ -169,7 +168,7 @@ public class AccountController extends BaseController {
             if (!password.equals(rePassword)) {
                 return Rets.failure("新密码前后不一致");
             }
-            User user = userService.get(getIdUser(HttpUtil.getRequest()));
+            User user = userService.get(getIdUser());
             /*if (ApiConstants.ADMIN_ACCOUNT.equals(user.getAccount())) {
                 return Rets.failure("不能修改超级管理员密码");
             }*/
@@ -250,8 +249,7 @@ public class AccountController extends BaseController {
     @RequestMapping(value = "/bindSystemUser", method = RequestMethod.POST)
     public Object bindSystemUser(String account, String password, String rePassword) {
         try {
-            HttpServletRequest request = HttpUtil.getRequest();
-            String token = getToken(request);
+            String token = getToken();
             Boolean isSystemUser = JwtUtil.checkIsSystemUser(token);
             if(isSystemUser){
                 return Rets.failure("第三方登录的用户才能绑定本系统账号！");

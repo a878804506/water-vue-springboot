@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Service
@@ -48,7 +49,7 @@ public class WaterInfoService extends BaseService<WaterInfo, Long, WaterInfoRepo
      * @return 账单实体
      */
     @Transactional
-    public WaterBill createWaterInfo(Integer month, Integer cid, Double meterCode) {
+    public WaterBill createWaterInfo(Integer month, Integer cid, Double meterCode, Double capacityCost, boolean half, String times) {
         WaterBill waterBill = new WaterBill();
         WaterCustomer waterCustomer = waterCustomerRepository.getOne(Long.valueOf(cid));
         WaterMeter waterMeter = waterMeterRepository.findByCid(cid);
@@ -59,19 +60,19 @@ public class WaterInfoService extends BaseService<WaterInfo, Long, WaterInfoRepo
         waterBill.setPrice(waterCustomer.getPrice());
         waterBill.setYear(year);
         waterBill.setMonth(month);
+        waterBill.setTimes(times);
         waterBill.setFirstNumber(lastMonthWaterCount);
         waterBill.setLastNumber(new BigDecimal(meterCode).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
         waterBill.setWaterCount(new BigDecimal(meterCode - lastMonthWaterCount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-        waterBill.setMeterageCost(new BigDecimal(waterCustomer.getPrice() * (waterBill.getWaterCount())).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-        waterBill.setAddress(StringUtils.isEmpty(waterCustomer.getAddress()) ? "紫金" : waterCustomer.getAddress());
-        waterBill.setCapacityCost(month == 13 ? 10d : 5d);
+        waterBill.setMeterageCost(new BigDecimal(waterCustomer.getPrice() * (waterBill.getWaterCount())).setScale(half ? 0 : 2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        waterBill.setAddress(StringUtils.isEmpty(waterCustomer.getAddress()) ? "大峪桥" : waterCustomer.getAddress());
+        waterBill.setCapacityCost(Objects.nonNull(capacityCost) ? new BigDecimal(capacityCost).setScale(half ? 0 : 2, BigDecimal.ROUND_HALF_UP).doubleValue() : 5d);
         waterBill.setWaterCost(waterBill.getMeterageCost() + waterBill.getCapacityCost());
         // double 转换成 char数组
         waterBill.setCharMeterageCost(this.DoubleToCharArray(8, waterBill.getMeterageCost()));
         waterBill.setCharCapacityCost(this.DoubleToCharArray(8, waterBill.getCapacityCost()));
         waterBill.setCharWaterCost(this.DoubleToCharArray(8, waterBill.getWaterCost()));
         waterBill.setCapitalization(NumToCNMoneyUtil.number2CNMontrayUnit(waterBill.getWaterCost()));
-        waterBill.setExcelFileName(OperateExcelUtil.createExcelFile(waterBill, waterExcelRootPath));
 
         //入库逻辑
         waterMeterRepository.save(waterMeter);
@@ -93,7 +94,7 @@ public class WaterInfoService extends BaseService<WaterInfo, Long, WaterInfoRepo
      * @param number 待转换的数字
      * @return Char数组（靠右对齐，左边补齐空格）
      */
-    private char[] DoubleToCharArray(int index, Double number) {
+    public char[] DoubleToCharArray(int index, Double number) {
         char[] numberChars = String.format("%.2f", number).toCharArray();
         if (index + 1 < numberChars.length) {
             return new char[]{};

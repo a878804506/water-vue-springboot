@@ -76,7 +76,7 @@ public class WaterBill implements java.io.Serializable{
     private String capitalization;
 
     /**
-     * 生成excel的名字
+     * excel 上的日期
      */
-    private String excelFileName;
+    private String times;
 }

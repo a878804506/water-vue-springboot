@@ -28,11 +28,10 @@ public class BaseController {
     /**
      * 根据token获取用户id，如果不存在则抛出异常
      *
-     * @param request
      * @return
      */
-    public Long getIdUser(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
+    public Long getIdUser() {
+        String token = HttpUtil.getRequest().getHeader("Authorization");
 
         Long idUser = JwtUtil.getUserId(token);
         if (idUser == null) {
