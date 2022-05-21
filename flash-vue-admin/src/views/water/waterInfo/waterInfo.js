@@ -71,7 +71,8 @@ export default {
         waterCost: undefined,
         charWaterCost: Array(8),
         capitalization: undefined,
-        excelFileName: undefined
+        excelFileName: undefined,
+        times: undefined
       },
       button: {
         createButton: false,
@@ -150,6 +151,7 @@ export default {
       this.waterBill.charWaterCost = Array(8)
       this.waterBill.capitalization = undefined
       this.waterBill.excelFileName = undefined
+      this.waterBill.times = ''
     },
     create() {
       if (this.checkInput()) {
@@ -214,6 +216,7 @@ export default {
         if (this.listQuery.month === 13) {
           this.waterBill.month = '1-2'
         }
+        this.waterBill.times = times
         this.button.downloadButton = false
       }).catch(() => {
       })
@@ -237,7 +240,7 @@ export default {
         if (this.listQuery.month === 13) {
           this.waterBill.month = 13
         }
-        window.location.href = this.downloadUrl + '?year=' + this.waterBill.year + '&month=' + this.waterBill.month + '&cid=' + this.waterBill.cid + '&token=' + getToken()
+        window.location.href = this.downloadUrl + '?year=' + this.waterBill.year + '&month=' + this.waterBill.month + '&cid=' + this.waterBill.cid + '&token=' + getToken() + '&times=' + this.waterBill.times
         this.reset()
         this.button.downloadButton = true
       }

@@ -121,7 +121,7 @@ public class ExcelUtil {
     public static void fileDownload( WaterBill waterBill, byte[] bytes) throws Exception {
 
         // 判断用户是要单月开票还是连月（1-2月）开票
-        String excelFileName = waterBill.getCid() + "-" + waterBill.getCname() + "的" + waterBill.getYear() + "年" + (waterBill.getMonth() == 13 ? "1-2" : waterBill.getMonth()) + "月收据.xlsx";
+        String excelFileName = waterBill.getCid() + "-" + waterBill.getCname() + "的" + waterBill.getTimes() + "收据.xlsx";
 
         HttpServletResponse response = HttpUtil.getResponse();
         response.setCharacterEncoding("UTF-8");

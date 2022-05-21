@@ -36,6 +36,8 @@ export default {
     customerWaterMeter: 'Customer Water Meter',
     waterCostByMonth: 'Month Water Cost',
     waterCostByToDay: 'ToDay Water Cost',
+    customerWaterHistory: 'Water Operate History',
+    customerWaterStatistics: 'Water Month Statistics',
     //  水务系统 结束
 
     //进销存 开始

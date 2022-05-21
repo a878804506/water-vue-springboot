@@ -8,6 +8,7 @@ import cn.enilu.flash.bean.entity.water.WaterMeter;
 import cn.enilu.flash.dao.water.WaterCustomerRepository;
 import cn.enilu.flash.dao.water.WaterInfoRepository;
 import cn.enilu.flash.dao.water.WaterMeterRepository;
+import cn.enilu.flash.security.JwtUtil;
 import cn.enilu.flash.service.BaseService;
 import cn.enilu.flash.utils.factory.Page;
 import cn.enilu.flash.utils.water.NumToCNMoneyUtil;
@@ -73,18 +74,28 @@ public class WaterInfoService extends BaseService<WaterInfo, Long, WaterInfoRepo
         waterBill.setCharCapacityCost(this.DoubleToCharArray(8, waterBill.getCapacityCost()));
         waterBill.setCharWaterCost(this.DoubleToCharArray(8, waterBill.getWaterCost()));
         waterBill.setCapitalization(NumToCNMoneyUtil.number2CNMontrayUnit(waterBill.getWaterCost()));
-
         //入库逻辑
         waterMeterRepository.save(waterMeter);
+
+        this.saveWaterInfo(waterBill);
+        return waterBill;
+    }
+
+    /**
+     * 插入开票记录
+     * @param waterBill
+     */
+    @Transactional
+    public void saveWaterInfo(WaterBill waterBill){
         WaterInfo waterInfo = new WaterInfo();
-        waterInfo.setCid(cid);
-        waterInfo.setCname(waterCustomer.getName());
-        waterInfo.setYear(year);
-        waterInfo.setMonth(month);
+        waterInfo.setCid(waterBill.getCid());
+        waterInfo.setCname(waterBill.getCname());
+        waterInfo.setYear(waterBill.getYear());
+        waterInfo.setMonth(waterBill.getMonth());
         waterInfo.setCount(waterBill.getWaterCount());
         waterInfo.setCost(waterBill.getWaterCost());
+        waterInfo.setRemark(waterBill.getTimes());
         waterInfoRepository.save(waterInfo);
-        return waterBill;
     }
 
     /**

@@ -38,9 +38,9 @@ public class WaterMeterService extends BaseService<WaterMeter, Long, WaterMeterR
              * 查询本年
              */
             String table = WaterConstant.WATER_METTER ;
-            String excu_page_sql = WaterCommonUtil.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_METTER_PAGE, table,WaterConstant.WATER_CUSTOMER, name, (page.getCurrent() - 1) * page.getLimit(), page.getLimit());
+            String excu_page_sql = WaterCommonUtil.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_PAGE, table,WaterConstant.WATER_CUSTOMER, name, (page.getCurrent() - 1) * page.getLimit(), page.getLimit());
             List<WaterMeter> records = waterMeterRepository.query(excu_page_sql);
-            String excu_page_count_sql = WaterCommonUtil.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_METTER_PAGE_COUNT, table,WaterConstant.WATER_CUSTOMER, name);
+            String excu_page_count_sql = WaterCommonUtil.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_PAGE_COUNT, table,WaterConstant.WATER_CUSTOMER, name);
             page.setRecords(records);
             page.setTotal(Integer.valueOf(waterMeterRepository.getBySql(excu_page_count_sql) + ""));
             return page;
@@ -50,9 +50,9 @@ public class WaterMeterService extends BaseService<WaterMeter, Long, WaterMeterR
              */
             //查询的表名
             String table = WaterConstant.WATER_METTER + year;
-            String excu_page_sql = WaterCommonUtil.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_METTER_PAGE, table, name, (page.getCurrent() - 1) * page.getLimit(), page.getLimit());
+            String excu_page_sql = WaterCommonUtil.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_PAGE, table, name, (page.getCurrent() - 1) * page.getLimit(), page.getLimit());
             List<WaterMeter> records = waterMeterRepository.query(excu_page_sql);
-            String excu_page_count_sql = WaterCommonUtil.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_METTER_PAGE_COUNT, table, name);
+            String excu_page_count_sql = WaterCommonUtil.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_PAGE_COUNT, table, name);
             page.setRecords(records);
             page.setTotal(Integer.valueOf(waterMeterRepository.getBySql(excu_page_count_sql) + ""));
             return page;

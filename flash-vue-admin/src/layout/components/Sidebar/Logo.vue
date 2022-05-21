@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       title: '一云智慧云平台',
-      logo: 'http://staticfile.erdongchen.top/oneCloud/oneCloud.png'
+      logo: 'https://staticfile.erdongchen.top/oneCloud/oneCloud.png'
     }
   }
 }

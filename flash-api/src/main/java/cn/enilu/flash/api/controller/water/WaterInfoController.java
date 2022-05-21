@@ -59,15 +59,16 @@ public class WaterInfoController extends BaseController {
             return Rets.failure("月份非法!");
         }
         WaterBill waterBill = waterInfoService.createWaterInfo(month, cid, meterCode, capacityCost, half, times);
-        hmap.put(cid + "-" + waterBill.getYear() + "-" + month, waterBill);
+        hmap.put(cid + "-" + times, waterBill);
         return Rets.success(waterBill);
     }
 
     @RequestMapping(value = "/downloadExcel", method = RequestMethod.GET)
     @BussinessLog(value = "下载客户月度水费账单", key = "name", dict = CommonDict.class)
-    public void downloadExcel(@ModelAttribute WaterBill pre_waterBill, String token) {
+    @RequiresPermissions(value = {Permission.DOWNLOAD_WATER_INFO})
+    public void downloadExcel(@ModelAttribute WaterBill pre_waterBill, String token, String times) {
         try {
-            WaterBill waterBill = hmap.get(pre_waterBill.getCid() + "-" + pre_waterBill.getYear() + "-" + pre_waterBill.getMonth());
+            WaterBill waterBill = hmap.get(pre_waterBill.getCid() + "-" + times);
             // double 转换成 char数组
             waterBill.setCharMeterageCost(waterInfoService.DoubleToCharArray(8, waterBill.getMeterageCost()));
             waterBill.setCharCapacityCost(waterInfoService.DoubleToCharArray(8, waterBill.getCapacityCost()));

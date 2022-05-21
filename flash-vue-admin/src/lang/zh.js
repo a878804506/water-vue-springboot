@@ -36,6 +36,8 @@ export default {
     customerWaterMeter: '起止码管理',
     waterCostByMonth: '全镇月度水费详情',
     waterCostByToDay: '今日录入详情',
+    customerWaterHistory: '开票历史',
+    customerWaterStatistics: '月度统计',
     //  水务系统 结束
 
     //进销存 开始

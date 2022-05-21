@@ -17,12 +17,10 @@ public class WaterInfoPK implements Serializable {
     @Column(name = "cid")
     @Id
     private int cid;
-    @Column(name = "year")
+
+    @Column(name = "remark")
     @Id
-    private int year;
-    @Column(name = "month")
-    @Id
-    private int month;
+    private String remark;
 
     @Override
     public boolean equals(Object o) {
@@ -32,8 +30,7 @@ public class WaterInfoPK implements Serializable {
         WaterInfoPK that = (WaterInfoPK) o;
 
         if (cid != that.cid) return false;
-        if (year != that.year) return false;
-        if (month != that.month) return false;
+        if (remark != that.remark) return false;
 
         return true;
     }
@@ -41,8 +38,7 @@ public class WaterInfoPK implements Serializable {
     @Override
     public int hashCode() {
         int result = cid;
-        result = 31 * result + year;
-        result = 31 * result + month;
+        result = 31 * result + remark.hashCode();
         return result;
     }
 }

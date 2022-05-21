@@ -31,16 +31,18 @@ public class WaterInfo {
     private int cid;
     @Column(name = "cname")
     private String cname;
-    @Id
     @Column(name = "year")
     private int year;
-    @Id
     @Column(name = "month")
     private int month;
     @Column(name = "[count]")
     private double count;
     @Column(name = "cost")
     private double cost;
+
+    @Id
+    @Column(name = "remark")
+    private String remark;
 
     @CreatedDate
     @Column(name = "create_time",columnDefinition="DATETIME COMMENT '创建时间/注册时间'",updatable = false)
@@ -55,6 +57,8 @@ public class WaterInfo {
     @Column(name = "modify_by",columnDefinition="bigint COMMENT '最后更新人'")
     private Long modifyBy;
 
+    @Transient
+    private String modifyName;
 
     @Override
     public boolean equals(Object o) {
