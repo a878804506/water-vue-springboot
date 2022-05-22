@@ -40,6 +40,17 @@ public class WaterInfo {
     @Column(name = "cost")
     private double cost;
 
+    // 1 普通开票，2 包月，默认为1
+    @Column(name = "type")
+    private int type;
+
+    // 是否已经作废 1是，0否，默认0
+    @Column(name = "cancel")
+    private int cancel;
+
+    @Column(name = "reason")
+    private String reason;
+
     @Id
     @Column(name = "remark")
     private String remark;
@@ -78,6 +89,9 @@ public class WaterInfo {
         if (modifyBy != null ? !modifyBy.equals(that.modifyBy) : that.modifyBy != null) return false;
         if (modifyTime != null ? !modifyTime.equals(that.modifyTime) : that.modifyTime != null) return false;
 
+        if (type != that.type ) return false;
+        if (cancel != that.cancel ) return false;
+        if (reason != null ? !reason.equals(that.reason) : that.reason != null) return false;
         return true;
     }
 
@@ -97,6 +111,10 @@ public class WaterInfo {
         result = 31 * result + (createTime != null ? createTime.hashCode() : 0);
         result = 31 * result + (modifyBy != null ? modifyBy.hashCode() : 0);
         result = 31 * result + (modifyTime != null ? modifyTime.hashCode() : 0);
+
+        result = 31 * result + type;
+        result = 31 * result + cancel;
+        result = 31 * result + (reason != null ? reason.hashCode() : 0);
         return result;
     }
 }

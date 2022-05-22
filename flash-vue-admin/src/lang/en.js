@@ -38,6 +38,7 @@ export default {
     waterCostByToDay: 'ToDay Water Cost',
     customerWaterHistory: 'Water Operate History',
     customerWaterStatistics: 'Water Month Statistics',
+    monthlyPayment: 'monthly payment',
     //  水务系统 结束
 
     //进销存 开始
@@ -100,7 +101,8 @@ export default {
     export: 'Export',
     //  水务系统 开始
     waterCreateTable: 'Create Bill',
-    waterDownloadExcel: '下载Excel',
+    waterDownloadExcel: 'download Excel',
+    waterCancel: 'canel bill',
     //  水务系统 结束
 
     // 进销存 开始
@@ -133,6 +135,7 @@ export default {
     },
     //  水务系统 开始
     mustInputIdAndMeterCode: 'illegal parameter:the customer ID or meter code !',
+    mustInputIdAndPrice: 'illegal parameter:the customer ID or monthly payment param!',
     FirstCreateBill: 'Please create customer bill first!',
     createSuccess: 'Create Success',
     illegalParameter: 'Illegal parameter!',

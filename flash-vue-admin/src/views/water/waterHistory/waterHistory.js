@@ -5,21 +5,8 @@ export default {
     return {
       formVisible: false,
       formTitle: '',
-      isAdd: true,
       form: {
-        cid: '',
-        one: '',
-        two: '',
-        three: '',
-        four: '',
-        five: '',
-        six: '',
-        seven: '',
-        eight: '',
-        nine: '',
-        ten: '',
-        eleven: '',
-        twelve: '',
+        reason: '',
         id: ''
       },
       listQuery: {
@@ -30,28 +17,18 @@ export default {
       total: 0,
       list: null,
       listLoading: true,
-      selRow: {}
+      selRow: null
     }
   },
   filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
+
   },
   computed: {
 
     //表单验证
     rules() {
       return {
-        // cfgName: [
-        //   { required: true, message: this.$t('config.name') + this.$t('common.isRequired'), trigger: 'blur' },
-        //   { min: 3, max: 2000, message: this.$t('config.name') + this.$t('config.lengthValidation'), trigger: 'blur' }
-        // ]
+
       }
     }
   },
@@ -71,6 +48,7 @@ export default {
       })
     },
     search() {
+      this.listQuery.page = 1
       this.fetchData()
     },
     reset() {
@@ -103,5 +81,20 @@ export default {
     handleCurrentChange(currentRow, oldCurrentRow) {
       this.selRow = currentRow
     },
+    cancel() {
+      if (this.selRow === null) {
+        this.$message({
+          message: this.$t('common.mustSelectOne'),
+          type: 'warning'
+        })
+        return
+      }
+      console.log(this.selRow)
+      this.$message({
+        message: this.$t('该功能暂未实现，耐心等待！'),
+        type: 'success'
+      })
+
+    }
   }
 }

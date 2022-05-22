@@ -9,6 +9,7 @@
         <el-col :span="6">
           <el-button type="success" size="mini" icon="el-icon-search" @click.native="search">{{ $t('button.search') }}</el-button>
           <el-button type="primary" size="mini" icon="el-icon-refresh" @click.native="reset">{{ $t('button.reset') }}</el-button>
+          <el-button type="danger" size="mini" icon="el-icon-delete" @click.native="cancel">{{ $t('button.waterCancel') }}</el-button>
         </el-col>
       </el-row>
       <br>
@@ -32,14 +33,34 @@
           {{scope.row.modifyTime}}
         </template>
       </el-table-column>
+      <el-table-column label="开票周期">
+        <template slot-scope="scope">
+          {{scope.row.remark}}
+        </template>
+      </el-table-column>
+      <el-table-column label="开票类型">
+        <template slot-scope="scope">
+          {{scope.row.type === 1 ? '按月开票' : '包月'}}
+        </template>
+      </el-table-column>
       <el-table-column label="开票人">
         <template slot-scope="scope">
           {{scope.row.modifyName}}
         </template>
       </el-table-column>
-      <el-table-column label="开票金额">
+      <el-table-column label="开票金额(元)">
         <template slot-scope="scope">
           {{scope.row.cost}}
+        </template>
+      </el-table-column>
+      <el-table-column label="已作废？">
+        <template slot-scope="scope">
+          {{scope.row.cancel === 1 ? '是' : '否'}}
+        </template>
+      </el-table-column>
+      <el-table-column label="作废原因">
+        <template slot-scope="scope">
+          {{scope.row.cancel === 1 ? scope.row.reason : '暂无'}}
         </template>
       </el-table-column>
     </el-table>
@@ -55,6 +76,54 @@
       @prev-click="fetchPrev"
       @next-click="fetchNext">
     </el-pagination>
+
+    <!-- 表单 -->
+    <el-dialog
+      :title="formTitle"
+      :visible.sync="formVisible"
+      width="70%">
+      <el-form ref="form" :model="form" :rules="rules" label-width="150px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="客户姓名" prop="name">
+              <el-input v-model="form.name" ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="水费定价(￥)" prop="price">
+              <el-input v-model="form.price" type="number"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="客户住址" prop="address">
+              <el-input v-model="form.address" minlength=1></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="开户时间" prop="starttime">
+              <el-input v-model="form.starttime" minlength=1></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="客户状态"  prop="status">
+              <el-select v-model="form.status" placeholder="请选择">
+                <el-option
+                  v-for="item in customerStatus"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item>
+          <el-button type="primary" @click="save">{{ $t('button.submit') }}</el-button>
+          <el-button @click.native="formVisible = false">{{ $t('button.cancel') }}</el-button>
+        </el-form-item>
+
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 

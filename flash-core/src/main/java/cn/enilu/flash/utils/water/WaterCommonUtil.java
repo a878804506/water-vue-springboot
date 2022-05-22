@@ -46,4 +46,27 @@ public class WaterCommonUtil {
         calendar.set(Calendar.SECOND,59);
         return calendar.getTime();
     }
+
+    /**
+     * 将Double转换成Char数组
+     *
+     * @param index  返回char长度
+     * @param number 待转换的数字
+     * @return Char数组（靠右对齐，左边补齐空格）
+     */
+    public static char[] DoubleToCharArray(int index, Double number) {
+        char[] numberChars = String.format("%.2f", number).toCharArray();
+        if (index + 1 < numberChars.length) {
+            return new char[]{};
+        }
+        char[] resultChar = new char[index];
+        int temp = index - numberChars.length;
+        for (int i = 0; i < temp; i++) {
+            resultChar[i] = ' ';
+        }
+        //将数组1放到目标数组中，参数为：
+        // 1.将要复制的数组  2.从将要复制的数组的第几个元素开始  3.目标数组   4.将要放到目标数组的那个位置   5.复制多少个元素
+        System.arraycopy(numberChars, 0, resultChar, temp, numberChars.length);
+        return resultChar;
+    }
 }

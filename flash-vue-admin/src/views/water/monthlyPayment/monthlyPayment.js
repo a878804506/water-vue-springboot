@@ -1,6 +1,7 @@
-import {createWaterInfo, checkMeterCode, getWaterInfo} from '@/api/water/waterInfo'
-import {getApiUrl} from '@/utils/utils'
-import {getToken} from '@/utils/auth'
+import { getWaterInfo } from '@/api/water/waterInfo'
+import { createWaterMonthlyPayment } from '@/api/water/waterMonthlyPayment'
+import { getApiUrl } from '@/utils/utils'
+import { getToken } from '@/utils/auth'
 
 export default {
   data() {
@@ -41,18 +42,13 @@ export default {
       }, {
         value: 12,
         label: '十二月'
-      }, {
-        value: 13,
-        label: '1-2月'
       }
       ],
       listQuery: {
         month: 1,
         cid: undefined,
-        meterCode: undefined,
         half: false,
-        optType: false,
-        capacityCost: 5
+        price: 20
       },
       waterBill: {
         cid: undefined,
@@ -99,10 +95,7 @@ export default {
     // 表单验证
     rules() {
       return {
-        // cfgName: [
-        //   { required: true, message: this.$t('config.name') + this.$t('common.isRequired'), trigger: 'blur' },
-        //   { min: 3, max: 2000, message: this.$t('config.name') + this.$t('config.lengthValidation'), trigger: 'blur' }
-        // ]
+
       }
     }
   },
@@ -112,7 +105,7 @@ export default {
   },
   methods: {
     init() {
-      this.downloadUrl = getApiUrl() + '/water/info/downloadExcel'
+      this.downloadUrl = getApiUrl() + '/water/monthlyPayment/downloadExcel'
     },
     getWaterInfoData() {
       getWaterInfo({
@@ -133,18 +126,12 @@ export default {
     },
     reset() {
       this.listQuery.cid = ''
-      this.listQuery.meterCode = ''
       this.waterBill.cid = undefined
       this.waterBill.cname = undefined
-      this.waterBill.year = undefined
       this.waterBill.month = undefined
-      this.waterBill.firstNumber = undefined
-      this.waterBill.lastNumber = undefined
       this.waterBill.waterCount = undefined
       this.waterBill.price = undefined
       this.waterBill.address = undefined
-      this.waterBill.meterageCost = undefined
-      this.waterBill.charMeterageCost = Array(8)
       this.waterBill.capacityCost = undefined
       this.waterBill.charCapacityCost = Array(8)
       this.waterBill.waterCost = undefined
@@ -157,31 +144,8 @@ export default {
       if (this.checkInput()) {
         this.listLoading = true
         this.button.createButton = true
-        let month = 1
-        if (!this.listQuery.optType) {
-          month = this.listQuery.times[1].getMonth() + 1
-        } else {
-          month = this.listQuery.month
-        }
-        // 检查录入止码的有效性
-        checkMeterCode({
-          month: month,
-          cid: this.listQuery.cid,
-          meterCode: this.listQuery.meterCode
-        }).then(response => {
-          if (response.data.result) {
-            this.createCustomerWaterInfo()
-          } else {
-            if (response.data.type === 1) {
-              this.$message({
-                message: response.data.msg,
-                type: 'warning'
-              })
-            } else {
-              this.openMsg(response.data.msg)
-            }
-          }
-        })
+
+        this.createCustomerWaterInfo()
         this.listLoading = false
         setTimeout(() => {
           this.button.createButton = false
@@ -189,22 +153,14 @@ export default {
       }
     },
     createCustomerWaterInfo() {
-      let times = ''
-      let month = 1
-      if (this.listQuery.optType) {
-        times = new Date().getFullYear() + '年' + this.listQuery.month + '月'
-        month = this.listQuery.month
-      } else {
-        times = this.listQuery.times[0].getFullYear() + '年' + (this.listQuery.times[0].getMonth() + 1) + '月-' + this.listQuery.times[1].getFullYear() + '年' + (this.listQuery.times[1].getMonth() + 1) + '月'
-        month = this.listQuery.times[1].getMonth() + 1
-      }
-      createWaterInfo({
-        month: month,
+      let months = this.listQuery.times[1].getMonth() - this.listQuery.times[0].getMonth() + 1
+      let times = this.listQuery.times[0].getFullYear() + '年' + (this.listQuery.times[0].getMonth() + 1) + '月-' + this.listQuery.times[1].getFullYear() + '年' + (this.listQuery.times[1].getMonth() + 1) + '月'
+
+      createWaterMonthlyPayment({
+        months: months,
         cid: this.listQuery.cid,
-        meterCode: this.listQuery.meterCode,
-        capacityCost: this.listQuery.capacityCost,
+        price: this.listQuery.price,
         half: this.listQuery.half,
-        optType: this.listQuery.optType,
         times: times
       }).then(response => {
         this.$message({
@@ -213,40 +169,34 @@ export default {
         })
         this.getWaterInfoData()
         this.waterBill = response.data
-        if (this.listQuery.month === 13) {
-          this.waterBill.month = '1-2'
-        }
         this.waterBill.times = times
         this.button.downloadButton = false
       }).catch(() => {
       })
     },
     checkInput() {
-      if (this.listQuery.month && this.listQuery.cid && this.listQuery.meterCode) {
-        if (this.listQuery.cid > 0 && this.listQuery.meterCode > 0) {
+      if (this.listQuery.times && this.listQuery.cid && this.listQuery.price) {
+        if (this.listQuery.cid > 0 && this.listQuery.price > 0) {
           if (this.reg.test(this.listQuery.cid)) {
             return true
           }
         }
       }
       this.$message({
-        message: this.$t('common.mustInputIdAndMeterCode'),
+        message: this.$t('common.mustInputIdAndPrice'),
         type: 'warning'
       })
       return false
     },
     downloadExcel() {
       if (this.checkDownload()) {
-        if (this.listQuery.month === 13) {
-          this.waterBill.month = 13
-        }
-        window.location.href = this.downloadUrl + '?year=' + this.waterBill.year + '&month=' + this.waterBill.month + '&cid=' + this.waterBill.cid + '&token=' + getToken() + '&times=' + this.waterBill.times
+        window.location.href = this.downloadUrl + '?cid=' + this.waterBill.cid + '&token=' + getToken() + '&times=' + this.waterBill.times
         this.reset()
         this.button.downloadButton = true
       }
     },
     checkDownload() {
-      if (this.waterBill.year && this.waterBill.month) {
+      if (this.listQuery.times && this.waterBill.cid && this.waterBill.price) {
         return true
       }
       this.$message({
@@ -254,16 +204,6 @@ export default {
         type: 'warning'
       })
       return false
-    },
-    openMsg(msg) {
-      this.$confirm(msg, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.createCustomerWaterInfo()
-      }).catch(() => {
-      })
     }
   }
 }

@@ -4,12 +4,12 @@ import cn.enilu.flash.bean.entity.water.WaterBill;
 import cn.enilu.flash.utils.HttpUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Map;
@@ -33,12 +33,9 @@ public class ExcelUtil {
      * @param context      表头或表尾数据集合
      * @return
      */
-    public static byte[] writeExcel(Map<String, Object> context) throws Exception {
-
-//        ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
-//        Resource resource = resourceResolver.getResource("classpath:templates" + File.separator + "water_template.xlsx");
-
-        ClassPathResource classPathResource = new ClassPathResource("templates" + File.separator + "water_template.xlsx");
+    public static byte[] writeExcel(Map<String, Object> context, boolean monthlyPayment) throws Exception {
+        String excelTemplatePath = "templates" + File.separator + (monthlyPayment ? "water_monthly_payment_template.xlsx" : "water_template.xlsx");
+        ClassPathResource classPathResource = new ClassPathResource(excelTemplatePath);
         InputStream inputStream =classPathResource.getInputStream();
 
         try (Workbook workbook = WorkbookFactory.create(inputStream)) {

@@ -16,9 +16,7 @@ import cn.enilu.flash.utils.DateUtil;
 import cn.enilu.flash.utils.factory.Page;
 import cn.enilu.flash.utils.water.ExcelUtil;
 import cn.enilu.flash.utils.water.NumToCNMoneyUtil;
-import cn.enilu.flash.utils.water.OperateExcelUtil;
 import cn.enilu.flash.utils.water.WaterCommonUtil;
-import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,9 +68,9 @@ public class WaterInfoController extends BaseController {
         try {
             WaterBill waterBill = hmap.get(pre_waterBill.getCid() + "-" + times);
             // double 转换成 char数组
-            waterBill.setCharMeterageCost(waterInfoService.DoubleToCharArray(8, waterBill.getMeterageCost()));
-            waterBill.setCharCapacityCost(waterInfoService.DoubleToCharArray(8, waterBill.getCapacityCost()));
-            waterBill.setCharWaterCost(waterInfoService.DoubleToCharArray(8, waterBill.getWaterCost()));
+            waterBill.setCharMeterageCost(WaterCommonUtil.DoubleToCharArray(8, waterBill.getMeterageCost()));
+            waterBill.setCharCapacityCost(WaterCommonUtil.DoubleToCharArray(8, waterBill.getCapacityCost()));
+            waterBill.setCharWaterCost(WaterCommonUtil.DoubleToCharArray(8, waterBill.getWaterCost()));
             waterBill.setCapitalization(NumToCNMoneyUtil.number2CNMontrayUnit(waterBill.getWaterCost()));
 
             ShiroUser user = tokenCache.getUser(token);
@@ -104,7 +102,7 @@ public class WaterInfoController extends BaseController {
             context.put("meterage.jiao",waterBill.getCharMeterageCost()[6]);
             context.put("meterage.fen", waterBill.getCharMeterageCost()[7]);
 
-            context.put("capacity.wan",waterBill.getCharMeterageCost()[0]);
+            context.put("capacity.wan",waterBill.getCharCapacityCost()[0]);
             context.put("capacity.qian", waterBill.getCharCapacityCost()[1]);
             context.put("capacity.bai", waterBill.getCharCapacityCost()[2]);
             context.put("capacity.shi", waterBill.getCharCapacityCost()[3]);
@@ -121,7 +119,7 @@ public class WaterInfoController extends BaseController {
             context.put("cost.jiao", waterBill.getCharWaterCost()[6]);
             context.put("cost.fen", waterBill.getCharWaterCost()[7]);
 
-            byte[] bytes = ExcelUtil.writeExcel(context);
+            byte[] bytes = ExcelUtil.writeExcel(context, false);
             ExcelUtil.fileDownload(waterBill, bytes);
         } catch (Exception e) {
             e.printStackTrace();

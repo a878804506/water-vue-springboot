@@ -70,9 +70,9 @@ public class WaterInfoService extends BaseService<WaterInfo, Long, WaterInfoRepo
         waterBill.setCapacityCost(Objects.nonNull(capacityCost) ? new BigDecimal(capacityCost).setScale(half ? 0 : 2, BigDecimal.ROUND_HALF_UP).doubleValue() : 5d);
         waterBill.setWaterCost(waterBill.getMeterageCost() + waterBill.getCapacityCost());
         // double 转换成 char数组
-        waterBill.setCharMeterageCost(this.DoubleToCharArray(8, waterBill.getMeterageCost()));
-        waterBill.setCharCapacityCost(this.DoubleToCharArray(8, waterBill.getCapacityCost()));
-        waterBill.setCharWaterCost(this.DoubleToCharArray(8, waterBill.getWaterCost()));
+        waterBill.setCharMeterageCost(WaterCommonUtil.DoubleToCharArray(8, waterBill.getMeterageCost()));
+        waterBill.setCharCapacityCost(WaterCommonUtil.DoubleToCharArray(8, waterBill.getCapacityCost()));
+        waterBill.setCharWaterCost(WaterCommonUtil.DoubleToCharArray(8, waterBill.getWaterCost()));
         waterBill.setCapitalization(NumToCNMoneyUtil.number2CNMontrayUnit(waterBill.getWaterCost()));
         //入库逻辑
         waterMeterRepository.save(waterMeter);
@@ -96,29 +96,6 @@ public class WaterInfoService extends BaseService<WaterInfo, Long, WaterInfoRepo
         waterInfo.setCost(waterBill.getWaterCost());
         waterInfo.setRemark(waterBill.getTimes());
         waterInfoRepository.save(waterInfo);
-    }
-
-    /**
-     * 将Double转换成Char数组
-     *
-     * @param index  返回char长度
-     * @param number 待转换的数字
-     * @return Char数组（靠右对齐，左边补齐空格）
-     */
-    public char[] DoubleToCharArray(int index, Double number) {
-        char[] numberChars = String.format("%.2f", number).toCharArray();
-        if (index + 1 < numberChars.length) {
-            return new char[]{};
-        }
-        char[] resultChar = new char[index];
-        int temp = index - numberChars.length;
-        for (int i = 0; i < temp; i++) {
-            resultChar[i] = ' ';
-        }
-        //将数组1放到目标数组中，参数为：
-        // 1.将要复制的数组  2.从将要复制的数组的第几个元素开始  3.目标数组   4.将要放到目标数组的那个位置   5.复制多少个元素
-        System.arraycopy(numberChars, 0, resultChar, temp, numberChars.length);
-        return resultChar;
     }
 
     /**

@@ -38,6 +38,7 @@ export default {
     waterCostByToDay: '今日录入详情',
     customerWaterHistory: '开票历史',
     customerWaterStatistics: '月度统计',
+    monthlyPayment: '包月开票',
     //  水务系统 结束
 
     //进销存 开始
@@ -102,6 +103,7 @@ export default {
     //  水务系统 开始
     waterCreateTable: '账单生成',
     waterDownloadExcel: '下载Excel',
+    waterCancel: '作废',
     //  水务系统 结束
 
     // 进销存 开始
@@ -134,10 +136,11 @@ export default {
     },
     //  水务系统 开始
     mustInputIdAndMeterCode: '非法参数:客户id或本月止码!',
+    mustInputIdAndPrice: '非法参数:客户id或包月单价!',
     FirstCreateBill: '请先生成账单!',
     createSuccess: '生成成功',
     illegalParameter: '非法参数!',
-    toDayNoData: '今日还没给任何客户录入水费!'
+    toDayNoData: '今日还没给任何客户录入水费!',
     //  水务系统 结束
   },
   dashboard: {

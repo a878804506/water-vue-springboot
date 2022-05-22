@@ -71,6 +71,7 @@ export default {
       })
     },
     search() {
+      this.listQuery.page = 1
       this.fetchData()
     },
     reset() {
