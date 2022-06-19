@@ -60,4 +60,17 @@ public class WaterHistoryController {
         Map<String, Object> result = waterHistoryService.monthStatistics(year, month);
         return Rets.success(result);
     }
+
+    /**
+     * 作废单据
+     *
+     * @param id 用戶id
+     * @param reason 作废原因
+     * @return 月度统计信息
+     */
+    @RequestMapping(value = "/waterCancel", method = RequestMethod.POST)
+    public Object waterCancel(int id, String remark, String reason) {
+        waterHistoryService.waterCancel(id, remark, reason);
+        return Rets.success();
+    }
 }

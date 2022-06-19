@@ -1,4 +1,4 @@
-import { getList } from '@/api/water/waterHistory'
+import { getList, waterCancel } from '@/api/water/waterHistory'
 
 export default {
   data() {
@@ -7,7 +7,8 @@ export default {
       formTitle: '',
       form: {
         reason: '',
-        id: ''
+        remark: null,
+        id: null
       },
       listQuery: {
         page: 1,
@@ -81,7 +82,7 @@ export default {
     handleCurrentChange(currentRow, oldCurrentRow) {
       this.selRow = currentRow
     },
-    cancel() {
+    waterCancel() {
       if (this.selRow === null) {
         this.$message({
           message: this.$t('common.mustSelectOne'),
@@ -90,11 +91,29 @@ export default {
         return
       }
       console.log(this.selRow)
-      this.$message({
-        message: this.$t('该功能暂未实现，耐心等待！'),
-        type: 'success'
-      })
+      this.formVisible = true
+      this.formTitle = '作废' + this.selRow.cname + '的' + this.selRow.remark + '收据'
 
+      this.form.id = this.selRow.cid
+      this.form.remark = this.selRow.remark
+    },
+    waterCancelSubmit() {
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          waterCancel({
+            id: this.form.id,
+            remark: this.form.remark,
+            reason: this.form.reason
+          }).then(response => {
+            this.$message({
+              message: this.$t('common.optionSuccess'),
+              type: 'success'
+            })
+            this.formVisible = false
+            this.fetchData()
+          })
+        }
+      })
     }
   }
 }

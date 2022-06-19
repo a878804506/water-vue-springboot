@@ -8,3 +8,10 @@ export function getList(params) {
   })
 }
 
+export function waterCancel(params) {
+  return request({
+    url: '/water/waterhistory/waterCancel',
+    method: 'post',
+    params
+  })
+}

@@ -2,6 +2,7 @@ package cn.enilu.flash.dao.water;
 
 import cn.enilu.flash.bean.entity.water.WaterInfo;
 import cn.enilu.flash.dao.BaseRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -17,5 +18,9 @@ public interface WaterHistoryRepository extends BaseRepository<WaterInfo, Long> 
 
     @Query(value = "select t.id, t.name, t.price, t.address, t.starttime, t.status from t_water_customer t where t.id not in (SELECT t.cid  FROM t_water_waterinfo t  WHERE t.modify_time BETWEEN DATE_FORMAT( ?1 ,'%Y-%m-%d %H:%i:%s')  and  DATE_FORMAT( ?2 ,'%Y-%m-%d %H:%i:%s') );",nativeQuery = true)
     List<Map<String, Object>> queryNotMonthBillCustomers(String format, String format1);
+
+    @Modifying
+    @Query(value = "update t_water_waterinfo set cancel = 1, reason = ?3 where cid = ?1 and remark = ?2",nativeQuery = true)
+    int cancelBill(int id, String remark, String reason);
 }
 

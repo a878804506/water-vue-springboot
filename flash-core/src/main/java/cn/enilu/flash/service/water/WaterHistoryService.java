@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -79,6 +80,11 @@ public class WaterHistoryService extends BaseService<WaterMeter, Long, WaterMete
         result.put("waterCustomer", waterCustomers);
 
         return result;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void waterCancel(int id, String remark, String reason) {
+        waterHistoryRepository.cancelBill(id, remark, reason);
     }
 }
 
