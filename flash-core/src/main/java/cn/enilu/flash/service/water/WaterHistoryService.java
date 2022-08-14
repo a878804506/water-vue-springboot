@@ -7,10 +7,14 @@ import cn.enilu.flash.bean.entity.water.WaterCustomer;
 import cn.enilu.flash.bean.entity.water.WaterInfo;
 import cn.enilu.flash.bean.entity.water.WaterMeter;
 import cn.enilu.flash.dao.system.UserRepository;
+import cn.enilu.flash.dao.water.WaterCustomerRepository;
 import cn.enilu.flash.dao.water.WaterHistoryRepository;
 import cn.enilu.flash.dao.water.WaterMeterRepository;
+import cn.enilu.flash.security.JwtUtil;
 import cn.enilu.flash.service.BaseService;
+import cn.enilu.flash.utils.BeanUtil;
 import cn.enilu.flash.utils.factory.Page;
+import cn.enilu.flash.utils.water.ExcelUtil;
 import cn.enilu.flash.utils.water.WaterCommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,15 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAdjuster;
-import java.time.temporal.TemporalAdjusters;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class WaterHistoryService extends BaseService<WaterMeter, Long, WaterMeterRepository> {
@@ -38,6 +35,8 @@ public class WaterHistoryService extends BaseService<WaterMeter, Long, WaterMete
     private UserRepository userRepository;
     @Autowired
     private WaterHistoryRepository waterHistoryRepository;
+    @Autowired
+    private WaterCustomerRepository waterCustomerRepository;
 
     /**
      * WaterMeter 列表查询
@@ -50,33 +49,28 @@ public class WaterHistoryService extends BaseService<WaterMeter, Long, WaterMete
         List<WaterInfo> records = waterHistoryRepository.queryWaterInfoPage(name, (page.getCurrent() - 1) * page.getLimit(), page.getLimit());
         List<User> users = userRepository.query("select * from t_sys_user");
         Map<Long, String> userMapping = users.stream().collect(Collectors.toMap(User::getId, User::getName));
-        records.forEach( waterinfo -> {
+        records.forEach(waterinfo -> {
             waterinfo.setModifyName(userMapping.getOrDefault(waterinfo.getModifyBy(), ""));
         });
-        String excu_page_count_sql = WaterCommonUtil.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_SYS_PAGE_COUNT, WaterConstant.WATER_INFO,WaterConstant.SYS_USER, name);
+        String excu_page_count_sql = WaterCommonUtil.replaceTemplateSQL(WaterTemplateSQLConstant.WATER_SYS_PAGE_COUNT, WaterConstant.WATER_INFO, WaterConstant.SYS_USER, name);
         page.setRecords(records);
         page.setTotal(Integer.valueOf(waterHistoryRepository.getBySql(excu_page_count_sql) + ""));
         return page;
     }
 
-    public Map<String, Object> monthStatistics(int year, int month) {
+    public Map<String, Object> monthStatistics(String startDate, String endDate) {
         Map<String, Object> result = new HashMap<>();
-
         // 统计出当月已经开票的
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern(WaterConstant.YYYY_MM_DD_HH_MM_SS);
-        LocalDateTime date = LocalDateTime.of(year, month, 1, 0 , 0, 0);
-        LocalDateTime firstday = date.with(TemporalAdjusters.firstDayOfMonth());
-        LocalDateTime lastDay = date.with(TemporalAdjusters.lastDayOfMonth()).withHour(23).withMinute(59).withSecond(59);
-        List<Map<String, Object>> waterInfos = waterHistoryRepository.queryWaterInfoByMonth(fmt.format(firstday), fmt.format(lastDay));
+        List<Map<String, Object>> waterInfos = waterHistoryRepository.queryWaterInfoByMonth(startDate, endDate);
         BigDecimal total = BigDecimal.ZERO;
-        for (Map<String, Object> waterInfo : waterInfos){
+        for (Map<String, Object> waterInfo : waterInfos) {
             total = total.add(new BigDecimal(waterInfo.get("cost").toString()));
         }
         result.put("waterInfo", waterInfos);
         result.put("total", total.doubleValue());
 
         // 统计出当月没有开票的用户信息
-        List<Map<String, Object>> waterCustomers = waterHistoryRepository.queryNotMonthBillCustomers(fmt.format(firstday), fmt.format(lastDay));
+        List<Map<String, Object>> waterCustomers = waterHistoryRepository.queryNotMonthBillCustomers(startDate, endDate);
         result.put("waterCustomer", waterCustomers);
 
         return result;
@@ -85,6 +79,62 @@ public class WaterHistoryService extends BaseService<WaterMeter, Long, WaterMete
     @Transactional(rollbackFor = Exception.class)
     public void waterCancel(int id, String remark, String reason) {
         waterHistoryRepository.cancelBill(id, remark, reason);
+    }
+
+    public void monthStatisticsExport(String startDate, String endDate, String token) {
+        Long userId = JwtUtil.getUserId(token);
+        String userNike = JwtUtil.getUserNike(token);
+        // 统计出当月已经开票的
+        List<WaterInfo> waterInfos = waterHistoryRepository.queryWaterInfoByUserId(startDate, endDate, userId);
+        List<WaterCustomer> allWaterCustomer = waterCustomerRepository.findAll();
+
+        BigDecimal total = BigDecimal.ZERO;
+        for (WaterInfo waterInfo : waterInfos) {
+            total = total.add(new BigDecimal(waterInfo.getCost()));
+            allWaterCustomer.forEach(customer -> {
+                if (customer.getId().intValue() == waterInfo.getCid()) {
+                    waterInfo.setAddress(customer.getAddress());
+                }
+            });
+        }
+        List<Map<?, ?>> notAddress_waterInfos = new ArrayList<>();
+        List<Map<?, ?>> list = new ArrayList<>();
+        waterInfos.forEach(waterInfo -> list.add(BeanUtil.beanToMapDiy(waterInfo, userNike)));
+        Map<String, List<Map<?, ?>>> collect = list.stream().filter(item -> {
+            if (item.containsKey("address")) {
+                return true;
+            } else {
+                notAddress_waterInfos.add(item);
+                return false;
+            }
+        }).collect(Collectors.groupingBy(e -> e.get("address").toString()));
+
+        List<Map<String, Object>> groupCosts = new LinkedList<>();
+        BigDecimal allCost = new BigDecimal("0");
+        Iterator<String> iterator = collect.keySet().iterator();
+        while (iterator.hasNext()) {
+            String address = iterator.next();
+            BigDecimal totalByAddress = new BigDecimal("0");
+            for (WaterInfo waterInfo : waterInfos) {
+                if (address.equals(waterInfo.getAddress())) {
+                    BigDecimal bigDecimal = new BigDecimal(waterInfo.getCost());
+                    totalByAddress = totalByAddress.add(bigDecimal);
+                    allCost = allCost.add(bigDecimal);
+                }
+            }
+            Map<String, Object> addressGroupCost = new HashMap<>();
+            addressGroupCost.put("address", address);
+            addressGroupCost.put("totalCost", totalByAddress.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            groupCosts.add(addressGroupCost);
+        }
+        Map<String, Object> allCostMap = new HashMap<>();
+        allCostMap.put("address", "总计");
+        allCostMap.put("totalCost", allCost.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        groupCosts.add(allCostMap);
+
+
+        // 转？，？ ，出excel 即可
+        ExcelUtil.ExportExcel(collect, groupCosts, startDate, endDate, userNike);
     }
 }
 

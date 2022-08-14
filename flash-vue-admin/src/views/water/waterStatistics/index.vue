@@ -2,27 +2,36 @@
   <div class="app-container waterStatistics">
     <div class="block">
       <el-form :inline="true" >
-        <el-form-item label="统计月">
+        <el-form-item label="统计区间" span="16">
           <el-date-picker
-            v-model="date"
-            type="month"
+            v-model="serchDate"
+            type="daterange"
             @change="changeDatePicker"
-            placeholder="选择统计月">
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="success" size="mini" icon="el-icon-search" @click.native="search">{{ $t('button.search') }}
+          <el-button type="success" size="mini" icon="el-icon-search" @click.native="search">{{ $t('button.search') }}</el-button>
+
+          <el-button type="primary" size="mini" icon="el-icon-check" @click.native="downloadExcel"  :disabled="downloadBtnDisabeld">{{$t('button.waterDownloadExcel') }}
           </el-button>
         </el-form-item>
       </el-form>
       <div>
-        当月已开票汇总金额为：<span class="statisticsInfo">{{waterInfoTotal}}</span>元，未开票的用户总数为：<span class="statisticsInfo">{{waterCustomers.length}}</span>户
+        已开票汇总金额为：<span class="statisticsInfo">{{waterInfoTotal}}</span>元，未开票的用户数为：<span class="statisticsInfo">{{waterCustomers.length}}</span>户
       </div>
     </div>
 
     <el-tabs class="tabs" v-model="activeName" type="card" @tab-click="tabClick">
-      <el-tab-pane label="当月已开票" name="first">
+      <el-tab-pane label="已开票" name="first">
         <el-table :data="waterInfos" v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row>
+          <el-table-column label="序号">
+            <template slot-scope="scope">
+              {{scope.$index + 1}}
+            </template>
+          </el-table-column>
           <el-table-column label="客户编号">
             <template slot-scope="scope">
               {{scope.row.id}}
@@ -38,6 +47,18 @@
               {{scope.row.modifyTime}}
             </template>
           </el-table-column>
+
+          <el-table-column label="客户住址">
+            <template slot-scope="scope">
+              {{scope.row.address}}
+            </template>
+          </el-table-column>
+          <el-table-column label="开票类型">
+            <template slot-scope="scope">
+              {{scope.row.type === 1 ? '按月开票' : '包月'}}
+            </template>
+          </el-table-column>
+
           <el-table-column label="开票人">
             <template slot-scope="scope">
               {{scope.row.modifyName}}
@@ -50,8 +71,13 @@
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="当月未开票" name="second">
+      <el-tab-pane label="未开票的用户" name="second">
         <el-table :data="waterCustomers" v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row>
+          <el-table-column label="序号">
+            <template slot-scope="scope">
+              {{scope.$index + 1}}
+            </template>
+          </el-table-column>
           <el-table-column label="客户编号">
             <template slot-scope="scope">
               {{scope.row.id}}

@@ -71,6 +71,9 @@ public class WaterInfo {
     @Transient
     private String modifyName;
 
+    @Transient
+    private String address;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

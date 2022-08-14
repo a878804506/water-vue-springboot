@@ -55,6 +55,17 @@ public class JwtUtil {
         }
     }
 
+    public static String getUserNike(String token) {
+        if (StringUtils.isEmpty(token))
+            return null;
+        try {
+            DecodedJWT jwt = JWT.decode(token);
+            return jwt.getClaim("userNike").asString();
+        } catch (JWTDecodeException e) {
+            return null;
+        }
+    }
+
     public static Long getUserId() {
         return getUserId(HttpUtil.getToken());
     }
@@ -84,6 +95,7 @@ public class JwtUtil {
                     .withClaim("openId", openId)
                     .withClaim("username", user.getAccount())
                     .withClaim("userId", user.getId())
+                    .withClaim("userNike", user.getName())
                     .withExpiresAt(date)
                     .sign(algorithm);
         } catch (UnsupportedEncodingException e) {

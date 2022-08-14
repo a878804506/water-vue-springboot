@@ -8,6 +8,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -25,7 +26,7 @@ public class SessionUtils {
 
 	public static HttpServletRequest getRequest() {
 		if (RequestContextHolder.getRequestAttributes() == null) {
-			return null;
+			throw new RuntimeException("request为空");
 		}
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 		return request;
@@ -36,5 +37,12 @@ public class SessionUtils {
 		return context.getServletContext();
 	}
 
+	public static HttpServletResponse getResponse() {
+		ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		if (requestAttributes == null) {
+			throw new RuntimeException("response为空");
+		}
+		return requestAttributes.getResponse();
+	}
 
 }

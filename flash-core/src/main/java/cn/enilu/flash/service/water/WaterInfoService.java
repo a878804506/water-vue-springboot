@@ -95,6 +95,7 @@ public class WaterInfoService extends BaseService<WaterInfo, Long, WaterInfoRepo
         waterInfo.setCount(waterBill.getWaterCount());
         waterInfo.setCost(waterBill.getWaterCost());
         waterInfo.setRemark(waterBill.getTimes());
+        waterInfo.setType(1);
         waterInfoRepository.save(waterInfo);
     }
 

@@ -51,13 +51,13 @@ public class WaterHistoryController {
     /**
      * 月度统计
      *
-     * @param year 年份
-     * @param month 月份
+     * @param startDate 开始
+     * @param endDate 结束
      * @return 月度统计信息
      */
     @RequestMapping(value = "/monthStatistics", method = RequestMethod.GET)
-    public Object monthStatistics(@RequestParam int year, @RequestParam int month) {
-        Map<String, Object> result = waterHistoryService.monthStatistics(year, month);
+    public Object monthStatistics(@RequestParam String startDate, @RequestParam String endDate) {
+        Map<String, Object> result = waterHistoryService.monthStatistics(startDate, endDate);
         return Rets.success(result);
     }
 
@@ -72,5 +72,17 @@ public class WaterHistoryController {
     public Object waterCancel(int id, String remark, String reason) {
         waterHistoryService.waterCancel(id, remark, reason);
         return Rets.success();
+    }
+
+    /**
+     * 月度统计  导出excel
+     *
+     * @param startDate 开始
+     * @param endDate 结束
+     * @return 月度统计信息
+     */
+    @RequestMapping(value = "/monthStatisticsExport", method = RequestMethod.GET)
+    public void monthStatisticsExport(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String token) {
+        waterHistoryService.monthStatisticsExport(startDate, endDate, token);
     }
 }

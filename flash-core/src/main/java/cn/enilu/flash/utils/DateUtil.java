@@ -29,6 +29,7 @@ import java.util.Map;
 
 public class DateUtil {
 
+	public static final String YMDHMS = "yyyy-MM-dd HH:mm:ss";
 
 	private static final Object LOCK = new Object();
 

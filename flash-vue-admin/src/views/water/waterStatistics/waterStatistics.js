@@ -1,17 +1,19 @@
 import { getData } from '@/api/water/waterStatistics'
+import { getApiUrl } from '@/utils/utils'
+import { getToken } from '@/utils/auth'
+import { parseTime } from '../../../utils'
 
 export default {
   data() {
     return {
-      date: null,
-      listQuery: {
-        year: 2022,
-        month: 5
-      },
+      serchDate: [null, null],
+      listLoading: false,
       activeName: 'first',
       waterInfos: [],
       waterInfoTotal: 0,
-      waterCustomers: []
+      waterCustomers: [],
+      downloadBtnDisabeld: true,
+      downloadUrl: null
     }
   },
   filters: {
@@ -38,67 +40,67 @@ export default {
   },
   methods: {
     init() {
-      this.date = new Date()
-      this.listQuery.year = this.date.getFullYear()
-      this.listQuery.month = this.date.getMonth() + 1
-      this.fetchData()
+      this.downloadUrl = getApiUrl() + '/water/waterhistory/monthStatisticsExport'
+      let startDate = new Date()
+      let endDate = new Date()
+      if (endDate.getMonth() === 0) {
+        startDate.setFullYear(startDate.getFullYear() - 1, 11, 21)
+      } else {
+        startDate.setMonth(startDate.getMonth() - 1, 21)
+      }
+      endDate.setDate(20)
+
+      startDate.setHours(0)
+      startDate.setMinutes(0)
+      startDate.setSeconds(0)
+
+      endDate.setHours(23)
+      endDate.setMinutes(59)
+      endDate.setSeconds(59)
+      this.serchDate[0] = startDate
+      this.serchDate[1] = endDate
     },
     changeDatePicker(e) {
-      console.log(e)
-      this.date = e
+      e[1].setHours(23)
+      e[1].setMinutes(59)
+      e[1].setSeconds(59)
       if (e) {
-        this.listQuery.year = this.date.getFullYear()
-        this.listQuery.month = this.date.getMonth() + 1
-      } else {
-        this.date = new Date()
-        this.listQuery.year = this.date.getFullYear()
-        this.listQuery.month = this.date.getMonth() + 1
+        this.serchDate = e
       }
+      console.log(this.serchDate[0])
+      console.log(this.serchDate[1])
     },
     tabClick(tab, event) {
       console.log(tab, event)
     },
     fetchData() {
       this.listLoading = true
-      getData(this.listQuery).then(response => {
+      let startDate = parseTime(this.serchDate[0])
+      let endDate = parseTime(this.serchDate[1])
+      console.log(startDate)
+      console.log(endDate)
+      getData({startDate, endDate}).then(response => {
         this.waterInfos = response.data.waterInfo
         this.waterInfoTotal = response.data.total
         this.waterCustomers = response.data.waterCustomer
         this.listLoading = false
+        if (response.data.waterInfo && response.data.waterInfo.length != 0){
+          this.downloadBtnDisabeld = false
+        } else {
+          this.downloadBtnDisabeld = true
+        }
       })
     },
     search() {
       this.fetchData()
     },
-    reset() {
-      this.listQuery.cname = ''
-      this.fetchData()
-    },
-    handleFilter() {
-      this.listQuery.page = 1
-      this.getData()
-    },
-    handleClose() {
-
-    },
-    fetchNext() {
-      this.listQuery.page = this.listQuery.page + 1
-      this.fetchData()
-    },
-    fetchPrev() {
-      this.listQuery.page = this.listQuery.page - 1
-      this.fetchData()
-    },
-    fetchPage(page) {
-      this.listQuery.page = page
-      this.fetchData()
-    },
-    changeSize(limit) {
-      this.listQuery.limit = limit
-      this.fetchData()
-    },
-    handleCurrentChange(currentRow, oldCurrentRow) {
-      this.selRow = currentRow
+    downloadExcel() {
+      let startDate = parseTime(this.serchDate[0])
+      let endDate = parseTime(this.serchDate[1])
+      console.log(startDate)
+      console.log(endDate)
+      window.location.href = this.downloadUrl + '?startDate=' + startDate + '&endDate=' + endDate +  '&token=' + getToken()
+      this.downloadBtnDisabeld = true
     },
   }
 }
