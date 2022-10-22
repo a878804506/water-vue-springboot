@@ -13,7 +13,8 @@ export default {
       waterInfoTotal: 0,
       waterCustomers: [],
       downloadBtnDisabeld: true,
-      downloadUrl: null
+      downloadUrl: null,
+      downloadOriUrl: null
     }
   },
   filters: {
@@ -41,6 +42,7 @@ export default {
   methods: {
     init() {
       this.downloadUrl = getApiUrl() + '/water/waterhistory/monthStatisticsExport'
+      this.downloadOriUrl = getApiUrl() + '/water/waterhistory/monthStatisticsOriginExport'
       let startDate = new Date()
       let endDate = new Date()
       if (endDate.getMonth() === 0) {
@@ -100,6 +102,14 @@ export default {
       console.log(startDate)
       console.log(endDate)
       window.location.href = this.downloadUrl + '?startDate=' + startDate + '&endDate=' + endDate +  '&token=' + getToken()
+      this.downloadBtnDisabeld = true
+    },
+    downloadOriExcel() {
+      let startDate = parseTime(this.serchDate[0])
+      let endDate = parseTime(this.serchDate[1])
+      console.log(startDate)
+      console.log(endDate)
+      window.location.href = this.downloadOriUrl + '?startDate=' + startDate + '&endDate=' + endDate +  '&token=' + getToken()
       this.downloadBtnDisabeld = true
     },
   }

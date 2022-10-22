@@ -103,6 +103,7 @@ export default {
     //  水务系统 开始
     waterCreateTable: '账单生成',
     waterDownloadExcel: '下载Excel',
+    waterDownloadOriExcel: '下载原始Excel',
     waterCancel: '作废',
     //  水务系统 结束
 

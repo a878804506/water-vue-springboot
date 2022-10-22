@@ -102,6 +102,7 @@ export default {
     //  水务系统 开始
     waterCreateTable: 'Create Bill',
     waterDownloadExcel: 'download Excel',
+    waterDownloadOriExcel: 'download origin Excel',
     waterCancel: 'canel bill',
     //  水务系统 结束
 

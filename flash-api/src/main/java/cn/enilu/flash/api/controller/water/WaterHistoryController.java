@@ -85,4 +85,16 @@ public class WaterHistoryController {
     public void monthStatisticsExport(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String token) {
         waterHistoryService.monthStatisticsExport(startDate, endDate, token);
     }
+
+    /**
+     * 月度统计  导出原始excel
+     *
+     * @param startDate 开始
+     * @param endDate 结束
+     * @return 月度统计信息
+     */
+    @RequestMapping(value = "/monthStatisticsOriginExport", method = RequestMethod.GET)
+    public void monthStatisticsOriginExport(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String token) {
+        waterHistoryService.monthStatisticsOriginExport(startDate, endDate, token);
+    }
 }

@@ -136,5 +136,21 @@ public class WaterHistoryService extends BaseService<WaterMeter, Long, WaterMete
         // 转？，？ ，出excel 即可
         ExcelUtil.ExportExcel(collect, groupCosts, startDate, endDate, userNike);
     }
+
+    public void monthStatisticsOriginExport(String startDate, String endDate, String token) {
+        Long userId = JwtUtil.getUserId(token);
+        String userNike = JwtUtil.getUserNike(token);
+        // 统计出当月已经开票的
+        List<WaterInfo> waterInfos = waterHistoryRepository.queryWaterInfoByUserId(startDate, endDate, userId);
+        List<Map<?, ?>> list = new ArrayList<>();
+        waterInfos.forEach(waterInfo -> list.add(BeanUtil.beanToMapDiy(waterInfo, userNike)));
+        BigDecimal allCost = new BigDecimal("0");
+        for (WaterInfo waterInfo : waterInfos) {
+            BigDecimal bigDecimal = new BigDecimal(waterInfo.getCost());
+            allCost = allCost.add(bigDecimal);
+        }
+        // 转？，？ ，出excel 即可
+        ExcelUtil.ExportOriginExcel(list, startDate, endDate, userNike, allCost.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+    }
 }
 

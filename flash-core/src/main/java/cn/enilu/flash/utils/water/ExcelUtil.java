@@ -4,6 +4,8 @@ import cn.enilu.flash.bean.entity.water.WaterBill;
 import cn.enilu.flash.utils.HttpUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
@@ -299,6 +301,66 @@ public class ExcelUtil {
             response.setContentType("application/force-download");// 应用程序强制下载
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(tempFileName, "UTF-8"));
             xb.removeSheetAt(1);
+            xb.write(response.getOutputStream());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 导出excel：月度统计分组  原始表格
+     */
+    public static void ExportOriginExcel(List<Map<?, ?>> data, String startDate, String endDate, String userNike, double totalValue) {
+        ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+        Resource resource = resourceResolver.getResource("templates" + File.separator + "water_Origin_Statistics.xlsx");
+        try (
+                InputStream inputStream = resource.getInputStream();
+                XSSFWorkbook xb = new XSSFWorkbook(inputStream);
+        ) {
+            XSSFSheet sheetAt = xb.getSheetAt(0);
+            Pattern pattern = Pattern.compile(REG_);
+            for(int i = 0; i < data.size() -1; i++){
+                sheetAt.copyRows(1,1,i + 2, new CellCopyPolicy());
+            }
+            for(int i = 0; i < data.size(); i++){
+                Row row = sheetAt.getRow(i + 1);
+                int lastCellNum = row.getLastCellNum();
+
+                for (int j = 0; j < lastCellNum; j++) {
+                    Cell cell = row.getCell(j);
+                    if (cell != null) {
+                        // 单元格是一个表达式
+                        if (cell.getCellType() == STRING && cell.getStringCellValue().matches(REG_)) {
+                            String cellExp = cell.getStringCellValue();
+                            Matcher matcher = pattern.matcher(cellExp);
+                            matcher.find();
+                            // 获取key
+                            String key = matcher.group(1);
+                            if ("index".equals(key)) {
+                                ExcelUtil.setCellValue(cell, String.valueOf(i + 1));
+                            } else {
+                                Object newValue = data.get(i).get(key);
+                                if (newValue == null) {
+                                    newValue = "";
+                                }
+                                ExcelUtil.setCellValue(cell, newValue);
+                            }
+                        }
+                    }
+                }
+            }
+
+            XSSFRow totalRow = sheetAt.createRow(data.size() + 2);
+            totalRow.createCell(5).setCellValue("总计");
+            totalRow.createCell(6).setCellValue(totalValue);
+
+            sheetAt.setForceFormulaRecalculation(true);
+
+            String tempFileName = "月度原始统计-" + userNike + "-" + startDate.substring(0, 10) + "-" + endDate.substring(0,10) + ".xlsx";
+            HttpServletResponse response = HttpUtil.getResponse();
+            response.setContentType("application/force-download");// 应用程序强制下载
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(tempFileName, "UTF-8"));
             xb.write(response.getOutputStream());
 
         } catch (Exception e) {

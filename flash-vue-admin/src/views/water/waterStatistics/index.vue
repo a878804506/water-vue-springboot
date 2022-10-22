@@ -14,9 +14,8 @@
         </el-form-item>
         <el-form-item>
           <el-button type="success" size="mini" icon="el-icon-search" @click.native="search">{{ $t('button.search') }}</el-button>
-
-          <el-button type="primary" size="mini" icon="el-icon-check" @click.native="downloadExcel"  :disabled="downloadBtnDisabeld">{{$t('button.waterDownloadExcel') }}
-          </el-button>
+          <el-button type="primary" size="mini" icon="el-icon-check" @click.native="downloadExcel"  :disabled="downloadBtnDisabeld">{{$t('button.waterDownloadExcel') }}</el-button>
+          <el-button type="primary" size="mini" icon="el-icon-check" @click.native="downloadOriExcel"  :disabled="downloadBtnDisabeld">{{$t('button.waterDownloadOriExcel') }}</el-button>
         </el-form-item>
       </el-form>
       <div>
