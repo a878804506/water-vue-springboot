@@ -41,31 +41,34 @@
               {{scope.row.name}}
             </template>
           </el-table-column>
-          <el-table-column label="最后开票时间">
-            <template slot-scope="scope">
-              {{scope.row.modifyTime}}
-            </template>
-          </el-table-column>
-
-          <el-table-column label="客户住址">
-            <template slot-scope="scope">
-              {{scope.row.address}}
-            </template>
-          </el-table-column>
           <el-table-column label="开票类型">
             <template slot-scope="scope">
               {{scope.row.type === 1 ? '按月开票' : '包月'}}
             </template>
           </el-table-column>
-
-          <el-table-column label="开票人">
+          <el-table-column label="客户住址">
             <template slot-scope="scope">
-              {{scope.row.modifyName}}
+              {{scope.row.address}}
+            </template>
+          </el-table-column>
+          <el-table-column label="收费区间">
+            <template slot-scope="scope">
+              {{scope.row.remark}}
             </template>
           </el-table-column>
           <el-table-column label="开票金额">
             <template slot-scope="scope">
               {{scope.row.cost}}
+            </template>
+          </el-table-column>
+          <el-table-column label="开票人">
+            <template slot-scope="scope">
+              {{scope.row.modifyName}}
+            </template>
+          </el-table-column>
+          <el-table-column label="最后开票时间">
+            <template slot-scope="scope">
+              {{scope.row.modifyTime}}
             </template>
           </el-table-column>
         </el-table>
