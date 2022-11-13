@@ -71,7 +71,7 @@ public class WaterInfo {
     @Transient
     private String modifyName;
 
-    @Column(name = "address")
+    @Transient
     private String address;
 
     @Override

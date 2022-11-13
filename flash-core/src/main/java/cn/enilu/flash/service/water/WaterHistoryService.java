@@ -142,6 +142,18 @@ public class WaterHistoryService extends BaseService<WaterMeter, Long, WaterMete
         String userNike = JwtUtil.getUserNike(token);
         // 统计出当月已经开票的
         List<WaterInfo> waterInfos = waterHistoryRepository.queryWaterInfoByUserId(startDate, endDate, userId);
+
+        List<WaterCustomer> allWaterCustomer = waterCustomerRepository.findAll();
+        BigDecimal total = BigDecimal.ZERO;
+        for (WaterInfo waterInfo : waterInfos) {
+            total = total.add(new BigDecimal(waterInfo.getCost()));
+            allWaterCustomer.forEach(customer -> {
+                if (customer.getId().intValue() == waterInfo.getCid()) {
+                    waterInfo.setAddress(customer.getAddress());
+                }
+            });
+        }
+
         List<Map<?, ?>> list = new ArrayList<>();
         waterInfos.forEach(waterInfo -> list.add(BeanUtil.beanToMapDiy(waterInfo, userNike)));
         BigDecimal allCost = new BigDecimal("0");
