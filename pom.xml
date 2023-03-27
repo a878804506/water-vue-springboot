@@ -60,7 +60,7 @@
         <lombok.version>1.16.20</lombok.version>
         <version>2.6.12</version>
         <aliyunoss.version>3.8.0</aliyunoss.version>
-        <itextpdf.version>5.5.13</itextpdf.version>
+        <itextpdf.version>5.5.13.3</itextpdf.version>
         <poi.version>4.1.2</poi.version>
         <redis.clients.version>2.9.0</redis.clients.version>
         <jsoup.version>1.12.1</jsoup.version>
